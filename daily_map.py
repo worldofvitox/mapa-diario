@@ -7,11 +7,12 @@ from datetime import datetime, timedelta
 import pytz
 from icalendar import Calendar
 
-# --- CONFIGURATION ---
+# --- 1. CONFIGURATION ---
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
 
+# Precision Base Location
 BASE_LOCATION = [-33.45219480797122, -70.5787333882418] 
 
 MECHANICS = {
@@ -29,7 +30,7 @@ MECHANICS = {
     }
 }
 
-# --- STYLING ---
+# --- 2. UNIFIED UI STYLE ---
 CARD_STYLE = (
     "font-family: sans-serif; font-size: 12px; font-weight: bold; "
     "background-color: rgba(255, 255, 255, 0.95); padding: 6px 10px; "
@@ -70,7 +71,7 @@ def get_appointments():
                             'name': extracted_name, 'address': summary, 
                             'mechanic': name, 'start_time': start_time_str
                         })
-        except Exception as e: print(f"Error fetching {name}: {e}")
+        except Exception as e: print(f"Error: {e}")
     return all_appointments
 
 def generate_map():
@@ -82,7 +83,6 @@ def generate_map():
     now_dt = datetime.now(timezone)
 
     for name, info in MECHANICS.items():
-        # FeatureGroup name MUST match the URL parameter logic
         fg = folium.FeatureGroup(name=name).add_to(m)
         mech_apps = sorted([a for a in appointments if a['mechanic'] == name], key=lambda x: x['start_time'])
         current_loc = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
@@ -101,11 +101,11 @@ def generate_map():
                 points = apply_offset(raw_pts, info['offset'])
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
-                # Unified Transit Pill
+                # Transit Pill
                 mid = points[len(points)//2]
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: {leg_color};">{label_id}: {duration}</div>')).add_to(fg)
 
-                # Unified Customer Card
+                # Customer Pill
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: black; transform: translate(-10%, -50%);">{start_dt.strftime("%H:%M")} {app["name"]} ({label_id})</div>')).add_to(fg)
                 current_loc = app['address']
@@ -121,42 +121,40 @@ def generate_map():
                 raw_back_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(back[0]['overview_polyline']['points'])]
                 back_pts = apply_offset(raw_back_pts, info['offset'], multiplier=2.5)
                 folium.PolyLine(back_pts, color='#6c757d', weight=3, dash_array='10', opacity=0.6).add_to(fg)
+                
                 mid_back = back_pts[len(back_pts)//2]
                 folium.Marker(location=mid_back, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: #6c757d;">base: {dur}</div>')).add_to(fg)
 
+    # COLLAPSED=FALSE is critical so the JS can see the labels
     folium.LayerControl(collapsed=False).add_to(m)
 
-    # --- BULLETPROOF JAVASCRIPT ---
+    # --- THE "MENU-CLICKER" JAVASCRIPT ---
     js_filter = """
     <script>
-    (function() {
-        var checkExist = setInterval(function() {
-           var mapInstance = null;
-           for (var prop in window) {
-               if (prop.startsWith('map_') && window[prop] && window[prop].eachLayer) {
-                   mapInstance = window[prop];
-                   break;
-               }
-           }
+    function autoFilter() {
+        const params = new URLSearchParams(window.location.search);
+        const mech = params.get('mechanic');
+        if (!mech) return;
 
-           if (mapInstance) {
-              const urlParams = new URLSearchParams(window.location.search);
-              const target = urlParams.get('mechanic');
-              if (target) {
-                  const targetLower = target.toLowerCase();
-                  mapInstance.eachLayer(function(layer) {
-                      if (layer.options && layer.options.name) {
-                          const layerLower = layer.options.name.toLowerCase();
-                          if ((layerLower === 'juan' || layerLower === 'seba') && layerLower !== targetLower) {
-                              mapInstance.removeLayer(layer);
-                          }
-                      }
-                  });
-              }
-              clearInterval(checkExist);
-           }
-        }, 100); // Check every 100ms
-    })();
+        const target = mech.toLowerCase();
+        const selectors = document.querySelectorAll('.leaflet-control-layers-selector');
+        
+        if (selectors.length === 0) {
+            setTimeout(autoFilter, 300); // Retry if menu isn't built yet
+            return;
+        }
+
+        selectors.forEach(input => {
+            const labelText = input.nextElementSibling.innerText.trim().toLowerCase();
+            // If the label is a mechanic but NOT the one we want, uncheck it
+            if ((labelText === 'juan' || labelText === 'seba') && labelText !== target) {
+                if (input.checked) {
+                    input.click(); 
+                }
+            }
+        });
+    }
+    window.addEventListener('load', autoFilter);
     </script>
     """
     m.get_root().html.add_child(folium.Element(js_filter))
