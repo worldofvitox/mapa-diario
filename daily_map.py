@@ -38,8 +38,8 @@ CARD_STYLE = (
     "display: inline-block; border: none; text-decoration: none;"
 )
 
-# Using a high-stability PNG icon
-WAZE_ICON_URL = "https://cdn-icons-png.flaticon.com/512/732/732252.png"
+# The official "Ghost Car" Waze logo
+WAZE_ICON_URL = "https://cdn-icons-png.flaticon.com/512/1653/1653630.png"
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -114,8 +114,8 @@ def generate_map():
                     location=mid, 
                     icon=folium.DivIcon(html=f'''
                         <a href="{waze_link}" target="_blank" style="text-decoration: none; pointer-events: auto;">
-                            <div style="{CARD_STYLE} color: {leg_color}; vertical-align: middle;">
-                                <img src="{WAZE_ICON_URL}" style="width:16px; height:16px; margin-right:5px; vertical-align: middle;">
+                            <div style="{CARD_STYLE} color: {leg_color}; vertical-align: middle; display: inline-flex; align-items: center;">
+                                <img src="{WAZE_ICON_URL}" style="width:20px; height:auto; margin-right:6px;">
                                 <span>{label_id}: {duration}</span>
                             </div>
                         </a>''')
