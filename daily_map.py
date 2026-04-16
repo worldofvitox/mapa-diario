@@ -1,111 +1,129 @@
 import os
+import requests
 import googlemaps
 import folium
 from datetime import datetime, timedelta
 import pytz
+from icalendar import Calendar
 
 # --- CONFIGURATION ---
-API_KEY = os.getenv('GMAPS_API_KEY')
-gmaps = googlemaps.Client(key=API_KEY)
+GMAPS_KEY = os.getenv('GMAPS_API_KEY')
+gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
+BASE_LOCATION = [-33.4489, -70.6693] # Workshop
 
-# Coordinates for the "Base" (MBS Workshop)
-BASE_LOCATION = "-33.4489, -70.6693" 
-
-# Mechanics and their colors
 MECHANICS = {
-    'Seba': {'color': 'blue', 'initial': 'S'},
-    'Juan': {'color': 'red', 'initial': 'J'}
+    'Juan': {
+        'url': 'https://www.bookthatapp.com/ical/2NZIK6V9T86G4QN7/calendar.ics?resource=31043&token=7242fe38f484ff07e05e4d73fc92c8',
+        'color': '#dc3545',
+        'initial': 'J'
+    },
+    'Seba': {
+        'url': 'https://www.bookthatapp.com/ical/2NZIK6V9T86G4QN7/calendar.ics?resource=34470&token=7242fe38f484ff07e05e4d73fc92c8',
+        'color': '#007bff',
+        'initial': 'S'
+    }
 }
 
 def get_appointments():
-    today = datetime.now(timezone).strftime('%Y-%m-%d')
-    return [
-        {'name': 'Cliente Alfa', 'address': 'Las Condes, Chile', 'mechanic': 'Seba', 'start_time': f'{today} 09:00'},
-        {'name': 'Cliente Beta', 'address': 'Providencia, Chile', 'mechanic': 'Seba', 'start_time': f'{today} 11:30'},
-        {'name': 'Cliente Gamma', 'address': 'Vitacura, Chile', 'mechanic': 'Juan', 'start_time': f'{today} 10:00'},
-    ]
+    """Fetches and parses iCal files from BookThatApp."""
+    all_appointments = []
+    today = datetime.now(timezone).date()
+
+    for name, info in MECHANICS.items():
+        # Change webcal:// to https:// so requests can handle it
+        url = info['url'].replace('webcal://', 'https://')
+        response = requests.get(url)
+        
+        if response.status_code != 200:
+            print(f"Failed to fetch calendar for {name}")
+            continue
+
+        gcal = Calendar.from_ical(response.content)
+
+        for component in gcal.walk():
+            if component.name == "VEVENT":
+                start_dt = component.get('dtstart').dt
+                
+                # Handle both date and datetime objects
+                if isinstance(start_dt, datetime):
+                    event_date = start_dt.astimezone(timezone).date()
+                    start_time_str = start_dt.astimezone(timezone).strftime('%Y-%m-%d %H:%M')
+                else:
+                    event_date = start_dt
+                    start_time_str = f"{start_dt} 09:00"
+
+                # Only include events for TODAY
+                if event_date == today:
+                    summary = str(component.get('summary', 'No Name'))
+                    location = str(component.get('location', summary))
+                    
+                    all_appointments.append({
+                        'name': summary,
+                        'address': location,
+                        'mechanic': name,
+                        'start_time': start_time_str
+                    })
+    return all_appointments
 
 def generate_map():
     appointments = get_appointments()
-    m = folium.Map(location=[-33.4489, -70.6693], zoom_start=12)
-    now = datetime.now(timezone)
+    if not appointments:
+        print("No appointments found for today in iCal.")
+        return
+
+    m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles='cartodbpositron')
+    folium.Marker(location=BASE_LOCATION, popup="Workshop", icon=folium.Icon(color='black', icon='home')).add_to(m)
+    now_dt = datetime.now(timezone)
 
     for name, info in MECHANICS.items():
+        fg = folium.FeatureGroup(name=name).add_to(m)
         mech_apps = [a for a in appointments if a['mechanic'] == name]
         mech_apps.sort(key=lambda x: x['start_time'])
 
-        current_loc = BASE_LOCATION
+        current_loc = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
         
         for i, app in enumerate(mech_apps):
             count = i + 1
             label_id = f"{info['initial']}{count}"
-            start_dt = datetime.strptime(app['start_time'], '%Y-%m-%d %H:%M')
-            start_dt = timezone.localize(start_dt)
+            start_dt = timezone.localize(datetime.strptime(app['start_time'], '%Y-%m-%d %H:%M'))
             time_str = start_dt.strftime('%H:%M')
+            dep_time = max(start_dt, now_dt)
 
-            dep_time = max(start_dt, now)
-
-            directions = gmaps.directions(
-                current_loc,
-                app['address'],
-                mode="driving",
-                departure_time=dep_time, 
-                traffic_model="best_guess"
-            )
+            directions = gmaps.directions(current_loc, app['address'], mode="driving", departure_time=dep_time)
 
             if directions:
                 leg = directions[0]['legs'][0]
                 duration = leg.get('duration_in_traffic', leg['duration'])['text'].replace(' mins', ' min')
+                pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])]
                 
-                # --- THE FIX: Convert list of dicts to list of tuples ---
-                raw_points = googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])
-                points = [(p['lat'], p['lng']) for p in raw_points]
-                
-                folium.PolyLine(points, color=info['color'], weight=5, opacity=0.7).add_to(m)
+                # Draw Route
+                folium.PolyLine(pts, color=info['color'], weight=5, opacity=0.8).add_to(fg)
 
-                midpoint = points[len(points)//2]
-                folium.Marker(
-                    location=midpoint,
-                    icon=folium.DivIcon(html=f'<div style="font-size: 10pt; color: {info["color"]}; font-weight: bold; background: white; border: 1px solid black; border-radius: 5px; padding: 2px;">{label_id}: {duration}</div>')
-                ).add_to(m)
+                # Transit Label (S1: 15 min)
+                mid = pts[len(pts)//2]
+                folium.Marker(location=mid, icon=folium.DivIcon(html=f'<div style="font-family: sans-serif; font-size: 11px; color: white; background-color: {info["color"]}; padding: 3px 7px; border-radius: 10px; border: 2px solid white; font-weight: bold; white-space: nowrap;">{label_id}: {duration}</div>')).add_to(fg)
 
-                folium.Marker(
-                    location=[leg['end_location']['lat'], leg['end_location']['lng']],
-                    popup=f"{time_str} - {app['name']}",
-                    tooltip=f"{time_str} {app['name']} ({label_id})",
-                    icon=folium.Icon(color=info['color'], icon='info-sign')
-                ).add_to(m)
+                # Customer Name Label
+                end_lat, end_lng = leg['end_location']['lat'], leg['end_location']['lng']
+                folium.Marker(location=[end_lat, end_lng], icon=folium.DivIcon(html=f'<div style="font-family: sans-serif; font-size: 12px; color: black; font-weight: bold; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; width: 250px;">{time_str} {app["name"]} ({label_id})</div>')).add_to(fg)
 
                 current_loc = app['address']
 
+        # Return Leg
         if mech_apps:
-            last_start = datetime.strptime(mech_apps[-1]['start_time'], '%Y-%m-%d %H:%M')
-            return_time_dt = timezone.localize(last_start) + timedelta(hours=1.5)
-            return_dep_time = max(return_time_dt, now)
-            
-            back_to_base = gmaps.directions(
-                current_loc, BASE_LOCATION, 
-                mode="driving", 
-                departure_time=return_dep_time
-            )
-            
-            if back_to_base:
-                leg = back_to_base[0]['legs'][0]
-                duration = leg.get('duration_in_traffic', leg['duration'])['text'].replace(' mins', ' min')
-                
-                # --- APPLY FIX HERE TOO ---
-                raw_back_points = googlemaps.convert.decode_polyline(back_to_base[0]['overview_polyline']['points'])
-                back_points = [(p['lat'], p['lng']) for p in raw_back_points]
-                
-                folium.PolyLine(back_points, color=info['color'], weight=3, dash_array='10', opacity=0.5).add_to(m)
-                
-                midpoint = back_points[len(back_points)//2]
-                folium.Marker(
-                    location=midpoint,
-                    icon=folium.DivIcon(html=f'<div style="font-size: 10pt; color: gray; font-weight: bold; background: white; border: 1px solid gray; border-radius: 5px; padding: 2px;">base: {duration}</div>')
-                ).add_to(m)
+            last_dt = timezone.localize(datetime.strptime(mech_apps[-1]['start_time'], '%Y-%m-%d %H:%M'))
+            ret_time = max(last_dt + timedelta(hours=1.5), now_dt)
+            back = gmaps.directions(current_loc, f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}", mode="driving", departure_time=ret_time)
+            if back:
+                leg = back[0]['legs'][0]
+                dur = leg.get('duration_in_traffic', leg['duration'])['text'].replace(' mins', ' min')
+                pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(back[0]['overview_polyline']['points'])]
+                folium.PolyLine(pts, color=info['color'], weight=3, dash_array='10', opacity=0.6).add_to(fg)
+                mid = pts[len(pts)//2]
+                folium.Marker(location=mid, icon=folium.DivIcon(html=f'<div style="font-size: 10px; color: #666; background: white; padding: 2px; border: 1px solid #666;">base: {dur}</div>')).add_to(fg)
 
+    folium.LayerControl(collapsed=False).add_to(m)
     m.save("mechanic_route.html")
 
 if __name__ == "__main__":
