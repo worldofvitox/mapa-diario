@@ -2,19 +2,24 @@ name: Generate Daily Mechanic Map
 
 on:
   schedule:
-    # 9:00 AM Santiago is 13:00 UTC (during standard time)
-    - cron: '0 13 * * *'
-  workflow_dispatch: # Allows you to run it manually for testing
+    # 9:00 AM Santiago is 13:00 UTC
+    - cron: '0 12 * * *'
+  workflow_dispatch: 
+  push:
+    branches: [main]
+
+permissions:
+  contents: write  # <--- This is the fix for Error 128
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Updated version
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5 # Updated version
         with:
           python-version: '3.10'
 
@@ -30,8 +35,8 @@ jobs:
 
       - name: Commit and Push Map
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add mechanic_route.html
-          git commit -m "Update daily map" || exit 0
+          git commit -m "Update daily map [skip ci]" || exit 0
           git push
