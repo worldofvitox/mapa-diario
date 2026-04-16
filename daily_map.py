@@ -12,7 +12,7 @@ GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
 
-# NEW UPDATED BASE COORDINATES (The ones you provided)
+# NEW UPDATED BASE COORDINATES
 BASE_LOCATION = [-33.45219480797122, -70.5787333882418] 
 
 MECHANICS = {
@@ -29,7 +29,6 @@ MECHANICS = {
 }
 
 def get_appointments():
-    """Fetches iCal and extracts Name from description and Address from summary."""
     all_appointments = []
     today = datetime.now(timezone).date()
 
@@ -43,7 +42,6 @@ def get_appointments():
             for component in gcal.walk():
                 if component.name == "VEVENT":
                     start_dt = component.get('dtstart').dt
-                    
                     if isinstance(start_dt, datetime):
                         event_dt = start_dt.astimezone(timezone)
                         event_date = event_dt.date()
@@ -55,14 +53,11 @@ def get_appointments():
                     if event_date == today:
                         summary_text = str(component.get('summary', ''))
                         description_text = str(component.get('description', ''))
-                        
-                        # Extract Name: Look for "Cliente: [Name] ("
                         name_match = re.search(r'Cliente:\s*(.*?)\s*\(', description_text)
                         
                         if name_match:
                             extracted_name = name_match.group(1).strip()
                         else:
-                            # Fallback: if "Cliente:" isn't found, use a shortened version of the summary
                             extracted_name = summary_text.split(',')[0]
                         
                         all_appointments.append({
@@ -82,12 +77,8 @@ def generate_map():
         print("No appointments found today.")
         return
 
-    # Cleaner Basemap
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles='cartodbpositron')
-    
-    # Workshop Marker
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
-    
     now_dt = datetime.now(timezone)
 
     for name, info in MECHANICS.items():
@@ -110,37 +101,45 @@ def generate_map():
                 leg = directions[0]['legs'][0]
                 duration = leg.get('duration_in_traffic', leg['duration'])['text'].replace(' mins', ' min')
                 pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])]
-                
-                # Route Line
                 folium.PolyLine(pts, color=info['color'], weight=5, opacity=0.8).add_to(fg)
 
-                # Transit Label (S1: 15 min) - No pin, just text
+                # Transit Label (Pill style)
                 mid = pts[len(pts)//2]
                 folium.Marker(
                     location=mid,
                     icon=folium.DivIcon(html=f'''
                         <div style="font-family: sans-serif; font-size: 11px; color: white; 
-                        background-color: {info['color']}; padding: 3px 7px; border-radius: 10px; 
-                        border: 2px solid white; font-weight: bold; white-space: nowrap;">
+                        background-color: {info['color']}; padding: 3px 8px; border-radius: 12px; 
+                        font-weight: bold; white-space: nowrap; box-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
                             {label_id}: {duration}
                         </div>''')
                 ).add_to(fg)
 
-                # Customer Name Label - No pin, just text
+                # Customer Label (THE BOX: Rounded square, no border, soft shadow)
                 end_lat, end_lng = leg['end_location']['lat'], leg['end_location']['lng']
                 folium.Marker(
                     location=[end_lat, end_lng],
                     icon=folium.DivIcon(html=f'''
-                        <div style="font-family: sans-serif; font-size: 12px; color: black; 
-                        font-weight: bold; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; 
-                        width: 250px; pointer-events: none;">
+                        <div style="
+                            font-family: sans-serif; 
+                            font-size: 12px; 
+                            color: black; 
+                            font-weight: bold; 
+                            background-color: rgba(255, 255, 255, 0.95); 
+                            padding: 6px 10px; 
+                            border-radius: 8px; 
+                            box-shadow: 0px 2px 8px rgba(0,0,0,0.15);
+                            white-space: nowrap;
+                            width: auto;
+                            display: inline-block;
+                            pointer-events: none;
+                            transform: translate(-10%, -50%);">
                             {time_str} {app['name']} ({label_id})
                         </div>''')
                 ).add_to(fg)
 
                 current_loc = app['address']
 
-        # Return to base logic
         if mech_apps:
             last_dt = timezone.localize(datetime.strptime(mech_apps[-1]['start_time'], '%Y-%m-%d %H:%M'))
             ret_time = max(last_dt + timedelta(hours=1.5), now_dt)
@@ -151,7 +150,7 @@ def generate_map():
                 pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(back[0]['overview_polyline']['points'])]
                 folium.PolyLine(pts, color=info['color'], weight=3, dash_array='10', opacity=0.6).add_to(fg)
                 mid = pts[len(pts)//2]
-                folium.Marker(location=mid, icon=folium.DivIcon(html=f'<div style="font-size: 10px; color: #666; background: white; padding: 2px; border: 1px solid #666;">base: {dur}</div>')).add_to(fg)
+                folium.Marker(location=mid, icon=folium.DivIcon(html=f'<div style="font-size: 10px; color: #666; background: white; padding: 2px 5px; border-radius: 4px; border: 1px solid #ddd;">base: {dur}</div>')).add_to(fg)
 
     folium.LayerControl(collapsed=False).add_to(m)
     m.save("mechanic_route.html")
