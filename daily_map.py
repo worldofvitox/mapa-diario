@@ -3,16 +3,16 @@ import re
 import requests
 import googlemaps
 import folium
+import urllib.parse
 from datetime import datetime, timedelta
 import pytz
 from icalendar import Calendar
 
-# --- 1. CONFIGURATION ---
+# --- CONFIGURATION ---
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
 
-# Precision Base Location
 BASE_LOCATION = [-33.45219480797122, -70.5787333882418] 
 
 MECHANICS = {
@@ -30,14 +30,17 @@ MECHANICS = {
     }
 }
 
-# --- 2. UNIFIED UI STYLE ---
+# --- UNIFIED UI STYLE ---
 CARD_STYLE = (
     "font-family: sans-serif; font-size: 12px; font-weight: bold; "
     "background-color: rgba(255, 255, 255, 0.95); padding: 6px 10px; "
     "border-radius: 8px; box-shadow: 0px 2px 8px rgba(0,0,0,0.15); "
-    "white-space: nowrap; width: auto; display: inline-block; "
-    "pointer-events: none; border: none;"
+    "white-space: nowrap; width: auto; display: flex; align-items: center; "
+    "gap: 6px; border: none; text-decoration: none; cursor: pointer;"
 )
+
+# Waze Logo URL (Small and clean)
+WAZE_ICON = "https://upload.wikimedia.org/wikipedia/commons/6/66/Waze_icon.svg"
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -101,13 +104,32 @@ def generate_map():
                 points = apply_offset(raw_pts, info['offset'])
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
-                # Transit Pill
+                # --- NEW CLICKABLE TRANSIT PILL ---
                 mid = points[len(points)//2]
-                folium.Marker(location=mid, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: {leg_color};">{label_id}: {duration}</div>')).add_to(fg)
+                safe_addr = urllib.parse.quote(app['address'])
+                waze_link = f"https://waze.com/ul?q={safe_addr}&navigate=yes"
 
-                # Customer Pill
+                folium.Marker(
+                    location=mid, 
+                    icon=folium.DivIcon(html=f'''
+                        <a href="{waze_link}" target="_blank" style="text-decoration: none;">
+                            <div style="{CARD_STYLE} color: {leg_color}; pointer-events: auto;">
+                                <img src="{WAZE_ICON}" width="16" height="16">
+                                {label_id}: {duration}
+                            </div>
+                        </a>''')
+                ).add_to(fg)
+
+                # --- CUSTOMER CARD (Non-clickable to prevent mis-clicks) ---
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
-                folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: black; transform: translate(-10%, -50%);">{start_dt.strftime("%H:%M")} {app["name"]} ({label_id})</div>')).add_to(fg)
+                folium.Marker(
+                    location=end_pt, 
+                    icon=folium.DivIcon(html=f'''
+                        <div style="{CARD_STYLE} color: black; transform: translate(-10%, -50%); pointer-events: none;">
+                            {start_dt.strftime("%H:%M")} {app["name"]} ({label_id})
+                        </div>''')
+                ).add_to(fg)
+
                 current_loc = app['address']
 
         # Return to Base
@@ -123,34 +145,24 @@ def generate_map():
                 folium.PolyLine(back_pts, color='#6c757d', weight=3, dash_array='10', opacity=0.6).add_to(fg)
                 
                 mid_back = back_pts[len(back_pts)//2]
-                folium.Marker(location=mid_back, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: #6c757d;">base: {dur}</div>')).add_to(fg)
+                folium.Marker(location=mid_back, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: #6c757d; pointer-events: none;">base: {dur}</div>')).add_to(fg)
 
-    # COLLAPSED=FALSE is critical so the JS can see the labels
     folium.LayerControl(collapsed=False).add_to(m)
 
-    # --- THE "MENU-CLICKER" JAVASCRIPT ---
+    # --- JAVASCRIPT FOR URL FILTERING ---
     js_filter = """
     <script>
     function autoFilter() {
         const params = new URLSearchParams(window.location.search);
         const mech = params.get('mechanic');
         if (!mech) return;
-
         const target = mech.toLowerCase();
         const selectors = document.querySelectorAll('.leaflet-control-layers-selector');
-        
-        if (selectors.length === 0) {
-            setTimeout(autoFilter, 300); // Retry if menu isn't built yet
-            return;
-        }
-
+        if (selectors.length === 0) { setTimeout(autoFilter, 300); return; }
         selectors.forEach(input => {
             const labelText = input.nextElementSibling.innerText.trim().toLowerCase();
-            // If the label is a mechanic but NOT the one we want, uncheck it
             if ((labelText === 'juan' || labelText === 'seba') && labelText !== target) {
-                if (input.checked) {
-                    input.click(); 
-                }
+                if (input.checked) { input.click(); }
             }
         });
     }
