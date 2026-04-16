@@ -30,16 +30,16 @@ MECHANICS = {
     }
 }
 
-# --- IMPROVED STYLING (More robust for mobile) ---
+# --- STYLING ---
 CARD_STYLE = (
     "font-family: 'Helvetica', sans-serif; font-size: 12px; font-weight: bold; "
     "background-color: white; padding: 6px 12px; border-radius: 8px; "
     "box-shadow: 0px 4px 10px rgba(0,0,0,0.2); white-space: nowrap; "
-    "display: inline-block; border: none; text-decoration: none;"
+    "display: inline-flex; align-items: center; border: none; text-decoration: none;"
 )
 
-# The official "Ghost Car" Waze logo
-WAZE_ICON_URL = "https://cdn-icons-png.flaticon.com/512/1653/1653630.png"
+# OFFICIAL WAZE GHOST (Permanent Wikimedia Link)
+WAZE_ICON_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Waze_icon.svg/512px-Waze_icon.svg.png"
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -103,25 +103,23 @@ def generate_map():
                 points = apply_offset(raw_pts, info['offset'])
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
-                # --- FIX: COORDINATE-BASED WAZE LINK ---
+                # Clickable Transit Pill with REAL Waze Icon
                 mid = points[len(points)//2]
-                dest_lat = leg['end_location']['lat']
-                dest_lng = leg['end_location']['lng']
-                # Using ll=lat,lng is more accurate than address strings
+                dest_lat, dest_lng = leg['end_location']['lat'], leg['end_location']['lng']
                 waze_link = f"https://waze.com/ul?ll={dest_lat},{dest_lng}&navigate=yes"
 
                 folium.Marker(
                     location=mid, 
                     icon=folium.DivIcon(html=f'''
                         <a href="{waze_link}" target="_blank" style="text-decoration: none; pointer-events: auto;">
-                            <div style="{CARD_STYLE} color: {leg_color}; vertical-align: middle; display: inline-flex; align-items: center;">
-                                <img src="{WAZE_ICON_URL}" style="width:20px; height:auto; margin-right:6px;">
+                            <div style="{CARD_STYLE} color: {leg_color};">
+                                <img src="{WAZE_ICON_URL}" style="width:18px; height:18px; margin-right:6px;">
                                 <span>{label_id}: {duration}</span>
                             </div>
                         </a>''')
                 ).add_to(fg)
 
-                # Customer Label
+                # Static Customer Label
                 end_pt = apply_offset([(dest_lat, dest_lng)], info['offset'])[0]
                 folium.Marker(
                     location=end_pt, 
@@ -148,7 +146,7 @@ def generate_map():
 
     folium.LayerControl(collapsed=False).add_to(m)
 
-    # --- JAVASCRIPT FOR URL FILTERING ---
+    # JavaScript for filtering remains the same
     js_filter = """
     <script>
     function autoFilter() {
