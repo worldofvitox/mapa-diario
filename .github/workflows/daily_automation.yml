@@ -2,24 +2,27 @@ name: Generate Daily Mechanic Map
 
 on:
   schedule:
-    # 9:00 AM Santiago is 13:00 UTC
-    - cron: '0 12 * * *'
+    - cron: '0 13 * * *'
   workflow_dispatch: 
   push:
     branches: [main]
 
 permissions:
-  contents: write  # <--- This is the fix for Error 128
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # This line opts into Node.js 24 and removes the warning
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 # Updated version
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5 # Updated version
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
