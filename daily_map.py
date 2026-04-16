@@ -29,7 +29,6 @@ MECHANICS = {
     }
 }
 
-# --- UNIFIED UI STYLE ---
 CARD_STYLE = (
     "font-family: sans-serif; font-size: 12px; font-weight: bold; "
     "background-color: rgba(255, 255, 255, 0.95); padding: 6px 10px; "
@@ -47,7 +46,7 @@ def get_appointments():
     for name, info in MECHANICS.items():
         url = info['url'].replace('webcal://', 'https://')
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=10)
             if response.status_code != 200: continue
             gcal = Calendar.from_ical(response.content)
             for component in gcal.walk():
@@ -70,19 +69,24 @@ def get_appointments():
                             'name': extracted_name, 'address': summary, 
                             'mechanic': name, 'start_time': start_time_str
                         })
-        except Exception as e: print(f"Error: {e}")
+        except Exception as e: print(f"Error fetching {name}: {e}")
     return all_appointments
 
 def generate_map():
     appointments = get_appointments()
-    if not appointments: return
+    if not appointments:
+        print("No appointments for today.")
+        return
 
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles='cartodbpositron')
+    
+    # Base is outside FeatureGroups so it ALWAYS shows
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
+    
     now_dt = datetime.now(timezone)
 
     for name, info in MECHANICS.items():
-        # Create FeatureGroup with the name (e.g., 'Juan')
+        # Create FeatureGroup - 'name' is what we filter by in the URL
         fg = folium.FeatureGroup(name=name).add_to(m)
         mech_apps = sorted([a for a in appointments if a['mechanic'] == name], key=lambda x: x['start_time'])
         current_loc = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
@@ -121,48 +125,47 @@ def generate_map():
                 raw_back_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(back[0]['overview_polyline']['points'])]
                 back_pts = apply_offset(raw_back_pts, info['offset'], multiplier=2.5)
                 folium.PolyLine(back_pts, color='#6c757d', weight=3, dash_array='10', opacity=0.6).add_to(fg)
-                
                 mid_back = back_pts[len(back_pts)//2]
                 folium.Marker(location=mid_back, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: #6c757d;">base: {dur}</div>')).add_to(fg)
 
     folium.LayerControl(collapsed=False).add_to(m)
 
-    # --- JAVASCRIPT INJECTION FOR URL FILTERING ---
-    # This script runs when the page loads, checks ?mechanic=XXX, and hides other layers.
+    # --- ENHANCED FILTER SCRIPT ---
     js_filter = """
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    window.onload = function() {
         setTimeout(function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const target = urlParams.get('mechanic');
-            if (!target) return;
-
-            let mapObj = null;
-            for (let key in window) {
-                if (window[key] && window[key] instanceof L.Map) {
-                    mapObj = window[key];
+            const params = new URLSearchParams(window.location.search);
+            const mech = params.get('mechanic');
+            if (!mech) return;
+            
+            const target = mech.toLowerCase();
+            const mechanics = ['juan', 'seba'];
+            
+            // Find the Leaflet map variable
+            let mapVar = null;
+            for (let prop in window) {
+                if (prop.startsWith('map_') && window[prop] && window[prop].eachLayer) {
+                    mapVar = window[prop];
                     break;
                 }
             }
 
-            if (mapObj) {
-                mapObj.eachLayer(function(layer) {
+            if (mapVar) {
+                mapVar.eachLayer(function(layer) {
                     if (layer.options && layer.options.name) {
-                        const layerName = layer.options.name.toLowerCase();
-                        const targetName = target.toLowerCase();
-                        // If it's a mechanic layer and doesn't match the target, remove it
-                        if (['juan', 'seba'].includes(layerName) && layerName !== targetName) {
-                            mapObj.removeLayer(layer);
+                        const lname = layer.options.name.toLowerCase();
+                        if (mechanics.includes(lname) && lname !== target) {
+                            mapVar.removeLayer(layer);
                         }
                     }
                 });
             }
-        }, 1000); // Delay to ensure Leaflet is fully loaded
-    });
+        }, 500);
+    };
     </script>
     """
     m.get_root().html.add_child(folium.Element(js_filter))
-
     m.save("mechanic_route.html")
 
 if __name__ == "__main__":
