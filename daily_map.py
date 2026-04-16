@@ -29,6 +29,7 @@ MECHANICS = {
     }
 }
 
+# --- STYLING ---
 CARD_STYLE = (
     "font-family: sans-serif; font-size: 12px; font-weight: bold; "
     "background-color: rgba(255, 255, 255, 0.95); padding: 6px 10px; "
@@ -46,7 +47,7 @@ def get_appointments():
     for name, info in MECHANICS.items():
         url = info['url'].replace('webcal://', 'https://')
         try:
-            response = requests.get(url, timeout=10)
+            response = requests.get(url, timeout=15)
             if response.status_code != 200: continue
             gcal = Calendar.from_ical(response.content)
             for component in gcal.walk():
@@ -74,19 +75,14 @@ def get_appointments():
 
 def generate_map():
     appointments = get_appointments()
-    if not appointments:
-        print("No appointments for today.")
-        return
+    if not appointments: return
 
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles='cartodbpositron')
-    
-    # Base is outside FeatureGroups so it ALWAYS shows
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
-    
     now_dt = datetime.now(timezone)
 
     for name, info in MECHANICS.items():
-        # Create FeatureGroup - 'name' is what we filter by in the URL
+        # FeatureGroup name MUST match the URL parameter logic
         fg = folium.FeatureGroup(name=name).add_to(m)
         mech_apps = sorted([a for a in appointments if a['mechanic'] == name], key=lambda x: x['start_time'])
         current_loc = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
@@ -105,11 +101,11 @@ def generate_map():
                 points = apply_offset(raw_pts, info['offset'])
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
-                # Transit Card
+                # Unified Transit Pill
                 mid = points[len(points)//2]
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: {leg_color};">{label_id}: {duration}</div>')).add_to(fg)
 
-                # Customer Card
+                # Unified Customer Card
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: black; transform: translate(-10%, -50%);">{start_dt.strftime("%H:%M")} {app["name"]} ({label_id})</div>')).add_to(fg)
                 current_loc = app['address']
@@ -130,39 +126,37 @@ def generate_map():
 
     folium.LayerControl(collapsed=False).add_to(m)
 
-    # --- ENHANCED FILTER SCRIPT ---
+    # --- BULLETPROOF JAVASCRIPT ---
     js_filter = """
     <script>
-    window.onload = function() {
-        setTimeout(function() {
-            const params = new URLSearchParams(window.location.search);
-            const mech = params.get('mechanic');
-            if (!mech) return;
-            
-            const target = mech.toLowerCase();
-            const mechanics = ['juan', 'seba'];
-            
-            // Find the Leaflet map variable
-            let mapVar = null;
-            for (let prop in window) {
-                if (prop.startsWith('map_') && window[prop] && window[prop].eachLayer) {
-                    mapVar = window[prop];
-                    break;
-                }
-            }
+    (function() {
+        var checkExist = setInterval(function() {
+           var mapInstance = null;
+           for (var prop in window) {
+               if (prop.startsWith('map_') && window[prop] && window[prop].eachLayer) {
+                   mapInstance = window[prop];
+                   break;
+               }
+           }
 
-            if (mapVar) {
-                mapVar.eachLayer(function(layer) {
-                    if (layer.options && layer.options.name) {
-                        const lname = layer.options.name.toLowerCase();
-                        if (mechanics.includes(lname) && lname !== target) {
-                            mapVar.removeLayer(layer);
-                        }
-                    }
-                });
-            }
-        }, 500);
-    };
+           if (mapInstance) {
+              const urlParams = new URLSearchParams(window.location.search);
+              const target = urlParams.get('mechanic');
+              if (target) {
+                  const targetLower = target.toLowerCase();
+                  mapInstance.eachLayer(function(layer) {
+                      if (layer.options && layer.options.name) {
+                          const layerLower = layer.options.name.toLowerCase();
+                          if ((layerLower === 'juan' || layerLower === 'seba') && layerLower !== targetLower) {
+                              mapInstance.removeLayer(layer);
+                          }
+                      }
+                  });
+              }
+              clearInterval(checkExist);
+           }
+        }, 100); // Check every 100ms
+    })();
     </script>
     """
     m.get_root().html.add_child(folium.Element(js_filter))
