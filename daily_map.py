@@ -10,7 +10,9 @@ from icalendar import Calendar
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
-BASE_LOCATION = [-33.4489, -70.6693] # Workshop
+
+# NEW UPDATED BASE COORDINATES
+BASE_LOCATION = [-33.45219480797122, -70.5787333882418] 
 
 MECHANICS = {
     'Juan': {
@@ -31,39 +33,36 @@ def get_appointments():
     today = datetime.now(timezone).date()
 
     for name, info in MECHANICS.items():
-        # Change webcal:// to https:// so requests can handle it
         url = info['url'].replace('webcal://', 'https://')
-        response = requests.get(url)
-        
-        if response.status_code != 200:
-            print(f"Failed to fetch calendar for {name}")
-            continue
+        try:
+            response = requests.get(url)
+            if response.status_code != 200:
+                print(f"Failed to fetch calendar for {name}")
+                continue
+            
+            gcal = Calendar.from_ical(response.content)
+            for component in gcal.walk():
+                if component.name == "VEVENT":
+                    start_dt = component.get('dtstart').dt
+                    if isinstance(start_dt, datetime):
+                        event_date = start_dt.astimezone(timezone).date()
+                        start_time_str = start_dt.astimezone(timezone).strftime('%Y-%m-%d %H:%M')
+                    else:
+                        event_date = start_dt
+                        start_time_str = f"{start_dt} 09:00"
 
-        gcal = Calendar.from_ical(response.content)
-
-        for component in gcal.walk():
-            if component.name == "VEVENT":
-                start_dt = component.get('dtstart').dt
-                
-                # Handle both date and datetime objects
-                if isinstance(start_dt, datetime):
-                    event_date = start_dt.astimezone(timezone).date()
-                    start_time_str = start_dt.astimezone(timezone).strftime('%Y-%m-%d %H:%M')
-                else:
-                    event_date = start_dt
-                    start_time_str = f"{start_dt} 09:00"
-
-                # Only include events for TODAY
-                if event_date == today:
-                    summary = str(component.get('summary', 'No Name'))
-                    location = str(component.get('location', summary))
-                    
-                    all_appointments.append({
-                        'name': summary,
-                        'address': location,
-                        'mechanic': name,
-                        'start_time': start_time_str
-                    })
+                    if event_date == today:
+                        summary = str(component.get('summary', 'No Name'))
+                        location = str(component.get('location', summary))
+                        all_appointments.append({
+                            'name': summary,
+                            'address': location,
+                            'mechanic': name,
+                            'start_time': start_time_str
+                        })
+        except Exception as e:
+            print(f"Error processing {name}: {e}")
+            
     return all_appointments
 
 def generate_map():
@@ -72,8 +71,16 @@ def generate_map():
         print("No appointments found for today in iCal.")
         return
 
-    m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles='cartodbpositron')
-    folium.Marker(location=BASE_LOCATION, popup="Workshop", icon=folium.Icon(color='black', icon='home')).add_to(m)
+    # Initialize map with new base location
+    m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles='cartodbpositron')
+    
+    # Workshop Marker
+    folium.Marker(
+        location=BASE_LOCATION, 
+        popup="MBS Workshop (Base)", 
+        icon=folium.Icon(color='black', icon='home')
+    ).add_to(m)
+    
     now_dt = datetime.now(timezone)
 
     for name, info in MECHANICS.items():
@@ -95,13 +102,13 @@ def generate_map():
             if directions:
                 leg = directions[0]['legs'][0]
                 duration = leg.get('duration_in_traffic', leg['duration'])['text'].replace(' mins', ' min')
-                pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])]
+                raw_pts = googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])
+                points = [(p['lat'], p['lng']) for p in raw_pts]
                 
-                # Draw Route
-                folium.PolyLine(pts, color=info['color'], weight=5, opacity=0.8).add_to(fg)
+                folium.PolyLine(points, color=info['color'], weight=5, opacity=0.8).add_to(fg)
 
-                # Transit Label (S1: 15 min)
-                mid = pts[len(pts)//2]
+                # Transit Label
+                mid = points[len(points)//2]
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'<div style="font-family: sans-serif; font-size: 11px; color: white; background-color: {info["color"]}; padding: 3px 7px; border-radius: 10px; border: 2px solid white; font-weight: bold; white-space: nowrap;">{label_id}: {duration}</div>')).add_to(fg)
 
                 # Customer Name Label
@@ -110,7 +117,7 @@ def generate_map():
 
                 current_loc = app['address']
 
-        # Return Leg
+        # Return to base leg
         if mech_apps:
             last_dt = timezone.localize(datetime.strptime(mech_apps[-1]['start_time'], '%Y-%m-%d %H:%M'))
             ret_time = max(last_dt + timedelta(hours=1.5), now_dt)
