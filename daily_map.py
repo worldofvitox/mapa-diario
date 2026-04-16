@@ -32,14 +32,14 @@ MECHANICS = {
 
 # --- STYLING ---
 CARD_STYLE = (
-    "font-family: 'Helvetica', sans-serif; font-size: 12px; font-weight: bold; "
-    "background-color: white; padding: 6px 12px; border-radius: 8px; "
-    "box-shadow: 0px 4px 10px rgba(0,0,0,0.2); white-space: nowrap; "
+    "font-family: 'Helvetica', sans-serif; font-size: 11px; font-weight: bold; "
+    "background-color: white; padding: 5px 10px; border-radius: 8px; "
+    "box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; "
     "display: inline-flex; align-items: center; border: none; text-decoration: none;"
 )
 
-# OFFICIAL WAZE GHOST (Permanent Wikimedia Link)
-WAZE_ICON_URL = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Waze_icon.svg/512px-Waze_icon.svg.png"
+# STABLE GITHUB-HOSTED PNG
+WAZE_ICON_URL = "https://raw.githubusercontent.com/vittorio-vittori/waze-icon/master/waze.png"
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -101,9 +101,9 @@ def generate_map():
                 duration = leg.get('duration_in_traffic', leg['duration'])['text'].replace(' mins', ' min')
                 raw_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])]
                 points = apply_offset(raw_pts, info['offset'])
-                folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
+                folium.PolyLine(points, color=leg_color, weight=5, opacity=0.8).add_to(fg)
 
-                # Clickable Transit Pill with REAL Waze Icon
+                # Transit Pill with Nudge to avoid overlap
                 mid = points[len(points)//2]
                 dest_lat, dest_lng = leg['end_location']['lat'], leg['end_location']['lng']
                 waze_link = f"https://waze.com/ul?ll={dest_lat},{dest_lng}&navigate=yes"
@@ -112,19 +112,19 @@ def generate_map():
                     location=mid, 
                     icon=folium.DivIcon(html=f'''
                         <a href="{waze_link}" target="_blank" style="text-decoration: none; pointer-events: auto;">
-                            <div style="{CARD_STYLE} color: {leg_color};">
-                                <img src="{WAZE_ICON_URL}" style="width:18px; height:18px; margin-right:6px;">
-                                <span>{label_id}: {duration}</span>
+                            <div style="{CARD_STYLE} color: {leg_color}; transform: translateY(-15px);">
+                                <img src="{WAZE_ICON_URL}" style="width:16px; height:16px; margin-right:5px;">
+                                {label_id}: {duration}
                             </div>
                         </a>''')
                 ).add_to(fg)
 
-                # Static Customer Label
+                # Customer Label
                 end_pt = apply_offset([(dest_lat, dest_lng)], info['offset'])[0]
                 folium.Marker(
                     location=end_pt, 
                     icon=folium.DivIcon(html=f'''
-                        <div style="{CARD_STYLE} color: black; transform: translate(-10%, -50%); pointer-events: none; box-shadow: 0px 2px 5px rgba(0,0,0,0.1);">
+                        <div style="{CARD_STYLE} color: black; transform: translate(-10%, -50%); pointer-events: none;">
                             {start_dt.strftime("%H:%M")} {app["name"]} ({label_id})
                         </div>''')
                 ).add_to(fg)
@@ -146,7 +146,6 @@ def generate_map():
 
     folium.LayerControl(collapsed=False).add_to(m)
 
-    # JavaScript for filtering remains the same
     js_filter = """
     <script>
     function autoFilter() {
