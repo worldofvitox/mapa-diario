@@ -19,9 +19,6 @@ MECHANICS = {
 }
 
 def get_appointments():
-    """
-    Simulated function: In your real version, this fetches from BookThatApp.
-    """
     today = datetime.now(timezone).strftime('%Y-%m-%d')
     return [
         {'name': 'Cliente Alfa', 'address': 'Las Condes, Chile', 'mechanic': 'Seba', 'start_time': f'{today} 09:00'},
@@ -32,7 +29,7 @@ def get_appointments():
 def generate_map():
     appointments = get_appointments()
     m = folium.Map(location=[-33.4489, -70.6693], zoom_start=12)
-    now = datetime.now(timezone) # Get current time for comparison
+    now = datetime.now(timezone)
 
     for name, info in MECHANICS.items():
         mech_apps = [a for a in appointments if a['mechanic'] == name]
@@ -47,11 +44,8 @@ def generate_map():
             start_dt = timezone.localize(start_dt)
             time_str = start_dt.strftime('%H:%M')
 
-            # --- SAFETY CHECK: Ensure departure_time is not in the past ---
-            # If start_dt is earlier than 'now', we use 'now' so the API doesn't crash.
             dep_time = max(start_dt, now)
 
-            # Get Directions with Traffic
             directions = gmaps.directions(
                 current_loc,
                 app['address'],
@@ -63,18 +57,19 @@ def generate_map():
             if directions:
                 leg = directions[0]['legs'][0]
                 duration = leg.get('duration_in_traffic', leg['duration'])['text'].replace(' mins', ' min')
-                points = googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])
+                
+                # --- THE FIX: Convert list of dicts to list of tuples ---
+                raw_points = googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])
+                points = [(p['lat'], p['lng']) for p in raw_points]
                 
                 folium.PolyLine(points, color=info['color'], weight=5, opacity=0.7).add_to(m)
 
-                # Leg Marker
                 midpoint = points[len(points)//2]
                 folium.Marker(
                     location=midpoint,
                     icon=folium.DivIcon(html=f'<div style="font-size: 10pt; color: {info["color"]}; font-weight: bold; background: white; border: 1px solid black; border-radius: 5px; padding: 2px;">{label_id}: {duration}</div>')
                 ).add_to(m)
 
-                # Customer Marker
                 folium.Marker(
                     location=[leg['end_location']['lat'], leg['end_location']['lng']],
                     popup=f"{time_str} - {app['name']}",
@@ -84,10 +79,8 @@ def generate_map():
 
                 current_loc = app['address']
 
-        # Final Leg back to Base
         if mech_apps:
             last_start = datetime.strptime(mech_apps[-1]['start_time'], '%Y-%m-%d %H:%M')
-            # Assume 1.5 hours per job, then calculate return traffic
             return_time_dt = timezone.localize(last_start) + timedelta(hours=1.5)
             return_dep_time = max(return_time_dt, now)
             
@@ -100,10 +93,14 @@ def generate_map():
             if back_to_base:
                 leg = back_to_base[0]['legs'][0]
                 duration = leg.get('duration_in_traffic', leg['duration'])['text'].replace(' mins', ' min')
-                points = googlemaps.convert.decode_polyline(back_to_base[0]['overview_polyline']['points'])
-                folium.PolyLine(points, color=info['color'], weight=3, dash_array='10', opacity=0.5).add_to(m)
                 
-                midpoint = points[len(points)//2]
+                # --- APPLY FIX HERE TOO ---
+                raw_back_points = googlemaps.convert.decode_polyline(back_to_base[0]['overview_polyline']['points'])
+                back_points = [(p['lat'], p['lng']) for p in raw_back_points]
+                
+                folium.PolyLine(back_points, color=info['color'], weight=3, dash_array='10', opacity=0.5).add_to(m)
+                
+                midpoint = back_points[len(back_points)//2]
                 folium.Marker(
                     location=midpoint,
                     icon=folium.DivIcon(html=f'<div style="font-size: 10pt; color: gray; font-weight: bold; background: white; border: 1px solid gray; border-radius: 5px; padding: 2px;">base: {duration}</div>')
