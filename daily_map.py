@@ -32,9 +32,9 @@ def get_appointments():
 def generate_map():
     appointments = get_appointments()
     m = folium.Map(location=[-33.4489, -70.6693], zoom_start=12)
+    now = datetime.now(timezone) # Get current time for comparison
 
     for name, info in MECHANICS.items():
-        # 1. Filter and sort appointments by time for this mechanic
         mech_apps = [a for a in appointments if a['mechanic'] == name]
         mech_apps.sort(key=lambda x: x['start_time'])
 
@@ -42,17 +42,21 @@ def generate_map():
         
         for i, app in enumerate(mech_apps):
             count = i + 1
-            label_id = f"{info['initial']}{count}" # e.g., S1, S2
+            label_id = f"{info['initial']}{count}"
             start_dt = datetime.strptime(app['start_time'], '%Y-%m-%d %H:%M')
             start_dt = timezone.localize(start_dt)
             time_str = start_dt.strftime('%H:%M')
 
-            # 2. Get Directions with Traffic
+            # --- SAFETY CHECK: Ensure departure_time is not in the past ---
+            # If start_dt is earlier than 'now', we use 'now' so the API doesn't crash.
+            dep_time = max(start_dt, now)
+
+            # Get Directions with Traffic
             directions = gmaps.directions(
                 current_loc,
                 app['address'],
                 mode="driving",
-                departure_time=start_dt, 
+                departure_time=dep_time, 
                 traffic_model="best_guess"
             )
 
@@ -63,14 +67,14 @@ def generate_map():
                 
                 folium.PolyLine(points, color=info['color'], weight=5, opacity=0.7).add_to(m)
 
-                # 3. Leg Marker (FIXED QUOTES HERE)
+                # Leg Marker
                 midpoint = points[len(points)//2]
                 folium.Marker(
                     location=midpoint,
                     icon=folium.DivIcon(html=f'<div style="font-size: 10pt; color: {info["color"]}; font-weight: bold; background: white; border: 1px solid black; border-radius: 5px; padding: 2px;">{label_id}: {duration}</div>')
                 ).add_to(m)
 
-                # 4. Customer Marker
+                # Customer Marker
                 folium.Marker(
                     location=[leg['end_location']['lat'], leg['end_location']['lng']],
                     popup=f"{time_str} - {app['name']}",
@@ -80,15 +84,17 @@ def generate_map():
 
                 current_loc = app['address']
 
-        # 5. Final Leg back to Base
+        # Final Leg back to Base
         if mech_apps:
             last_start = datetime.strptime(mech_apps[-1]['start_time'], '%Y-%m-%d %H:%M')
-            return_time = timezone.localize(last_start) + timedelta(hours=1.5)
+            # Assume 1.5 hours per job, then calculate return traffic
+            return_time_dt = timezone.localize(last_start) + timedelta(hours=1.5)
+            return_dep_time = max(return_time_dt, now)
             
             back_to_base = gmaps.directions(
                 current_loc, BASE_LOCATION, 
                 mode="driving", 
-                departure_time=return_time
+                departure_time=return_dep_time
             )
             
             if back_to_base:
