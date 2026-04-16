@@ -1,4 +1,5 @@
 import os
+import re
 import requests
 import googlemaps
 import folium
@@ -11,7 +12,7 @@ GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
 
-# NEW UPDATED BASE COORDINATES
+# NEW UPDATED BASE COORDINATES (The ones you provided)
 BASE_LOCATION = [-33.45219480797122, -70.5787333882418] 
 
 MECHANICS = {
@@ -28,7 +29,7 @@ MECHANICS = {
 }
 
 def get_appointments():
-    """Fetches and parses iCal files from BookThatApp."""
+    """Fetches iCal and extracts Name from description and Address from summary."""
     all_appointments = []
     today = datetime.now(timezone).date()
 
@@ -36,50 +37,56 @@ def get_appointments():
         url = info['url'].replace('webcal://', 'https://')
         try:
             response = requests.get(url)
-            if response.status_code != 200:
-                print(f"Failed to fetch calendar for {name}")
-                continue
+            if response.status_code != 200: continue
             
             gcal = Calendar.from_ical(response.content)
             for component in gcal.walk():
                 if component.name == "VEVENT":
                     start_dt = component.get('dtstart').dt
+                    
                     if isinstance(start_dt, datetime):
-                        event_date = start_dt.astimezone(timezone).date()
-                        start_time_str = start_dt.astimezone(timezone).strftime('%Y-%m-%d %H:%M')
+                        event_dt = start_dt.astimezone(timezone)
+                        event_date = event_dt.date()
+                        start_time_str = event_dt.strftime('%Y-%m-%d %H:%M')
                     else:
                         event_date = start_dt
                         start_time_str = f"{start_dt} 09:00"
 
                     if event_date == today:
-                        summary = str(component.get('summary', 'No Name'))
-                        location = str(component.get('location', summary))
+                        summary_text = str(component.get('summary', ''))
+                        description_text = str(component.get('description', ''))
+                        
+                        # Extract Name: Look for "Cliente: [Name] ("
+                        name_match = re.search(r'Cliente:\s*(.*?)\s*\(', description_text)
+                        
+                        if name_match:
+                            extracted_name = name_match.group(1).strip()
+                        else:
+                            # Fallback: if "Cliente:" isn't found, use a shortened version of the summary
+                            extracted_name = summary_text.split(',')[0]
+                        
                         all_appointments.append({
-                            'name': summary,
-                            'address': location,
+                            'name': extracted_name,
+                            'address': summary_text, 
                             'mechanic': name,
                             'start_time': start_time_str
                         })
         except Exception as e:
-            print(f"Error processing {name}: {e}")
+            print(f"Error for {name}: {e}")
             
     return all_appointments
 
 def generate_map():
     appointments = get_appointments()
     if not appointments:
-        print("No appointments found for today in iCal.")
+        print("No appointments found today.")
         return
 
-    # Initialize map with new base location
+    # Cleaner Basemap
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles='cartodbpositron')
     
     # Workshop Marker
-    folium.Marker(
-        location=BASE_LOCATION, 
-        popup="MBS Workshop (Base)", 
-        icon=folium.Icon(color='black', icon='home')
-    ).add_to(m)
+    folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
     
     now_dt = datetime.now(timezone)
 
@@ -102,22 +109,38 @@ def generate_map():
             if directions:
                 leg = directions[0]['legs'][0]
                 duration = leg.get('duration_in_traffic', leg['duration'])['text'].replace(' mins', ' min')
-                raw_pts = googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])
-                points = [(p['lat'], p['lng']) for p in raw_pts]
+                pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])]
                 
-                folium.PolyLine(points, color=info['color'], weight=5, opacity=0.8).add_to(fg)
+                # Route Line
+                folium.PolyLine(pts, color=info['color'], weight=5, opacity=0.8).add_to(fg)
 
-                # Transit Label
-                mid = points[len(points)//2]
-                folium.Marker(location=mid, icon=folium.DivIcon(html=f'<div style="font-family: sans-serif; font-size: 11px; color: white; background-color: {info["color"]}; padding: 3px 7px; border-radius: 10px; border: 2px solid white; font-weight: bold; white-space: nowrap;">{label_id}: {duration}</div>')).add_to(fg)
+                # Transit Label (S1: 15 min) - No pin, just text
+                mid = pts[len(pts)//2]
+                folium.Marker(
+                    location=mid,
+                    icon=folium.DivIcon(html=f'''
+                        <div style="font-family: sans-serif; font-size: 11px; color: white; 
+                        background-color: {info['color']}; padding: 3px 7px; border-radius: 10px; 
+                        border: 2px solid white; font-weight: bold; white-space: nowrap;">
+                            {label_id}: {duration}
+                        </div>''')
+                ).add_to(fg)
 
-                # Customer Name Label
+                # Customer Name Label - No pin, just text
                 end_lat, end_lng = leg['end_location']['lat'], leg['end_location']['lng']
-                folium.Marker(location=[end_lat, end_lng], icon=folium.DivIcon(html=f'<div style="font-family: sans-serif; font-size: 12px; color: black; font-weight: bold; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; width: 250px;">{time_str} {app["name"]} ({label_id})</div>')).add_to(fg)
+                folium.Marker(
+                    location=[end_lat, end_lng],
+                    icon=folium.DivIcon(html=f'''
+                        <div style="font-family: sans-serif; font-size: 12px; color: black; 
+                        font-weight: bold; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff; 
+                        width: 250px; pointer-events: none;">
+                            {time_str} {app['name']} ({label_id})
+                        </div>''')
+                ).add_to(fg)
 
                 current_loc = app['address']
 
-        # Return to base leg
+        # Return to base logic
         if mech_apps:
             last_dt = timezone.localize(datetime.strptime(mech_apps[-1]['start_time'], '%Y-%m-%d %H:%M'))
             ret_time = max(last_dt + timedelta(hours=1.5), now_dt)
