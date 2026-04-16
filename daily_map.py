@@ -30,17 +30,16 @@ MECHANICS = {
     }
 }
 
-# --- UNIFIED UI STYLE ---
+# --- IMPROVED STYLING (More robust for mobile) ---
 CARD_STYLE = (
-    "font-family: sans-serif; font-size: 12px; font-weight: bold; "
-    "background-color: rgba(255, 255, 255, 0.95); padding: 6px 10px; "
-    "border-radius: 8px; box-shadow: 0px 2px 8px rgba(0,0,0,0.15); "
-    "white-space: nowrap; width: auto; display: flex; align-items: center; "
-    "gap: 6px; border: none; text-decoration: none; cursor: pointer;"
+    "font-family: 'Helvetica', sans-serif; font-size: 12px; font-weight: bold; "
+    "background-color: white; padding: 6px 12px; border-radius: 8px; "
+    "box-shadow: 0px 4px 10px rgba(0,0,0,0.2); white-space: nowrap; "
+    "display: inline-block; border: none; text-decoration: none;"
 )
 
-# Waze Logo URL (Small and clean)
-WAZE_ICON = "https://upload.wikimedia.org/wikipedia/commons/6/66/Waze_icon.svg"
+# Using a high-stability PNG icon
+WAZE_ICON_URL = "https://cdn-icons-png.flaticon.com/512/732/732252.png"
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -104,32 +103,33 @@ def generate_map():
                 points = apply_offset(raw_pts, info['offset'])
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
-                # --- NEW CLICKABLE TRANSIT PILL ---
+                # --- FIX: COORDINATE-BASED WAZE LINK ---
                 mid = points[len(points)//2]
-                safe_addr = urllib.parse.quote(app['address'])
-                waze_link = f"https://waze.com/ul?q={safe_addr}&navigate=yes"
+                dest_lat = leg['end_location']['lat']
+                dest_lng = leg['end_location']['lng']
+                # Using ll=lat,lng is more accurate than address strings
+                waze_link = f"https://waze.com/ul?ll={dest_lat},{dest_lng}&navigate=yes"
 
                 folium.Marker(
                     location=mid, 
                     icon=folium.DivIcon(html=f'''
-                        <a href="{waze_link}" target="_blank" style="text-decoration: none;">
-                            <div style="{CARD_STYLE} color: {leg_color}; pointer-events: auto;">
-                                <img src="{WAZE_ICON}" width="16" height="16">
-                                {label_id}: {duration}
+                        <a href="{waze_link}" target="_blank" style="text-decoration: none; pointer-events: auto;">
+                            <div style="{CARD_STYLE} color: {leg_color}; vertical-align: middle;">
+                                <img src="{WAZE_ICON_URL}" style="width:16px; height:16px; margin-right:5px; vertical-align: middle;">
+                                <span>{label_id}: {duration}</span>
                             </div>
                         </a>''')
                 ).add_to(fg)
 
-                # --- CUSTOMER CARD (Non-clickable to prevent mis-clicks) ---
-                end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
+                # Customer Label
+                end_pt = apply_offset([(dest_lat, dest_lng)], info['offset'])[0]
                 folium.Marker(
                     location=end_pt, 
                     icon=folium.DivIcon(html=f'''
-                        <div style="{CARD_STYLE} color: black; transform: translate(-10%, -50%); pointer-events: none;">
+                        <div style="{CARD_STYLE} color: black; transform: translate(-10%, -50%); pointer-events: none; box-shadow: 0px 2px 5px rgba(0,0,0,0.1);">
                             {start_dt.strftime("%H:%M")} {app["name"]} ({label_id})
                         </div>''')
                 ).add_to(fg)
-
                 current_loc = app['address']
 
         # Return to Base
@@ -143,7 +143,6 @@ def generate_map():
                 raw_back_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(back[0]['overview_polyline']['points'])]
                 back_pts = apply_offset(raw_back_pts, info['offset'], multiplier=2.5)
                 folium.PolyLine(back_pts, color='#6c757d', weight=3, dash_array='10', opacity=0.6).add_to(fg)
-                
                 mid_back = back_pts[len(back_pts)//2]
                 folium.Marker(location=mid_back, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: #6c757d; pointer-events: none;">base: {dur}</div>')).add_to(fg)
 
