@@ -83,11 +83,29 @@ def get_appointments():
                         desc = str(component.get('description', ''))
                         name_match = re.search(r'Cliente:\s*(.*?)\s*\(', desc)
                         extracted_name = name_match.group(1).strip() if name_match else summary.split(',')[0]
-                        abbrev = SERVICE_MAP.get(summary.strip(), "SRV") 
+                        
+                        # --- NEW SPLIT LOGIC ---
+                        # This cuts the string at "1x ", "2x ", etc.
+                        parts = re.split(r'\s*\d+x\s+', summary, maxsplit=1, flags=re.IGNORECASE)
+                        
+                        if len(parts) == 2:
+                            clean_addr = parts[0].strip().rstrip(',').strip()
+                            clean_svc = parts[1].strip()
+                        else:
+                            # Fallback if no quantity counter is found
+                            clean_addr = summary.split(',')[0].strip()
+                            clean_svc = summary.strip()
+                            
+                        # Lookup the clean service name in the dictionary
+                        abbrev = SERVICE_MAP.get(clean_svc, "SRV") 
                         
                         all_appointments.append({
-                            'name': extracted_name, 'address': summary, 
-                            'mechanic': name, 'start_dt': start_dt, 'abbrev': abbrev
+                            'name': extracted_name, 
+                            'address': clean_addr,      # Left side (Used for Google Maps routing)
+                            'service': clean_svc,       # Right side
+                            'mechanic': name, 
+                            'start_dt': start_dt, 
+                            'abbrev': abbrev            # Successful lookup
                         })
         except Exception as e: print(f"Error: {e}")
     return all_appointments
@@ -103,7 +121,6 @@ def generate_map():
     all_points_for_zoom = [BASE_LOCATION]
     table_rows_html = ""
 
-    # Ensure Seba is at the bottom of the list
     ordered_mechs = ['Juan', 'Seba']
     
     for name in ordered_mechs:
@@ -116,7 +133,7 @@ def generate_map():
             label_id = f"{info['initial']}{i+1}"
             leg_color = info['palette'][i % len(info['palette'])]
             
-            # API Directions with 7% Buffer logic
+            # API Directions (Now uses the clean, separated address)
             directions = gmaps.directions(current_loc, app['address'], mode="driving", arrival_time=app['start_dt'])
             if directions:
                 leg = directions[0]['legs'][0]
@@ -124,36 +141,36 @@ def generate_map():
                 buffered_mins = round((raw_seconds * 1.07) / 60)
                 departure_dt = app['start_dt'] - timedelta(seconds=raw_seconds * 1.07)
                 
-                # Markers & Lines
                 raw_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])]
                 all_points_for_zoom.extend(raw_pts)
                 points = apply_offset(raw_pts, info['offset'])
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
-                # Transit Pill
                 mid = points[len(points)//2]
                 waze_link = f"https://waze.com/ul?ll={leg['end_location']['lat']},{leg['end_location']['lng']}&navigate=yes"
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:{leg_color}; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{label_id} / {departure_dt.strftime('%H:%M')} / {buffered_mins} min</div></a>''')).add_to(fg)
 
-                # Appointment Pill (Includes Abbrev)
+                # Appointment Pill (Will now correctly display 'CL1', 'ARC', etc. instead of 'SRV')
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:none;">{app["start_dt"].strftime("%H:%M")} {app["name"]} ({label_id}) {app["abbrev"]}</div>')).add_to(fg)
                 
-                # TABLE DATA (Independent of map layers)
+                # --- NEW 5-COLUMN TABLE LAYOUT ---
                 short_name = app['name'][:25]
+                short_svc = app['service'][:20] # Capped so it doesn't break the table UI
+                
                 table_rows_html += f"""
                 <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 6px; color: {leg_color}; width: 15%;">{label_id}</td>
-                    <td style="padding: 6px; width: 20%;">{app['start_dt'].strftime('%H:%M')}</td>
-                    <td style="padding: 6px; width: 30%;">{short_name}</td>
-                    <td style="padding: 6px; font-size: 10px; color: #666;">{app['address'].split(',')[0]}</td>
+                    <td style="padding: 6px; color: {leg_color}; width: 10%;">{label_id}</td>
+                    <td style="padding: 6px; width: 15%;">{app['start_dt'].strftime('%H:%M')}</td>
+                    <td style="padding: 6px; width: 25%;">{short_name}</td>
+                    <td style="padding: 6px; font-size: 10px; color: #666; width: 25%;">{app['address']}</td>
+                    <td style="padding: 6px; font-size: 10px; color: #444; width: 25%;">{short_svc}</td>
                 </tr>
                 """
                 current_loc = app['address']
 
     folium.LayerControl(collapsed=False).add_to(m)
 
-    # ZOOM: Mobile vertical optimization (Top 75%)
     if all_points_for_zoom:
         lats, lngs = zip(*all_points_for_zoom)
         sw, ne = [min(lats), min(lngs)], [max(lats), max(lngs)]
@@ -161,7 +178,6 @@ def generate_map():
         sw_phantom = [sw[0] - (height * 0.45), sw[1]]
         m.fit_bounds([sw_phantom, ne])
 
-    # TABLE AND STYLE INJECTION
     table_html = f"""
     <div id="mbs-table-container" style="
         position: fixed; bottom: 0; left: 0; width: 100%; height: 28%;
@@ -180,7 +196,6 @@ def generate_map():
     </style>
     """
     
-    # URL Filter JS (Layer picker only)
     js_filter = "<script>function autoFilter(){const p=new URLSearchParams(window.location.search);const m=p.get('mechanic');if(!m)return;const t=m.toLowerCase();const s=document.querySelectorAll('.leaflet-control-layers-selector');if(s.length===0){setTimeout(autoFilter,300);return}s.forEach(i=>{const l=i.nextElementSibling.innerText.trim().toLowerCase();if((l==='juan'||l==='seba')&&l!==t){if(i.checked)i.click()}})}window.addEventListener('load',autoFilter)</script>"
 
     m.get_root().html.add_child(folium.Element(table_html + js_filter))
