@@ -29,6 +29,7 @@ MECHANICS = {
     }
 }
 
+# --- FULL 48-ITEM SERVICE MAP RESTORED ---
 SERVICE_MAP = {
     "Armado de Bicicleta a Domicilio Con Cambios": "ARC",
     "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
@@ -37,15 +38,47 @@ SERVICE_MAP = {
     "Armado de Bicicleta a Domicilio Con Retráctil y/o Bloqueo Remoto": "ARB",
     "Cambio de Juego de Dirección o Horquilla Cambio de Horquilla": "DIR",
     "Cambio de Juego de Dirección o Horquilla Cambio de Direccion": "DIR",
+    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion y Horquilla": "DIR",
     "Conversion a Tubeless 1 Rueda": "TUB",
+    "Conversion a Tubeless Con Inserto / Cushcore": "TUB",
+    "Conversion a Tubeless": "TUB",
+    "Desenrayado y Enrayado de Rueda de Bicicleta": "DES",
     "Mantencion Clasica de Bicicleta Mant. Clasica 1 Bici": "CL1",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 2 Bicis": "CL2",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 3 Bicis": "CL3",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 4 Bicis": "CL4",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 5 Bicis": "CL5",
+    "Mantencion Clasica de Bicicleta": "CL1",
     "Mantención de Bicicleta a Domicilio Mantencion Preventiva 1 Bici": "PR1",
     "Mantención de Bicicleta a Domicilio Mantencion Clasica 1 Bici": "CL1",
     "Mantención de Bicicleta a Domicilio Mantencion Profunda 1 Bici": "PF1",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 2 Bicis": "PR2",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 2 Bicis": "CL2",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 3 Bicis": "PR3",
+    "Mantención de Bicicleta a Domicilio Mantencion Base Electrica": "ELR",
+    "Mantención de Bicicleta a Domicilio Mantencion Base Ruta Aero / Triatlon": "TR1",
+    "Mantención de Bicicleta a Domicilio Mantencion Profunda 2 Bicis": "PF2",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 3 Bicis": "CL3",
+    "Mantención de Bicicleta a Domicilio Mantencion Profunda 3 Bicis": "PF3",
     "Mantención de Bicicleta Electrica Mant. Electrica Rigida": "ELR",
     "Mantención de Bicicleta Electrica Mant. Elect. Doble Susp.": "ELD",
     "Mantencion de Bicicleta Ruta Aero o de Triatlón 1 Bicicleta": "TR1",
-    "Visita Mecanica": "VM",
+    "Mantencion de Bicicleta Ruta Aero o de Triatlón 2 Bicicletas": "TR2",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 1 Bici": "PR1",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 2 Bicis": "PR2",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 3 Bicis": "PR3",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 4 Bicis": "PR4",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 5 Bicis": "PR5",
+    "Mantención Preventiva de Bicicletas": "PR1",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 1 Bici": "PF1",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 2 Bicis": "PF2",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 4 Bicis": "PF4",
+    "Reparacion de Hilo (Inserto Helicoil)": "HEL",
+    "Reparacion de Hilo de Cuadro/Horquilla (Rivnut)": "RIV",
+    "Sangrado de Freno Hidráulico": "SAN",
+    "Servicio de Amortiguador Trasero / Shock de aire": "SUR",
+    "Servicio de Horquilla de Suspension": "SUF",
+    "Visita Mecanica": "VM"
 }
 
 CARD_STYLE = (
@@ -69,8 +102,10 @@ def extract_var(text, key):
 def get_appointments():
     all_appointments = []
     
-    # Targeting Tomorrow
-    target_date = datetime.now(timezone).date() + timedelta(days=1)
+    # --- HARDCODED TEST DATE: APRIL 21, 2026 ---
+    # When ready for live daily use, change this back to:
+    # target_date = datetime.now(timezone).date()
+    target_date = datetime(2026, 4, 21).date()
     
     try:
         response = requests.get(CALENDAR_URL, timeout=15)
@@ -86,13 +121,11 @@ def get_appointments():
                     start_dt = start_dt.astimezone(timezone)
 
                 if start_dt.date() == target_date:
-                    # 1. AGGRESSIVE CLEANING OF iCAL DESCRIPTION
                     raw_desc = str(component.get('description', ''))
-                    # Replace literal '\n' and html breaks with actual newlines, strip commas
+                    # Clean the description of HTML and funky iCal line breaks
                     clean_desc = raw_desc.replace('\\n', '\n').replace('\\N', '\n').replace('\\,', ',')
-                    clean_desc = re.sub(r'<[^>]+>', '\n', clean_desc) # Remove HTML tags
+                    clean_desc = re.sub(r'<[^>]+>', '\n', clean_desc) 
                     
-                    # 2. EXTRACTION
                     cliente = extract_var(clean_desc, "Cliente:")
                     mecanico_email = extract_var(clean_desc, "Mecanico:")
                     address1 = extract_var(clean_desc, "Address1:")
@@ -101,28 +134,24 @@ def get_appointments():
                     servicio = extract_var(clean_desc, "Servicio:")
                     summary = str(component.get('summary', ''))
                     
-                    # 3. FALLBACKS (In case an event wasn't perfectly formatted yet)
                     if not cliente:
                         name_match = re.search(r'Cliente:\s*(.*?)\s*\(', summary)
                         cliente = name_match.group(1).strip() if name_match else summary.split(',')[0]
                         
                     if not address1:
-                        # Fallback to old v0.9 logic
                         parts = re.split(r'\s*\d+x\s+', summary, maxsplit=1, flags=re.IGNORECASE)
                         address1 = parts[0].strip().rstrip(',').strip()
                         if not servicio and len(parts) == 2:
                             servicio = parts[1].strip()
 
-                    # 4. ROUTING
                     if "sebadechum" in mecanico_email.lower():
                         mechanic_name = "Seba"
                     elif "juandechum" in mecanico_email.lower():
                         mechanic_name = "Juan"
                     else:
                         print(f"Skipping {cliente}: No recognized mechanic email found.")
-                        continue # If we don't know who it belongs to, we must skip
+                        continue 
 
-                    # 5. ABBREVIATION LOOKUP
                     abbrev = "SRV" 
                     clean_svc_lower = servicio.lower()
                     for dictionary_key, code in sorted(SERVICE_MAP.items(), key=lambda x: len(x[0]), reverse=True):
@@ -130,7 +159,6 @@ def get_appointments():
                             abbrev = code
                             break
                             
-                    # 6. ROUTE ADDRESS
                     full_route_address = f"{address1}, {comuna}, Santiago, Chile".strip(', ')
                     
                     all_appointments.append({
@@ -149,7 +177,6 @@ def get_appointments():
 
 def generate_map():
     appointments = get_appointments()
-    # WE NO LONGER RETURN EARLY. WE ALWAYS BUILD THE MAP.
 
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles=None)
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
@@ -225,7 +252,6 @@ def generate_map():
         sw_phantom = [sw[0] - (height * 0.45), sw[1]]
         m.fit_bounds([sw_phantom, ne])
 
-    # Default message if no appointments exist so you know it worked
     if not table_rows_html:
         table_rows_html = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Sin rutas programadas para esta fecha.</td></tr>'
 
