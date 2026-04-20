@@ -77,9 +77,14 @@ def generate_map():
     appointments = get_appointments()
     if not appointments: return
 
-    m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles='cartodbpositron')
+    # Use tiles=None and add TileLayer manually with control=False to remove the artifact
+    m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles=None)
+    folium.TileLayer('cartodbpositron', control=False).add_to(m)
+    
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
     now_dt = datetime.now(timezone)
+
+    all_points_for_zoom = [BASE_LOCATION]
 
     for name, info in MECHANICS.items():
         fg = folium.FeatureGroup(name=name).add_to(m)
@@ -89,11 +94,8 @@ def generate_map():
         for i, app in enumerate(mech_apps):
             leg_color = info['palette'][i % len(info['palette'])]
             label_id = f"{info['initial']}{i+1}"
-            
-            # THE LOGIC SHIFT: Target Arrival Time
             arrival_target = app['start_dt']
             
-            # API can't use arrival_time for the past
             if arrival_target > now_dt:
                 directions = gmaps.directions(current_loc, app['address'], mode="driving", arrival_time=arrival_target)
             else:
@@ -102,23 +104,20 @@ def generate_map():
             if directions:
                 leg = directions[0]['legs'][0]
                 
-                # 1. Get raw duration and apply 5% buffer
+                # UPDATE 1: 7% Buffer
                 raw_seconds = leg.get('duration_in_traffic', leg['duration'])['value']
-                buffered_seconds = raw_seconds * 1.05
+                buffered_seconds = raw_seconds * 1.07 
                 buffered_mins = round(buffered_seconds / 60)
                 
-                # 2. Calculate Departure Time
                 departure_dt = arrival_target - timedelta(seconds=buffered_seconds)
                 dep_time_str = departure_dt.strftime('%H:%M')
-                
-                # 3. Format Display String: ID / Dep / Transit
                 display_str = f"{label_id} / {dep_time_str} / {buffered_mins} min"
 
                 raw_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])]
+                all_points_for_zoom.extend(raw_pts)
                 points = apply_offset(raw_pts, info['offset'])
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
-                # Clickable Transit Pill (Waze opens coordinate destination)
                 mid = points[len(points)//2]
                 dest_lat, dest_lng = leg['end_location']['lat'], leg['end_location']['lng']
                 waze_link = f"https://waze.com/ul?ll={dest_lat},{dest_lng}&navigate=yes"
@@ -134,7 +133,6 @@ def generate_map():
                         </a>''')
                 ).add_to(fg)
 
-                # Customer Label
                 end_pt = apply_offset([(dest_lat, dest_lng)], info['offset'])[0]
                 folium.Marker(
                     location=end_pt, 
@@ -145,22 +143,41 @@ def generate_map():
                 ).add_to(fg)
                 current_loc = app['address']
 
-        # Return Leg (Simple departure calculation)
-        if mech_apps:
-            last_dt = mech_apps[-1]['start_dt'] + timedelta(hours=1.5)
-            back = gmaps.directions(current_loc, f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}", mode="driving", departure_time=max(last_dt, now_dt))
-            if back:
-                leg = back[0]['legs'][0]
-                dur = round(leg.get('duration_in_traffic', leg['duration'])['value'] * 1.05 / 60)
-                raw_back_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(back[0]['overview_polyline']['points'])]
-                back_pts = apply_offset(raw_back_pts, info['offset'], multiplier=2.5)
-                folium.PolyLine(back_pts, color='#6c757d', weight=3, dash_array='10', opacity=0.6).add_to(fg)
-                mid_back = back_pts[len(back_pts)//2]
-                folium.Marker(location=mid_back, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: #6c757d; pointer-events: none;">base: {dur} min</div>')).add_to(fg)
-
+    # UPDATE 2: Add Title "Ruta" to Layer Control via CSS injection
     folium.LayerControl(collapsed=False).add_to(m)
+    
+    # UPDATE 3: Initial Zoom Logic (Fit Bounds with bottom padding)
+    if all_points_for_zoom:
+        lats = [p[0] for p in all_points_for_zoom]
+        lngs = [p[1] for p in all_points_for_zoom]
+        sw = [min(lats), min(lngs)]
+        ne = [max(lats), max(lngs)]
+        
+        # To push the map into the top 75%, we create a "phantom" southwest point 
+        # that extends far below the actual route.
+        height = ne[0] - sw[0]
+        sw_phantom = [sw[0] - (height * 0.4), sw[1]] 
+        m.fit_bounds([sw_phantom, ne])
 
-    # JavaScript Filter
+    # Injecting CSS to fix the Layer Control title and clean up the UI
+    css_fix = """
+    <style>
+    .leaflet-control-layers-list::before {
+        content: 'Ruta';
+        display: block;
+        font-family: 'Helvetica', sans-serif;
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 5px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 3px;
+    }
+    /* Hide the default empty space/artifact if any */
+    .leaflet-control-layers-base { display: none; }
+    </style>
+    """
+    
+    # Auto-filter JS
     js_filter = """
     <script>
     function autoFilter() {
@@ -180,6 +197,7 @@ def generate_map():
     window.addEventListener('load', autoFilter);
     </script>
     """
+    m.get_root().header.add_child(folium.Element(css_fix))
     m.get_root().html.add_child(folium.Element(js_filter))
     m.save("mechanic_route.html")
 
