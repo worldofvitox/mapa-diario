@@ -29,7 +29,6 @@ MECHANICS = {
     }
 }
 
-# --- FULL 48-ITEM SERVICE MAP RESTORED ---
 SERVICE_MAP = {
     "Armado de Bicicleta a Domicilio Con Cambios": "ARC",
     "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
@@ -90,21 +89,26 @@ CARD_STYLE = (
 
 WAZE_ICON_URL = "waze.png" 
 
+# Global debug string to catch raw text if things fail
+debug_log = ""
+
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
 
 def extract_var(text, key):
-    """Robust regex that ignores case and grabs everything up to the next newline"""
-    pattern = rf'(?i){key}\s*([^\n\r]+)'
+    """Ultra-forgiving regex: looks for the key, optional colon, and grabs the rest of the line"""
+    pattern = rf'(?i){key}[:\s]*([^\n\r]+)'
     match = re.search(pattern, text)
-    return match.group(1).strip() if match else ""
+    if match:
+        # Strip trailing HTML tags just in case
+        return re.sub(r'<[^>]+>', '', match.group(1)).strip()
+    return ""
 
 def get_appointments():
+    global debug_log
     all_appointments = []
     
-    # --- HARDCODED TEST DATE: APRIL 21, 2026 ---
-    # When ready for live daily use, change this back to:
-    # target_date = datetime.now(timezone).date()
+    # HARDCODED TEST DATE
     target_date = datetime(2026, 4, 21).date()
     
     try:
@@ -122,17 +126,20 @@ def get_appointments():
 
                 if start_dt.date() == target_date:
                     raw_desc = str(component.get('description', ''))
-                    # Clean the description of HTML and funky iCal line breaks
-                    clean_desc = raw_desc.replace('\\n', '\n').replace('\\N', '\n').replace('\\,', ',')
+                    summary = str(component.get('summary', ''))
+                    
+                    # Clean out the literal line breaks and html
+                    clean_desc = raw_desc.replace('\\n', '\n').replace('\\N', '\n').replace('&nbsp;', ' ')
                     clean_desc = re.sub(r'<[^>]+>', '\n', clean_desc) 
                     
-                    cliente = extract_var(clean_desc, "Cliente:")
-                    mecanico_email = extract_var(clean_desc, "Mecanico:")
-                    address1 = extract_var(clean_desc, "Address1:")
-                    address2 = extract_var(clean_desc, "Address2:")
-                    comuna = extract_var(clean_desc, "Comuna:")
-                    servicio = extract_var(clean_desc, "Servicio:")
-                    summary = str(component.get('summary', ''))
+                    # Log the raw text so we can see it on the map if it fails
+                    debug_log += f"<br><b>RAW TEXT SEEN:</b><br>{summary}<br>{clean_desc}<hr>"
+                    
+                    cliente = extract_var(clean_desc, "Cliente")
+                    address1 = extract_var(clean_desc, "Address1")
+                    address2 = extract_var(clean_desc, "Address2")
+                    comuna = extract_var(clean_desc, "Comuna")
+                    servicio = extract_var(clean_desc, "Servicio")
                     
                     if not cliente:
                         name_match = re.search(r'Cliente:\s*(.*?)\s*\(', summary)
@@ -144,12 +151,17 @@ def get_appointments():
                         if not servicio and len(parts) == 2:
                             servicio = parts[1].strip()
 
-                    if "sebadechum" in mecanico_email.lower():
+                    # --- NUCLEAR MECHANIC SEARCH ---
+                    # Checks anywhere in the description or summary for the email or name
+                    desc_lower = clean_desc.lower()
+                    sum_lower = summary.lower()
+                    
+                    if "sebadechum" in desc_lower or "sebadechum" in sum_lower:
                         mechanic_name = "Seba"
-                    elif "juandechum" in mecanico_email.lower():
+                    elif "juandechum" in desc_lower or "juandechum" in sum_lower:
                         mechanic_name = "Juan"
                     else:
-                        print(f"Skipping {cliente}: No recognized mechanic email found.")
+                        debug_log += f"<b style='color:red;'>DROPPED:</b> Could not find sebadechum or juandechum in the text.<hr>"
                         continue 
 
                     abbrev = "SRV" 
@@ -176,6 +188,7 @@ def get_appointments():
     return all_appointments
 
 def generate_map():
+    global debug_log
     appointments = get_appointments()
 
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles=None)
@@ -200,7 +213,10 @@ def generate_map():
             
             arrival_target = app['start_dt']
             
-            if arrival_target > now_dt:
+            # Temporary override for testing: if target date is far in the future, just use arrival time calculations to avoid Google API rejecting future departure times
+            if arrival_target.date() > now_dt.date():
+                directions = gmaps.directions(current_loc, app['route_address'], mode="driving")
+            elif arrival_target > now_dt:
                 directions = gmaps.directions(current_loc, app['route_address'], mode="driving", arrival_time=arrival_target)
             else:
                 directions = gmaps.directions(current_loc, app['route_address'], mode="driving", departure_time=now_dt)
@@ -253,7 +269,7 @@ def generate_map():
         m.fit_bounds([sw_phantom, ne])
 
     if not table_rows_html:
-        table_rows_html = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Sin rutas programadas para esta fecha.</td></tr>'
+        table_rows_html = f'<tr><td colspan="5" style="text-align:left; padding: 10px; font-weight:normal; font-size:10px;"><b>ERROR - SIN RUTAS. DIAGNOSTICO:</b><br>{debug_log}</td></tr>'
 
     table_html = f"""
     <div id="mbs-table-container" style="
