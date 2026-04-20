@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import pytz
 from icalendar import Calendar
 
-# --- 1. CONFIGURATION ---
+# --- CONFIGURATION ---
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
@@ -30,16 +30,14 @@ MECHANICS = {
     }
 }
 
-# RELATIVE PATH: Pointing to the file you just uploaded to your repo
-WAZE_ICON_URL = "waze.png" 
-
-# --- 2. UNIFIED UI STYLE ---
 CARD_STYLE = (
     "font-family: 'Helvetica', sans-serif; font-size: 11px; font-weight: bold; "
     "background-color: white; padding: 5px 10px; border-radius: 8px; "
     "box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; "
     "display: inline-flex; align-items: center; border: none; text-decoration: none;"
 )
+
+WAZE_ICON_URL = "waze.png" 
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -59,10 +57,9 @@ def get_appointments():
                     if isinstance(start_dt, datetime):
                         event_dt = start_dt.astimezone(timezone)
                         event_date = event_dt.date()
-                        start_time_str = event_dt.strftime('%Y-%m-%d %H:%M')
                     else:
                         event_date = start_dt
-                        start_time_str = f"{start_dt} 09:00"
+                        event_dt = timezone.localize(datetime.combine(event_date, datetime.min.time())).replace(hour=9)
 
                     if event_date == today:
                         summary = str(component.get('summary', ''))
@@ -71,7 +68,7 @@ def get_appointments():
                         extracted_name = name_match.group(1).strip() if name_match else summary.split(',')[0]
                         all_appointments.append({
                             'name': extracted_name, 'address': summary, 
-                            'mechanic': name, 'start_time': start_time_str
+                            'mechanic': name, 'start_dt': event_dt
                         })
         except Exception as e: print(f"Error: {e}")
     return all_appointments
@@ -86,24 +83,42 @@ def generate_map():
 
     for name, info in MECHANICS.items():
         fg = folium.FeatureGroup(name=name).add_to(m)
-        mech_apps = sorted([a for a in appointments if a['mechanic'] == name], key=lambda x: x['start_time'])
+        mech_apps = sorted([a for a in appointments if a['mechanic'] == name], key=lambda x: x['start_dt'])
         current_loc = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
         
         for i, app in enumerate(mech_apps):
             leg_color = info['palette'][i % len(info['palette'])]
             label_id = f"{info['initial']}{i+1}"
-            start_dt = timezone.localize(datetime.strptime(app['start_time'], '%Y-%m-%d %H:%M'))
-            dep_time = max(start_dt, now_dt)
+            
+            # THE LOGIC SHIFT: Target Arrival Time
+            arrival_target = app['start_dt']
+            
+            # API can't use arrival_time for the past
+            if arrival_target > now_dt:
+                directions = gmaps.directions(current_loc, app['address'], mode="driving", arrival_time=arrival_target)
+            else:
+                directions = gmaps.directions(current_loc, app['address'], mode="driving", departure_time=now_dt)
 
-            directions = gmaps.directions(current_loc, app['address'], mode="driving", departure_time=dep_time)
             if directions:
                 leg = directions[0]['legs'][0]
-                duration = leg.get('duration_in_traffic', leg['duration'])['text'].replace(' mins', ' min')
+                
+                # 1. Get raw duration and apply 5% buffer
+                raw_seconds = leg.get('duration_in_traffic', leg['duration'])['value']
+                buffered_seconds = raw_seconds * 1.05
+                buffered_mins = round(buffered_seconds / 60)
+                
+                # 2. Calculate Departure Time
+                departure_dt = arrival_target - timedelta(seconds=buffered_seconds)
+                dep_time_str = departure_dt.strftime('%H:%M')
+                
+                # 3. Format Display String: ID / Dep / Transit
+                display_str = f"{label_id} / {dep_time_str} / {buffered_mins} min"
+
                 raw_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])]
                 points = apply_offset(raw_pts, info['offset'])
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
-                # Transit Pill with Waze Link
+                # Clickable Transit Pill (Waze opens coordinate destination)
                 mid = points[len(points)//2]
                 dest_lat, dest_lng = leg['end_location']['lat'], leg['end_location']['lng']
                 waze_link = f"https://waze.com/ul?ll={dest_lat},{dest_lng}&navigate=yes"
@@ -114,39 +129,38 @@ def generate_map():
                         <a href="{waze_link}" target="_blank" style="text-decoration: none; pointer-events: auto;">
                             <div style="{CARD_STYLE} color: {leg_color}; transform: translateY(-20px);">
                                 <img src="{WAZE_ICON_URL}" style="width:16px; height:16px; margin-right:6px; vertical-align: middle;">
-                                <span style="vertical-align: middle;">{label_id}: {duration}</span>
+                                <span style="vertical-align: middle;">{display_str}</span>
                             </div>
                         </a>''')
                 ).add_to(fg)
 
-                # Customer Card
+                # Customer Label
                 end_pt = apply_offset([(dest_lat, dest_lng)], info['offset'])[0]
                 folium.Marker(
                     location=end_pt, 
                     icon=folium.DivIcon(html=f'''
                         <div style="{CARD_STYLE} color: black; transform: translate(-10%, -50%); pointer-events: none;">
-                            {start_dt.strftime("%H:%M")} {app["name"]} ({label_id})
+                            {app['start_dt'].strftime("%H:%M")} {app["name"]} ({label_id})
                         </div>''')
                 ).add_to(fg)
                 current_loc = app['address']
 
-        # Return to Base
+        # Return Leg (Simple departure calculation)
         if mech_apps:
-            last_dt = timezone.localize(datetime.strptime(mech_apps[-1]['start_time'], '%Y-%m-%d %H:%M'))
-            ret_time = max(last_dt + timedelta(hours=1.5), now_dt)
-            back = gmaps.directions(current_loc, f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}", mode="driving", departure_time=ret_time)
+            last_dt = mech_apps[-1]['start_dt'] + timedelta(hours=1.5)
+            back = gmaps.directions(current_loc, f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}", mode="driving", departure_time=max(last_dt, now_dt))
             if back:
                 leg = back[0]['legs'][0]
-                dur = leg.get('duration_in_traffic', leg['duration'])['text'].replace(' mins', ' min')
+                dur = round(leg.get('duration_in_traffic', leg['duration'])['value'] * 1.05 / 60)
                 raw_back_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(back[0]['overview_polyline']['points'])]
                 back_pts = apply_offset(raw_back_pts, info['offset'], multiplier=2.5)
                 folium.PolyLine(back_pts, color='#6c757d', weight=3, dash_array='10', opacity=0.6).add_to(fg)
                 mid_back = back_pts[len(back_pts)//2]
-                folium.Marker(location=mid_back, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: #6c757d; pointer-events: none;">base: {dur}</div>')).add_to(fg)
+                folium.Marker(location=mid_back, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color: #6c757d; pointer-events: none;">base: {dur} min</div>')).add_to(fg)
 
     folium.LayerControl(collapsed=False).add_to(m)
 
-    # --- AUTO-FILTER JAVASCRIPT ---
+    # JavaScript Filter
     js_filter = """
     <script>
     function autoFilter() {
