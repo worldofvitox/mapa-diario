@@ -93,7 +93,15 @@ def get_appointments():
                             clean_addr = summary.split(',')[0].strip()
                             clean_svc = summary.strip()
                             
-                        abbrev = SERVICE_MAP.get(clean_svc, "SRV") 
+                        # --- THE FIX: ROBUST "FUZZY" LOOKUP ---
+                        abbrev = "SRV" # Default
+                        clean_svc_lower = clean_svc.lower() # Remove case sensitivity
+                        
+                        for dictionary_key, code in SERVICE_MAP.items():
+                            # If the dictionary key is found anywhere inside the service text (or vice versa)
+                            if dictionary_key.lower() in clean_svc_lower:
+                                abbrev = code
+                                break
                         
                         all_appointments.append({
                             'name': extracted_name, 
@@ -148,8 +156,6 @@ def generate_map():
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:none;">{app["start_dt"].strftime("%H:%M")} {app["name"]} ({label_id}) {app["abbrev"]}</div>')).add_to(fg)
                 
-                # --- NEW COMPACT, ONE-LINE TABLE UI ---
-                # Added 'max-width: 0' and 'text-overflow: ellipsis' to force text to fit available % width.
                 table_rows_html += f"""
                 <tr style="border-bottom: 1px solid #eee; height: 26px;">
                     <td style="padding: 4px 6px; color: {leg_color}; width: 6%; white-space: nowrap;">{label_id}</td>
@@ -188,7 +194,6 @@ def generate_map():
     </style>
     """
     
-    # Simple JS: ONLY reads URL parameters to auto-click the map layers. Does NOT touch the table rows.
     js_filter = "<script>function autoFilter(){const p=new URLSearchParams(window.location.search);const m=p.get('mechanic');if(!m)return;const t=m.toLowerCase();const s=document.querySelectorAll('.leaflet-control-layers-selector');if(s.length===0){setTimeout(autoFilter,300);return}s.forEach(i=>{const l=i.nextElementSibling.innerText.trim().toLowerCase();if((l==='juan'||l==='seba')&&l!==t){if(i.checked)i.click()}})}window.addEventListener('load',autoFilter)</script>"
 
     m.get_root().html.add_child(folium.Element(table_html + js_filter))
