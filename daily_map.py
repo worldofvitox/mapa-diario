@@ -30,7 +30,6 @@ MECHANICS = {
     }
 }
 
-# --- 2. THE HARDCODED DICTIONARY ---
 SERVICE_MAP = {
     "Armado de Bicicleta a Domicilio Con Cambios": "ARC",
     "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
@@ -85,36 +84,24 @@ def get_appointments():
                         name_match = re.search(r'Cliente:\s*(.*?)\s*\(', desc)
                         extracted_name = name_match.group(1).strip() if name_match else summary.split(',')[0]
                         
-                        # --- THE NEW SMART SCISSOR ---
-                        # Looks for commas, dashes, and digits followed by 'x' (e.g., ", 1x ", "2X", "-1x")
-                        parts = re.split(r'\s*(?:,|-)?\s*\d+\s*[xX]\s*', summary, maxsplit=1, flags=re.IGNORECASE)
+                        parts = re.split(r'\s*\d+x\s+', summary, maxsplit=1, flags=re.IGNORECASE)
                         
                         if len(parts) == 2:
-                            clean_addr = parts[0].strip()
+                            clean_addr = parts[0].strip().rstrip(',').strip()
                             clean_svc = parts[1].strip()
                         else:
-                            clean_addr = summary.strip()
-                            clean_svc = "SRV_UNKNOWN"
-
-                        # --- FUZZY ABBREVIATION LOOKUP ---
-                        abbrev = "SRV"
-                        # Strip all punctuation and spaces for a pure text comparison
-                        norm_svc = re.sub(r'[^a-z0-9]', '', clean_svc.lower())
-                        
-                        # Check against dictionary (sorted by longest first to ensure accurate matches)
-                        for key in sorted(SERVICE_MAP.keys(), key=len, reverse=True):
-                            norm_key = re.sub(r'[^a-z0-9]', '', key.lower())
-                            if norm_key and norm_key in norm_svc:
-                                abbrev = SERVICE_MAP[key]
-                                break
+                            clean_addr = summary.split(',')[0].strip()
+                            clean_svc = summary.strip()
+                            
+                        abbrev = SERVICE_MAP.get(clean_svc, "SRV") 
                         
                         all_appointments.append({
                             'name': extracted_name, 
-                            'address': clean_addr,      # Perfect Address for GPS
-                            'service': clean_svc,       # Perfect Service Name
+                            'address': clean_addr, 
+                            'service': clean_svc, 
                             'mechanic': name, 
                             'start_dt': start_dt, 
-                            'abbrev': abbrev            # The resolved 3-letter code
+                            'abbrev': abbrev
                         })
         except Exception as e: print(f"Error: {e}")
     return all_appointments
@@ -142,7 +129,6 @@ def generate_map():
             label_id = f"{info['initial']}{i+1}"
             leg_color = info['palette'][i % len(info['palette'])]
             
-            # Now passing the perfectly clean address to Google
             directions = gmaps.directions(current_loc, app['address'], mode="driving", arrival_time=app['start_dt'])
             if directions:
                 leg = directions[0]['legs'][0]
@@ -159,22 +145,18 @@ def generate_map():
                 waze_link = f"https://waze.com/ul?ll={leg['end_location']['lat']},{leg['end_location']['lng']}&navigate=yes"
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:{leg_color}; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{label_id} / {departure_dt.strftime('%H:%M')} / {buffered_mins} min</div></a>''')).add_to(fg)
 
-                # Appointment Pill with dynamically resolved abbreviation
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:none;">{app["start_dt"].strftime("%H:%M")} {app["name"]} ({label_id}) {app["abbrev"]}</div>')).add_to(fg)
                 
-                # --- 5 COLUMN DASHBOARD TABLE ---
-                short_name = app['name'][:20]
-                short_addr = app['address'][:30] # Capped to keep table clean
-                short_svc = app['service'][:25]
-                
+                # --- NEW COMPACT, ONE-LINE TABLE UI ---
+                # Added 'max-width: 0' and 'text-overflow: ellipsis' to force text to fit available % width.
                 table_rows_html += f"""
-                <tr class="mech-row mech-{name.lower()}" style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 6px; color: {leg_color}; width: 10%;">{label_id}</td>
-                    <td style="padding: 6px; width: 12%;">{app['start_dt'].strftime('%H:%M')}</td>
-                    <td style="padding: 6px; width: 23%;">{short_name}</td>
-                    <td style="padding: 6px; font-size: 10px; color: #666; width: 25%;">{short_addr}</td>
-                    <td style="padding: 6px; font-size: 10px; color: #444; width: 30%;">{short_svc}</td>
+                <tr style="border-bottom: 1px solid #eee; height: 26px;">
+                    <td style="padding: 4px 6px; color: {leg_color}; width: 6%; white-space: nowrap;">{label_id}</td>
+                    <td style="padding: 4px 6px; width: 10%; white-space: nowrap;">{app['start_dt'].strftime('%H:%M')}</td>
+                    <td style="padding: 4px 6px; width: 28%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0;">{app['name']}</td>
+                    <td style="padding: 4px 6px; font-size: 10px; color: #666; width: 46%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0;">{app['address']}</td>
+                    <td style="padding: 4px 6px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right;">{app['abbrev']}</td>
                 </tr>
                 """
                 current_loc = app['address']
@@ -193,7 +175,7 @@ def generate_map():
         position: fixed; bottom: 0; left: 0; width: 100%; height: 28%;
         background-color: white; z-index: 9999; overflow-y: auto;
         box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid #ddd;">
-        <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; font-weight: bold;">
+        <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
             <tbody>
                 {table_rows_html}
             </tbody>
@@ -206,36 +188,10 @@ def generate_map():
     </style>
     """
     
-    js_sync = """
-    <script>
-    function syncTable() {
-        const selectors = document.querySelectorAll('.leaflet-control-layers-selector');
-        if (selectors.length === 0) { setTimeout(syncTable, 300); return; }
-        const updateRows = () => {
-            selectors.forEach(input => {
-                const mechName = input.nextElementSibling.innerText.trim().toLowerCase();
-                const rows = document.querySelectorAll('.mech-' + mechName);
-                rows.forEach(row => { row.style.display = input.checked ? 'table-row' : 'none'; });
-            });
-        };
-        const params = new URLSearchParams(window.location.search);
-        const target = params.get('mechanic');
-        if (target) {
-            selectors.forEach(input => {
-                const name = input.nextElementSibling.innerText.trim().toLowerCase();
-                if (['juan', 'seba'].includes(name) && name !== target.toLowerCase()) {
-                    if (input.checked) input.click();
-                }
-            });
-        }
-        selectors.forEach(input => { input.addEventListener('change', updateRows); });
-        updateRows();
-    }
-    window.addEventListener('load', syncTable);
-    </script>
-    """
+    # Simple JS: ONLY reads URL parameters to auto-click the map layers. Does NOT touch the table rows.
+    js_filter = "<script>function autoFilter(){const p=new URLSearchParams(window.location.search);const m=p.get('mechanic');if(!m)return;const t=m.toLowerCase();const s=document.querySelectorAll('.leaflet-control-layers-selector');if(s.length===0){setTimeout(autoFilter,300);return}s.forEach(i=>{const l=i.nextElementSibling.innerText.trim().toLowerCase();if((l==='juan'||l==='seba')&&l!==t){if(i.checked)i.click()}})}window.addEventListener('load',autoFilter)</script>"
 
-    m.get_root().html.add_child(folium.Element(table_html + js_sync))
+    m.get_root().html.add_child(folium.Element(table_html + js_filter))
     m.save("mechanic_route.html")
 
 if __name__ == "__main__":
