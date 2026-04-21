@@ -12,8 +12,7 @@ gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
 
 BASE_LOCATION = [-33.45219480797122, -70.5787333882418] 
-CALENDAR_URL = 'https://calendar.google.com/calendar/ical/c_8opb357tnsp99elt8b7r9k79ss%40group.calendar.google.com/private-d744ba0d7a025c6d8b25c93752ed7cc1/basic.ics'
-
+CALENDAR_URL = 'https://calendar.google.com/calendar/ical/c_0e3e9c70ab1527edfef805c43e9fd06dabb0fdfab8e5081f4feb40565337708b%40group.calendar.google.com/private-a534c46e66604fef2e96a3dc4810f688/basic.ics'
 MECHANICS = {
     'Juan': {'palette': ['#dc3545', '#fd7e14', '#e83e8c', '#6f42c1', '#b02a37'], 'initial': 'J', 'offset': (0.00012, 0.00012)},
     'Seba': {'palette': ['#007bff', '#28a745', '#17a2b8', '#20c997', '#004085'], 'initial': 'S', 'offset': (-0.00012, -0.00012)}
