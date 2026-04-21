@@ -37,6 +37,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add desktop_map*.html
+          git add desktop_map*.html distances.csv
           git commit -m "Auto-update desktop planning map" -a || exit 0
           git push

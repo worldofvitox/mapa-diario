@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import pytz
 from icalendar import Calendar
 import locale
+import csv
 
 try:
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
@@ -59,7 +60,9 @@ CARD_STYLE = (
 )
 
 WAZE_ICON_URL = "waze.png" 
-debug_log = ""
+
+# GLOBAL DICT TO STORE DISTANCES
+daily_distances = {}
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -71,7 +74,6 @@ def extract_var(text, key):
     return ""
 
 def get_all_appointments():
-    global debug_log
     all_appointments = []
     try:
         response = requests.get(CALENDAR_URL, timeout=15)
@@ -125,10 +127,12 @@ def get_all_appointments():
     return all_appointments
 
 def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, now_dt):
+    global daily_distances
     date_str = target_date.strftime('%Y-%m-%d')
     display_date = target_date.strftime('%a, %d %b').capitalize()
     
     day_apps = [a for a in all_apps if a['start_dt'].date() == target_date]
+    day_metrics = {'Juan': 0, 'Seba': 0}
     
     m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
@@ -157,6 +161,10 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
 
             if directions:
                 leg = directions[0]['legs'][0]
+                
+                # --- EXTRACT DISTANCE IN METERS ---
+                day_metrics[name] += leg.get('distance', {}).get('value', 0)
+                
                 raw_seconds = leg.get('duration_in_traffic', leg['duration'])['value']
                 penalty_seconds = 180 if app['address2'] else 0
                 buffered_seconds = (raw_seconds * 1.07) + penalty_seconds
@@ -195,7 +203,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         # --- RETURN TO BASE LOGIC ---
         if mech_apps:
             base_str = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
-            # Estimate departure for return trip 1 hour after the last appointment starts
             return_target = mech_apps[-1]['start_dt'] + timedelta(hours=1)
             
             if return_target.date() > now_dt.date(): directions = gmaps.directions(current_loc, base_str, mode="driving")
@@ -204,6 +211,10 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
 
             if directions:
                 leg = directions[0]['legs'][0]
+                
+                # --- EXTRACT RETURN DISTANCE ---
+                day_metrics[name] += leg.get('distance', {}).get('value', 0)
+                
                 raw_seconds = leg.get('duration_in_traffic', leg['duration'])['value']
                 buffered_mins = round((raw_seconds * 1.07) / 60)
                 
@@ -211,15 +222,16 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 all_points.extend(raw_pts)
                 points = apply_offset(raw_pts, info['offset'])
                 
-                # Draw dashed line to indicate return trip
                 folium.PolyLine(points, color=info['palette'][0], weight=5, opacity=0.6, dash_array='7, 7').add_to(fg)
                 
                 mid = points[len(points)//2]
                 waze_link = f"https://waze.com/ul?ll={BASE_LOCATION[0]},{BASE_LOCATION[1]}&navigate=yes"
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#666; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">Base / {buffered_mins} min</div></a>''')).add_to(fg)
 
+    # Save metrics for this date
+    daily_distances[date_str] = day_metrics
+
     folium.LayerControl(collapsed=False).add_to(m)
-    
     if len(all_points) > 1: m.fit_bounds(all_points)
     if len(day_apps) == 0: side_panel_html += "<div style='padding:20px; text-align:center; color:#888; font-family:sans-serif;'>No hay rutas programadas para este día.</div>"
 
@@ -247,6 +259,37 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     m.get_root().html.add_child(folium.Element(desktop_layout))
     m.save(f"desktop_map_{date_str}.html")
 
+def update_distance_csv():
+    """Reads existing CSV, merges new day data, and overwrites it"""
+    file_name = 'distances.csv'
+    historical_data = {}
+    
+    # 1. Read existing data if the file already exists
+    if os.path.exists(file_name):
+        with open(file_name, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                historical_data[row['Date']] = {
+                    'Juan': float(row.get('Juan_km', 0)),
+                    'Seba': float(row.get('Seba_km', 0))
+                }
+                
+    # 2. Update with the latest calculated routes (converts meters to km)
+    for date_str, metrics in daily_distances.items():
+        historical_data[date_str] = {
+            'Juan': round(metrics.get('Juan', 0) / 1000, 2),
+            'Seba': round(metrics.get('Seba', 0) / 1000, 2)
+        }
+        
+    # 3. Write it all back sorted by date
+    with open(file_name, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Date', 'Juan_km', 'Seba_km', 'Total_km'])
+        for d in sorted(historical_data.keys()):
+            j_km = historical_data[d]['Juan']
+            s_km = historical_data[d]['Seba']
+            writer.writerow([d, j_km, s_km, round(j_km + s_km, 2)])
+
 if __name__ == "__main__":
     print("Fetching global appointments...")
     all_apps = get_all_appointments()
@@ -264,6 +307,9 @@ if __name__ == "__main__":
         next_d = target + timedelta(days=1)
         generate_desktop_map_for_date(target, prev_d, next_d, all_apps, now_dt)
         
+    # Fire the new CSV function after all maps are generated
+    update_distance_csv()
+    
     with open("desktop_map.html", "w") as f:
         f.write(f'''
         <!DOCTYPE html>
