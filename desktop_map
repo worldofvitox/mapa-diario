@@ -1,1 +1,42 @@
+name: Generate Desktop Map
 
+on:
+  # 1. THE CRON: Runs automatically every 30 minutes to catch passive changes
+  schedule:
+    - cron: '*/30 * * * *'
+  
+  # 2. THE WEBHOOK: Allows Zapier/Make to trigger this instantly
+  repository_dispatch:
+    types: [calendar_update]
+    
+  # 3. MANUAL: Allows you to click "Run Workflow" in GitHub
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install requests googlemaps folium pytz icalendar
+
+      - name: Run Desktop Map Generator
+        env:
+          GMAPS_API_KEY: ${{ secrets.GMAPS_API_KEY }}
+        run: python desktop_map.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add desktop_map*.html
+          git commit -m "Auto-update desktop planning map" -a || exit 0
+          git push
