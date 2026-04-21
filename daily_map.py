@@ -6,6 +6,7 @@ import folium
 from datetime import datetime, timedelta
 import pytz
 from icalendar import Calendar
+import json
 
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
@@ -13,6 +14,8 @@ timezone = pytz.timezone('America/Santiago')
 
 BASE_LOCATION = [-33.45219480797122, -70.5787333882418] 
 CALENDAR_URL = 'https://calendar.google.com/calendar/ical/c_0e3e9c70ab1527edfef805c43e9fd06dabb0fdfab8e5081f4feb40565337708b%40group.calendar.google.com/private-a534c46e66604fef2e96a3dc4810f688/basic.ics'
+CACHE_FILE = 'appointments_cache.json'
+
 MECHANICS = {
     'Juan': {'palette': ['#dc3545', '#fd7e14', '#e83e8c', '#6f42c1', '#b02a37'], 'initial': 'J', 'offset': (0.00012, 0.00012)},
     'Seba': {'palette': ['#007bff', '#28a745', '#17a2b8', '#20c997', '#004085'], 'initial': 'S', 'offset': (-0.00012, -0.00012)}
@@ -52,7 +55,6 @@ CARD_STYLE = (
 )
 
 WAZE_ICON_URL = "waze.png" 
-debug_log = ""
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -64,8 +66,7 @@ def extract_var(text, key):
     return ""
 
 def get_appointments():
-    global debug_log
-    all_appointments = []
+    live_apps = []
     
     now_dt = datetime.now(timezone)
     if now_dt.hour >= 18: target_date = (now_dt + timedelta(days=1)).date()
@@ -73,69 +74,88 @@ def get_appointments():
     
     try:
         response = requests.get(CALENDAR_URL, timeout=15)
-        if response.status_code != 200: return []
-            
-        gcal = Calendar.from_ical(response.content)
-        for component in gcal.walk():
-            if component.name == "VEVENT":
-                start_dt = component.get('dtstart').dt
-                if not isinstance(start_dt, datetime):
-                    start_dt = timezone.localize(datetime.combine(start_dt, datetime.min.time())).replace(hour=9)
-                else:
-                    start_dt = start_dt.astimezone(timezone)
+        if response.status_code == 200:
+            gcal = Calendar.from_ical(response.content)
+            for component in gcal.walk():
+                if component.name == "VEVENT":
+                    start_dt = component.get('dtstart').dt
+                    if not isinstance(start_dt, datetime):
+                        start_dt = timezone.localize(datetime.combine(start_dt, datetime.min.time())).replace(hour=9)
+                    else:
+                        start_dt = start_dt.astimezone(timezone)
 
-                if start_dt.date() == target_date:
                     raw_desc = str(component.get('description', ''))
                     summary = str(component.get('summary', ''))
-                    
                     clean_desc = raw_desc.replace('\\n', '\n').replace('\\N', '\n').replace('&nbsp;', ' ')
                     clean_desc = re.sub(r'<[^>]+>', '\n', clean_desc) 
-                    
-                    debug_log += f"<br><b>RAW TEXT SEEN:</b><br>{summary}<br>{clean_desc}<hr>"
                     
                     cliente = extract_var(clean_desc, "Cliente")
                     address1 = extract_var(clean_desc, "Address1")
                     address2 = extract_var(clean_desc, "Address2")
                     comuna = extract_var(clean_desc, "Comuna")
                     servicio = extract_var(clean_desc, "Servicio")
+                    booking_id = extract_var(clean_desc, "Booking")
                     
                     if not cliente:
                         name_match = re.search(r'Cliente:\s*(.*?)\s*\(', summary)
                         cliente = name_match.group(1).strip() if name_match else summary.split(',')[0]
-                        
                     if not address1:
                         parts = re.split(r'\s*\d+x\s+', summary, maxsplit=1, flags=re.IGNORECASE)
                         address1 = parts[0].strip().rstrip(',').strip()
                         if not servicio and len(parts) == 2: servicio = parts[1].strip()
 
-                    desc_lower = clean_desc.lower()
-                    sum_lower = summary.lower()
-                    
+                    desc_lower, sum_lower = clean_desc.lower(), summary.lower()
                     if "sebadechum" in desc_lower or "sebadechum" in sum_lower: mechanic_name = "Seba"
                     elif "juandechum" in desc_lower or "juandechum" in sum_lower: mechanic_name = "Juan"
                     else: continue 
 
                     abbrev = "SRV" 
-                    clean_svc_lower = servicio.lower()
-                    for dictionary_key, code in sorted(SERVICE_MAP.items(), key=lambda x: len(x[0]), reverse=True):
-                        if dictionary_key.lower() in clean_svc_lower:
+                    for key, code in sorted(SERVICE_MAP.items(), key=lambda x: len(x[0]), reverse=True):
+                        if key.lower() in servicio.lower():
                             abbrev = code
                             break
                             
-                    full_route_address = f"{address1}, {comuna}, Santiago, Chile".strip(', ')
-                    
-                    all_appointments.append({
-                        'name': cliente, 'address1': address1, 'address2': address2, 'comuna': comuna,
-                        'route_address': full_route_address, 'service': servicio, 
-                        'mechanic': mechanic_name, 'start_dt': start_dt, 'abbrev': abbrev
+                    uid = booking_id if booking_id else f"{start_dt.timestamp()}_{mechanic_name}_{cliente}"
+                            
+                    live_apps.append({
+                        'uid': uid, 'booking_id': booking_id, 'name': cliente, 
+                        'address1': address1, 'address2': address2, 'comuna': comuna,
+                        'route_address': f"{address1}, {comuna}, Santiago, Chile".strip(', '),
+                        'service': servicio, 'mechanic': mechanic_name, 
+                        'start_dt': start_dt.isoformat(), 'start_timestamp': start_dt.timestamp(), 'abbrev': abbrev
                     })
-    except Exception as e: print(f"Error: {e}")
-    return all_appointments
+    except Exception as e: print(f"Error fetching live ICS: {e}")
+
+    # --- MEMORY CACHE LOGIC ---
+    cache = {}
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
+                cache = json.load(f)
+        except: pass
+
+    now_ts = datetime.now(timezone).timestamp()
+    merged = {}
+
+    for app in live_apps: merged[app['uid']] = app
+    for uid, cached_app in cache.items():
+        if uid not in merged:
+            if cached_app['start_timestamp'] < now_ts:
+                merged[uid] = cached_app
+
+    with open(CACHE_FILE, 'w', encoding='utf-8') as f:
+        json.dump(merged, f, ensure_ascii=False, indent=2)
+
+    final_apps = []
+    for uid, app in merged.items():
+        app['start_dt'] = datetime.fromisoformat(app['start_dt'])
+        if app['start_dt'].date() == target_date: # Mobile filter
+            final_apps.append(app)
+
+    return final_apps
 
 def generate_map():
-    global debug_log
     appointments = get_appointments()
-
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles=None)
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
@@ -219,7 +239,11 @@ def generate_map():
                 
                 mid = points[len(points)//2]
                 waze_link = f"https://waze.com/ul?ll={BASE_LOCATION[0]},{BASE_LOCATION[1]}&navigate=yes"
-                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#666; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">Base / {buffered_mins} min</div></a>''')).add_to(fg)
+                
+                # ISSUE 2 FIX: ADD J4 / S5 to Base Return
+                base_label = f"{info['initial']}{len(mech_apps)}"
+                
+                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#666; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{base_label} / Base / {buffered_mins} min</div></a>''')).add_to(fg)
 
 
     folium.LayerControl(collapsed=False).add_to(m)
@@ -232,26 +256,16 @@ def generate_map():
         m.fit_bounds([sw_phantom, ne])
 
     if not table_rows_html:
-        table_rows_html = f'<tr><td colspan="5" style="text-align:left; padding: 10px; font-weight:normal; font-size:10px;"><b>ERROR - SIN RUTAS. DIAGNOSTICO:</b><br>{debug_log}</td></tr>'
+        table_rows_html = f'<tr><td colspan="5" style="text-align:left; padding: 10px; font-weight:normal; font-size:10px;"><b>No hay rutas para este dia.</b></td></tr>'
 
     table_html = f"""
-    <div id="mbs-table-container" style="
-        position: fixed; bottom: 0; left: 0; width: 100%; height: 28%;
-        background-color: white; z-index: 9999; overflow-y: auto;
-        box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid #ddd;">
+    <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid #ddd;">
         <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
-            <tbody>
-                {table_rows_html}
-            </tbody>
+            <tbody>{table_rows_html}</tbody>
         </table>
     </div>
-    <style>
-        .leaflet-bottom {{ bottom: 28% !important; }}
-        .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; }}
-        .leaflet-control-layers-base {{ display: none; }}
-    </style>
+    <style>.leaflet-bottom {{ bottom: 28% !important; }} .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; }} .leaflet-control-layers-base {{ display: none; }}</style>
     """
-    
     js_filter = "<script>function autoFilter(){const p=new URLSearchParams(window.location.search);const m=p.get('mechanic');if(!m)return;const t=m.toLowerCase();const s=document.querySelectorAll('.leaflet-control-layers-selector');if(s.length===0){setTimeout(autoFilter,300);return}s.forEach(i=>{const l=i.nextElementSibling.innerText.trim().toLowerCase();if((l==='juan'||l==='seba')&&l!==t){if(i.checked)i.click()}})}window.addEventListener('load',autoFilter)</script>"
 
     m.get_root().html.add_child(folium.Element(table_html + js_filter))
