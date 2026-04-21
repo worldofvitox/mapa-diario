@@ -8,7 +8,6 @@ import pytz
 from icalendar import Calendar
 import locale
 
-# Try to set locale for Spanish dates, fallback to default if not available
 try:
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 except:
@@ -27,13 +26,65 @@ MECHANICS = {
     'Seba': {'palette': ['#007bff', '#28a745', '#17a2b8', '#20c997', '#004085'], 'initial': 'S', 'offset': (-0.00012, -0.00012)}
 }
 
-# Condensed map for planning view
 SERVICE_MAP = {
-    "Armado": "ARM", "Tubeless": "TUB", "Mantencion Clasica": "CL1", 
-    "Mantencion Preventiva": "PR1", "Mantencion Profunda": "PF1", 
-    "Electrica": "ELR", "Ruta Aero": "TR1", "Visita Mecanica": "VM",
-    "Juego de Dirección": "DIR", "Desenrayado": "DES", "Hilo": "HIL", "Sangrado": "SAN"
+    "Armado de Bicicleta a Domicilio Con Cambios": "ARC",
+    "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
+    "Armado de Bicicleta a Domicilio Armado con Optimizado": "ARO",
+    "Armado de Bicicleta a Domicilio Armado Bici Eléctrica Rigida": "ARE",
+    "Armado de Bicicleta a Domicilio Con Retráctil y/o Bloqueo Remoto": "ARB",
+    "Cambio de Juego de Dirección o Horquilla Cambio de Horquilla": "DIR",
+    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion": "DIR",
+    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion y Horquilla": "DIR",
+    "Conversion a Tubeless 1 Rueda": "TUB",
+    "Conversion a Tubeless Con Inserto / Cushcore": "TUB",
+    "Conversion a Tubeless": "TUB",
+    "Desenrayado y Enrayado de Rueda de Bicicleta": "DES",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 1 Bici": "CL1",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 2 Bicis": "CL2",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 3 Bicis": "CL3",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 4 Bicis": "CL4",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 5 Bicis": "CL5",
+    "Mantencion Clasica de Bicicleta": "CL1",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 1 Bici": "PR1",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 1 Bici": "CL1",
+    "Mantención de Bicicleta a Domicilio Mantencion Profunda 1 Bici": "PF1",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 2 Bicis": "PR2",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 2 Bicis": "CL2",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 3 Bicis": "PR3",
+    "Mantención de Bicicleta a Domicilio Mantencion Base Electrica": "ELR",
+    "Mantención de Bicicleta a Domicilio Mantencion Base Ruta Aero / Triatlon": "TR1",
+    "Mantención de Bicicleta a Domicilio Mantencion Profunda 2 Bicis": "PF2",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 3 Bicis": "CL3",
+    "Mantención de Bicicleta a Domicilio Mantencion Profunda 3 Bicis": "PF3",
+    "Mantención de Bicicleta Electrica Mant. Electrica Rigida": "ELR",
+    "Mantención de Bicicleta Electrica Mant. Elect. Doble Susp.": "ELD",
+    "Mantencion de Bicicleta Ruta Aero o de Triatlón 1 Bicicleta": "TR1",
+    "Mantencion de Bicicleta Ruta Aero o de Triatlón 2 Bicicletas": "TR2",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 1 Bici": "PR1",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 2 Bicis": "PR2",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 3 Bicis": "PR3",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 4 Bicis": "PR4",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 5 Bicis": "PR5",
+    "Mantención Preventiva de Bicicletas": "PR1",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 1 Bici": "PF1",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 2 Bicis": "PF2",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 4 Bicis": "PF4",
+    "Reparacion de Hilo (Inserto Helicoil)": "HEL",
+    "Reparacion de Hilo de Cuadro/Horquilla (Rivnut)": "RIV",
+    "Sangrado de Freno Hidráulico": "SAN",
+    "Servicio de Amortiguador Trasero / Shock de aire": "SUR",
+    "Servicio de Horquilla de Suspension": "SUF",
+    "Visita Mecanica": "VM"
 }
+
+CARD_STYLE = (
+    "font-family: 'Helvetica', sans-serif; font-size: 11px; font-weight: bold; "
+    "background-color: white; padding: 5px 10px; border-radius: 8px; "
+    "box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; "
+    "display: inline-flex; align-items: center; border: none;"
+)
+
+WAZE_ICON_URL = "waze.png" 
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -45,7 +96,6 @@ def extract_var(text, key):
     return ""
 
 def get_all_appointments():
-    """Fetches ALL appointments from the calendar at once to save bandwidth"""
     all_appointments = []
     try:
         response = requests.get(CALENDAR_URL, timeout=15)
@@ -80,7 +130,12 @@ def get_all_appointments():
                     if not servicio and len(parts) == 2: servicio = parts[1].strip()
 
                 desc_lower, sum_lower = clean_desc.lower(), summary.lower()
-                mechanic_name = "Seba" if "sebadechum" in desc_lower or "sebadechum" in sum_lower else ("Juan" if "juandechum" in desc_lower or "juandechum" in sum_lower else "Unassigned")
+                if "sebadechum" in desc_lower or "sebadechum" in sum_lower:
+                    mechanic_name = "Seba"
+                elif "juandechum" in desc_lower or "juandechum" in sum_lower:
+                    mechanic_name = "Juan"
+                else:
+                    continue
                 
                 abbrev = "SRV"
                 for key, code in sorted(SERVICE_MAP.items(), key=lambda x: len(x[0]), reverse=True):
@@ -89,22 +144,27 @@ def get_all_appointments():
                         break
                         
                 all_appointments.append({
-                    'name': cliente, 'address': f"{address1} {address2}".strip(),
-                    'route_address': f"{address1}, {comuna}, Santiago, Chile",
-                    'service': servicio, 'mechanic': mechanic_name, 
-                    'start_dt': start_dt, 'abbrev': abbrev
+                    'name': cliente, 
+                    'address1': address1,
+                    'address2': address2,
+                    'comuna': comuna,
+                    'route_address': f"{address1}, {comuna}, Santiago, Chile".strip(', '),
+                    'service': servicio, 
+                    'mechanic': mechanic_name, 
+                    'start_dt': start_dt, 
+                    'abbrev': abbrev
                 })
     except Exception as e: print(f"Error fetching: {e}")
     return all_appointments
 
-def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps):
+def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, now_dt):
     date_str = target_date.strftime('%Y-%m-%d')
     display_date = target_date.strftime('%a, %d %b').capitalize()
     
-    # Filter apps for this specific day
     day_apps = [a for a in all_apps if a['start_dt'].date() == target_date]
     
-    m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles='cartodbpositron')
+    m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
+    folium.TileLayer('cartodbpositron', control=False).add_to(m)
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
     
     all_points = [BASE_LOCATION]
@@ -123,30 +183,50 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps):
             label_id = f"{info['initial']}{i+1}"
             leg_color = info['palette'][i % len(info['palette'])]
             
-            # Simplified routing for planning view
-            directions = gmaps.directions(current_loc, app['route_address'], mode="driving")
+            arrival_target = app['start_dt']
             
+            if arrival_target.date() > now_dt.date():
+                directions = gmaps.directions(current_loc, app['route_address'], mode="driving")
+            elif arrival_target > now_dt:
+                directions = gmaps.directions(current_loc, app['route_address'], mode="driving", arrival_time=arrival_target)
+            else:
+                directions = gmaps.directions(current_loc, app['route_address'], mode="driving", departure_time=now_dt)
+
             if directions:
                 leg = directions[0]['legs'][0]
+                raw_seconds = leg.get('duration_in_traffic', leg['duration'])['value']
+                penalty_seconds = 180 if app['address2'] else 0
+                buffered_seconds = (raw_seconds * 1.07) + penalty_seconds
+                buffered_mins = round(buffered_seconds / 60)
+                departure_dt = arrival_target - timedelta(seconds=buffered_seconds)
+                
                 raw_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])]
                 all_points.extend(raw_pts)
                 points = apply_offset(raw_pts, info['offset'])
-                folium.PolyLine(points, color=leg_color, weight=4, opacity=0.7).add_to(fg)
+                folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
-                dest = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
+                # Waze / Traffic Pill
+                mid = points[len(points)//2]
+                waze_link = f"https://waze.com/ul?ll={leg['end_location']['lat']},{leg['end_location']['lng']}&navigate=yes"
+                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:{leg_color}; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{label_id} / {departure_dt.strftime('%H:%M')} / {buffered_mins} min</div></a>''')).add_to(fg)
+
+                # Appointment Pill (Matches Mobile format)
+                short_cust_name = app['name'][:20]
+                display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
+                end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
+                folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:none;">{app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1} / {app["abbrev"]}</div>')).add_to(fg)
+
+                # Desktop Side Panel Card (Uncapped, precise variables)
+                full_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
+                full_address = re.sub(r'\s+', ' ', full_address) # Collapse double spaces if Address2 is empty
                 
-                # Planning Pill
-                icon_html = f'''<div style="background:{leg_color}; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.3); font-size:10px;">{label_id}</div>'''
-                folium.Marker(location=dest, tooltip=f"{app['start_dt'].strftime('%H:%M')} | {app['name']}", icon=folium.DivIcon(html=icon_html)).add_to(fg)
-
-                # Desktop Side Panel Card
                 side_panel_html += f"""
                 <div style="padding: 10px 15px; border-bottom: 1px solid #ddd; background: white; font-family: sans-serif; display: flex; align-items: center;">
                     <div style="background:{leg_color}; color:white; border-radius:50%; min-width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:11px; margin-right:12px;">{label_id}</div>
                     <div style="flex-grow: 1;">
-                        <div style="font-weight: bold; font-size: 13px; color: #333;">{app['start_dt'].strftime('%H:%M')} - {app['name'][:22]}</div>
-                        <div style="font-size: 11px; color: #666; margin-top: 3px;">{app['address']}</div>
-                        <div style="font-size: 10px; color: #888; margin-top: 2px;">{app['abbrev']} | {app['route_address'].split(',')[1].strip()}</div>
+                        <div style="font-weight: bold; font-size: 13px; color: #333;">{app['start_dt'].strftime('%H:%M')} - {app['name']}</div>
+                        <div style="font-size: 11px; color: #666; margin-top: 3px;">{full_address}</div>
+                        <div style="font-size: 10px; color: #888; margin-top: 2px;">{app['service']} | {app['comuna']}</div>
                     </div>
                 </div>
                 """
@@ -160,8 +240,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps):
     if len(day_apps) == 0:
         side_panel_html += "<div style='padding:20px; text-align:center; color:#888; font-family:sans-serif;'>No hay rutas programadas para este día.</div>"
 
-    # --- DESKTOP UI INJECTION ---
-    # 1. The Date Carousel (Floating on the map)
     carousel_html = f"""
     <div style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 8px 20px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 20px; font-family: sans-serif; font-weight: bold; font-size: 14px; border: 1px solid #eee;">
         <a href="desktop_map_{prev_date.strftime('%Y-%m-%d')}.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&lt;</a>
@@ -170,11 +248,13 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps):
     </div>
     """
     
-    # 2. Layout CSS (70% Map, 30% Right Panel)
+    # Layer Picker formatting (Ruta title) is added into the CSS here
     desktop_layout = f"""
     <style>
         body, html {{ margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; }}
         .leaflet-container {{ width: 70vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }}
+        .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: sans-serif;}}
+        .leaflet-control-layers-base {{ display: none; }}
     </style>
     <div id="desktop-side-panel" style="width: 30vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; overflow-y: auto; border-left: 2px solid #ddd; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05);">
         {side_panel_html}
@@ -188,10 +268,8 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps):
 if __name__ == "__main__":
     print("Fetching global appointments...")
     all_apps = get_all_appointments()
-    
     now_dt = datetime.now(timezone)
     
-    # "18:00 Rule" for Default Date
     if now_dt.hour >= 18:
         base_date = (now_dt + timedelta(days=1)).date()
     else:
@@ -199,18 +277,13 @@ if __name__ == "__main__":
         
     print(f"Base logic date set to: {base_date}")
 
-    # Generate a rolling 6-day window (Yesterday -> +4 Days)
     days_to_generate = [-1, 0, 1, 2, 3, 4]
-    
     for day_offset in days_to_generate:
         target = base_date + timedelta(days=day_offset)
         prev_d = target - timedelta(days=1)
         next_d = target + timedelta(days=1)
+        generate_desktop_map_for_date(target, prev_d, next_d, all_apps, now_dt)
         
-        print(f"Generating Desktop View for: {target}")
-        generate_desktop_map_for_date(target, prev_d, next_d, all_apps)
-        
-    # Generate the master "index" file that automatically redirects to the active base date
     with open("desktop_map.html", "w") as f:
         f.write(f'''
         <!DOCTYPE html>
@@ -224,4 +297,3 @@ if __name__ == "__main__":
         </body>
         </html>
         ''')
-    print("Desktop Map Generation Complete!")
