@@ -89,18 +89,15 @@ CARD_STYLE = (
 
 WAZE_ICON_URL = "waze.png" 
 
-# Global debug string to catch raw text if things fail
 debug_log = ""
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
 
 def extract_var(text, key):
-    """Ultra-forgiving regex: looks for the key, optional colon, and grabs the rest of the line"""
     pattern = rf'(?i){key}[:\s]*([^\n\r]+)'
     match = re.search(pattern, text)
     if match:
-        # Strip trailing HTML tags just in case
         return re.sub(r'<[^>]+>', '', match.group(1)).strip()
     return ""
 
@@ -108,8 +105,14 @@ def get_appointments():
     global debug_log
     all_appointments = []
     
-    # HARDCODED TEST DATE
-    target_date = datetime(2026, 4, 21).date()
+    # --- SMART TIME SHIFT LOGIC ---
+    now_dt = datetime.now(timezone)
+    if now_dt.hour >= 18:
+        # If it's 6:00 PM or later, look at tomorrow
+        target_date = (now_dt + timedelta(days=1)).date()
+    else:
+        # Otherwise, look at today
+        target_date = now_dt.date()
     
     try:
         response = requests.get(CALENDAR_URL, timeout=15)
@@ -128,11 +131,9 @@ def get_appointments():
                     raw_desc = str(component.get('description', ''))
                     summary = str(component.get('summary', ''))
                     
-                    # Clean out the literal line breaks and html
                     clean_desc = raw_desc.replace('\\n', '\n').replace('\\N', '\n').replace('&nbsp;', ' ')
                     clean_desc = re.sub(r'<[^>]+>', '\n', clean_desc) 
                     
-                    # Log the raw text so we can see it on the map if it fails
                     debug_log += f"<br><b>RAW TEXT SEEN:</b><br>{summary}<br>{clean_desc}<hr>"
                     
                     cliente = extract_var(clean_desc, "Cliente")
@@ -151,8 +152,6 @@ def get_appointments():
                         if not servicio and len(parts) == 2:
                             servicio = parts[1].strip()
 
-                    # --- NUCLEAR MECHANIC SEARCH ---
-                    # Checks anywhere in the description or summary for the email or name
                     desc_lower = clean_desc.lower()
                     sum_lower = summary.lower()
                     
@@ -213,7 +212,6 @@ def generate_map():
             
             arrival_target = app['start_dt']
             
-            # Temporary override for testing: if target date is far in the future, just use arrival time calculations to avoid Google API rejecting future departure times
             if arrival_target.date() > now_dt.date():
                 directions = gmaps.directions(current_loc, app['route_address'], mode="driving")
             elif arrival_target > now_dt:
@@ -252,8 +250,8 @@ def generate_map():
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 4px 2px; color: {leg_color}; width: 6%; white-space: nowrap; vertical-align: middle;">{label_id}</td>
                     <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">{app['start_dt'].strftime('%H:%M')}</td>
-                    <td style="padding: 4px 2px; width: 18%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">{short_cust_name}</td>
-                    <td style="padding: 4px 2px; width: 56%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">{table_address}</td>
+                    <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">{short_cust_name}</td>
+                    <td style="padding: 4px 2px; width: 51%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">{table_address}</td>
                     <td style="padding: 4px 2px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right; vertical-align: middle;">{app['abbrev']}</td>
                 </tr>
                 """
