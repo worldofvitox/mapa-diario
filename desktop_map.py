@@ -8,13 +8,11 @@ import pytz
 from icalendar import Calendar
 import locale
 
-# Try to set locale for Spanish dates, fallback to default if not available
 try:
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 except:
     pass
 
-# --- CONFIGURATION ---
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
@@ -27,56 +25,30 @@ MECHANICS = {
     'Seba': {'palette': ['#007bff', '#28a745', '#17a2b8', '#20c997', '#004085'], 'initial': 'S', 'offset': (-0.00012, -0.00012)}
 }
 
-# Full 48-Item Dictionary mapped from Mobile app
 SERVICE_MAP = {
-    "Armado de Bicicleta a Domicilio Con Cambios": "ARC",
-    "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
-    "Armado de Bicicleta a Domicilio Armado con Optimizado": "ARO",
-    "Armado de Bicicleta a Domicilio Armado Bici Eléctrica Rigida": "ARE",
-    "Armado de Bicicleta a Domicilio Con Retráctil y/o Bloqueo Remoto": "ARB",
-    "Cambio de Juego de Dirección o Horquilla Cambio de Horquilla": "DIR",
-    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion": "DIR",
-    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion y Horquilla": "DIR",
-    "Conversion a Tubeless 1 Rueda": "TUB",
-    "Conversion a Tubeless Con Inserto / Cushcore": "TUB",
-    "Conversion a Tubeless": "TUB",
-    "Desenrayado y Enrayado de Rueda de Bicicleta": "DES",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 1 Bici": "CL1",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 2 Bicis": "CL2",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 3 Bicis": "CL3",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 4 Bicis": "CL4",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 5 Bicis": "CL5",
-    "Mantencion Clasica de Bicicleta": "CL1",
-    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 1 Bici": "PR1",
-    "Mantención de Bicicleta a Domicilio Mantencion Clasica 1 Bici": "CL1",
-    "Mantención de Bicicleta a Domicilio Mantencion Profunda 1 Bici": "PF1",
-    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 2 Bicis": "PR2",
-    "Mantención de Bicicleta a Domicilio Mantencion Clasica 2 Bicis": "CL2",
-    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 3 Bicis": "PR3",
-    "Mantención de Bicicleta a Domicilio Mantencion Base Electrica": "ELR",
-    "Mantención de Bicicleta a Domicilio Mantencion Base Ruta Aero / Triatlon": "TR1",
-    "Mantención de Bicicleta a Domicilio Mantencion Profunda 2 Bicis": "PF2",
-    "Mantención de Bicicleta a Domicilio Mantencion Clasica 3 Bicis": "CL3",
-    "Mantención de Bicicleta a Domicilio Mantencion Profunda 3 Bicis": "PF3",
-    "Mantención de Bicicleta Electrica Mant. Electrica Rigida": "ELR",
-    "Mantención de Bicicleta Electrica Mant. Elect. Doble Susp.": "ELD",
-    "Mantencion de Bicicleta Ruta Aero o de Triatlón 1 Bicicleta": "TR1",
-    "Mantencion de Bicicleta Ruta Aero o de Triatlón 2 Bicicletas": "TR2",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 1 Bici": "PR1",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 2 Bicis": "PR2",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 3 Bicis": "PR3",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 4 Bicis": "PR4",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 5 Bicis": "PR5",
-    "Mantención Preventiva de Bicicletas": "PR1",
-    "Mantencion Profunda de Bicicleta Mant. Profunda 1 Bici": "PF1",
-    "Mantencion Profunda de Bicicleta Mant. Profunda 2 Bicis": "PF2",
-    "Mantencion Profunda de Bicicleta Mant. Profunda 4 Bicis": "PF4",
-    "Reparacion de Hilo (Inserto Helicoil)": "HEL",
-    "Reparacion de Hilo de Cuadro/Horquilla (Rivnut)": "RIV",
-    "Sangrado de Freno Hidráulico": "SAN",
-    "Servicio de Amortiguador Trasero / Shock de aire": "SUR",
-    "Servicio de Horquilla de Suspension": "SUF",
-    "Visita Mecanica": "VM"
+    "Armado de Bicicleta a Domicilio Con Cambios": "ARC", "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
+    "Armado de Bicicleta a Domicilio Armado con Optimizado": "ARO", "Armado de Bicicleta a Domicilio Armado Bici Eléctrica Rigida": "ARE",
+    "Armado de Bicicleta a Domicilio Con Retráctil y/o Bloqueo Remoto": "ARB", "Cambio de Juego de Dirección o Horquilla Cambio de Horquilla": "DIR",
+    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion": "DIR", "Cambio de Juego de Dirección o Horquilla Cambio de Direccion y Horquilla": "DIR",
+    "Conversion a Tubeless 1 Rueda": "TUB", "Conversion a Tubeless Con Inserto / Cushcore": "TUB", "Conversion a Tubeless": "TUB",
+    "Desenrayado y Enrayado de Rueda de Bicicleta": "DES", "Mantencion Clasica de Bicicleta Mant. Clasica 1 Bici": "CL1",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 2 Bicis": "CL2", "Mantencion Clasica de Bicicleta Mant. Clasica 3 Bicis": "CL3",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 4 Bicis": "CL4", "Mantencion Clasica de Bicicleta Mant. Clasica 5 Bicis": "CL5",
+    "Mantencion Clasica de Bicicleta": "CL1", "Mantención de Bicicleta a Domicilio Mantencion Preventiva 1 Bici": "PR1",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 1 Bici": "CL1", "Mantención de Bicicleta a Domicilio Mantencion Profunda 1 Bici": "PF1",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 2 Bicis": "PR2", "Mantención de Bicicleta a Domicilio Mantencion Clasica 2 Bicis": "CL2",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 3 Bicis": "PR3", "Mantención de Bicicleta a Domicilio Mantencion Base Electrica": "ELR",
+    "Mantención de Bicicleta a Domicilio Mantencion Base Ruta Aero / Triatlon": "TR1", "Mantención de Bicicleta a Domicilio Mantencion Profunda 2 Bicis": "PF2",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 3 Bicis": "CL3", "Mantención de Bicicleta a Domicilio Mantencion Profunda 3 Bicis": "PF3",
+    "Mantención de Bicicleta Electrica Mant. Electrica Rigida": "ELR", "Mantención de Bicicleta Electrica Mant. Elect. Doble Susp.": "ELD",
+    "Mantencion de Bicicleta Ruta Aero o de Triatlón 1 Bicicleta": "TR1", "Mantencion de Bicicleta Ruta Aero o de Triatlón 2 Bicicletas": "TR2",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 1 Bici": "PR1", "Mantención Preventiva de Bicicletas Mant. Preventiva 2 Bicis": "PR2",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 3 Bicis": "PR3", "Mantención Preventiva de Bicicletas Mant. Preventiva 4 Bicis": "PR4",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 5 Bicis": "PR5", "Mantención Preventiva de Bicicletas": "PR1",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 1 Bici": "PF1", "Mantencion Profunda de Bicicleta Mant. Profunda 2 Bicis": "PF2",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 4 Bicis": "PF4", "Reparacion de Hilo (Inserto Helicoil)": "HEL",
+    "Reparacion de Hilo de Cuadro/Horquilla (Rivnut)": "RIV", "Sangrado de Freno Hidráulico": "SAN",
+    "Servicio de Amortiguador Trasero / Shock de aire": "SUR", "Servicio de Horquilla de Suspension": "SUF", "Visita Mecanica": "VM"
 }
 
 CARD_STYLE = (
@@ -87,6 +59,7 @@ CARD_STYLE = (
 )
 
 WAZE_ICON_URL = "waze.png" 
+debug_log = ""
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -98,6 +71,7 @@ def extract_var(text, key):
     return ""
 
 def get_all_appointments():
+    global debug_log
     all_appointments = []
     try:
         response = requests.get(CALENDAR_URL, timeout=15)
@@ -132,12 +106,9 @@ def get_all_appointments():
                     if not servicio and len(parts) == 2: servicio = parts[1].strip()
 
                 desc_lower, sum_lower = clean_desc.lower(), summary.lower()
-                if "sebadechum" in desc_lower or "sebadechum" in sum_lower:
-                    mechanic_name = "Seba"
-                elif "juandechum" in desc_lower or "juandechum" in sum_lower:
-                    mechanic_name = "Juan"
-                else:
-                    continue
+                if "sebadechum" in desc_lower or "sebadechum" in sum_lower: mechanic_name = "Seba"
+                elif "juandechum" in desc_lower or "juandechum" in sum_lower: mechanic_name = "Juan"
+                else: continue
                 
                 abbrev = "SRV"
                 for key, code in sorted(SERVICE_MAP.items(), key=lambda x: len(x[0]), reverse=True):
@@ -146,15 +117,9 @@ def get_all_appointments():
                         break
                         
                 all_appointments.append({
-                    'name': cliente, 
-                    'address1': address1,
-                    'address2': address2,
-                    'comuna': comuna,
+                    'name': cliente, 'address1': address1, 'address2': address2, 'comuna': comuna,
                     'route_address': f"{address1}, {comuna}, Santiago, Chile".strip(', '),
-                    'service': servicio, 
-                    'mechanic': mechanic_name, 
-                    'start_dt': start_dt, 
-                    'abbrev': abbrev
+                    'service': servicio, 'mechanic': mechanic_name, 'start_dt': start_dt, 'abbrev': abbrev
                 })
     except Exception as e: print(f"Error fetching: {e}")
     return all_appointments
@@ -165,7 +130,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     
     day_apps = [a for a in all_apps if a['start_dt'].date() == target_date]
     
-    # 1. LAYER PICKER FIX: Set tiles=None here, add cartodbpositron with control=False
     m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
@@ -187,13 +151,9 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             leg_color = info['palette'][i % len(info['palette'])]
             
             arrival_target = app['start_dt']
-            
-            if arrival_target.date() > now_dt.date():
-                directions = gmaps.directions(current_loc, app['route_address'], mode="driving")
-            elif arrival_target > now_dt:
-                directions = gmaps.directions(current_loc, app['route_address'], mode="driving", arrival_time=arrival_target)
-            else:
-                directions = gmaps.directions(current_loc, app['route_address'], mode="driving", departure_time=now_dt)
+            if arrival_target.date() > now_dt.date(): directions = gmaps.directions(current_loc, app['route_address'], mode="driving")
+            elif arrival_target > now_dt: directions = gmaps.directions(current_loc, app['route_address'], mode="driving", arrival_time=arrival_target)
+            else: directions = gmaps.directions(current_loc, app['route_address'], mode="driving", departure_time=now_dt)
 
             if directions:
                 leg = directions[0]['legs'][0]
@@ -208,7 +168,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 points = apply_offset(raw_pts, info['offset'])
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
-                # 2 & 3. TRAFFIC & APPOINTMENT PILLS (Exact match to mobile version)
                 mid = points[len(points)//2]
                 waze_link = f"https://waze.com/ul?ll={leg['end_location']['lat']},{leg['end_location']['lng']}&navigate=yes"
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:{leg_color}; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{label_id} / {departure_dt.strftime('%H:%M')} / {buffered_mins} min</div></a>''')).add_to(fg)
@@ -218,9 +177,8 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:none;">{app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1} / {app["abbrev"]}</div>')).add_to(fg)
 
-                # 4. RIGHT PANEL TABLE (Uncapped variables, clean format)
                 full_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
-                full_address = re.sub(r'\s+', ' ', full_address) # Collapse double spaces safely
+                full_address = re.sub(r'\s+', ' ', full_address) 
                 
                 side_panel_html += f"""
                 <div style="padding: 10px 15px; border-bottom: 1px solid #ddd; background: white; font-family: sans-serif; display: flex; align-items: center;">
@@ -233,14 +191,37 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 </div>
                 """
                 current_loc = app['route_address']
+                
+        # --- RETURN TO BASE LOGIC ---
+        if mech_apps:
+            base_str = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
+            # Estimate departure for return trip 1 hour after the last appointment starts
+            return_target = mech_apps[-1]['start_dt'] + timedelta(hours=1)
+            
+            if return_target.date() > now_dt.date(): directions = gmaps.directions(current_loc, base_str, mode="driving")
+            elif return_target > now_dt: directions = gmaps.directions(current_loc, base_str, mode="driving", departure_time=return_target)
+            else: directions = gmaps.directions(current_loc, base_str, mode="driving", departure_time=now_dt)
+
+            if directions:
+                leg = directions[0]['legs'][0]
+                raw_seconds = leg.get('duration_in_traffic', leg['duration'])['value']
+                buffered_mins = round((raw_seconds * 1.07) / 60)
+                
+                raw_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])]
+                all_points.extend(raw_pts)
+                points = apply_offset(raw_pts, info['offset'])
+                
+                # Draw dashed line to indicate return trip
+                folium.PolyLine(points, color=info['palette'][0], weight=5, opacity=0.6, dash_array='7, 7').add_to(fg)
+                
+                mid = points[len(points)//2]
+                waze_link = f"https://waze.com/ul?ll={BASE_LOCATION[0]},{BASE_LOCATION[1]}&navigate=yes"
+                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#666; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">Base / {buffered_mins} min</div></a>''')).add_to(fg)
 
     folium.LayerControl(collapsed=False).add_to(m)
     
-    if len(all_points) > 1:
-        m.fit_bounds(all_points)
-
-    if len(day_apps) == 0:
-        side_panel_html += "<div style='padding:20px; text-align:center; color:#888; font-family:sans-serif;'>No hay rutas programadas para este día.</div>"
+    if len(all_points) > 1: m.fit_bounds(all_points)
+    if len(day_apps) == 0: side_panel_html += "<div style='padding:20px; text-align:center; color:#888; font-family:sans-serif;'>No hay rutas programadas para este día.</div>"
 
     carousel_html = f"""
     <div style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 8px 20px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 20px; font-family: sans-serif; font-weight: bold; font-size: 14px; border: 1px solid #eee;">
@@ -271,10 +252,8 @@ if __name__ == "__main__":
     all_apps = get_all_appointments()
     now_dt = datetime.now(timezone)
     
-    if now_dt.hour >= 18:
-        base_date = (now_dt + timedelta(days=1)).date()
-    else:
-        base_date = now_dt.date()
+    if now_dt.hour >= 18: base_date = (now_dt + timedelta(days=1)).date()
+    else: base_date = now_dt.date()
         
     print(f"Base logic date set to: {base_date}")
 
