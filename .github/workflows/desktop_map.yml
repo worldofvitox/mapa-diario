@@ -1,16 +1,16 @@
-name: Generate Desktop Map
+name: Master Map Generator
 
 on:
-  # 1. THE CRON: Runs automatically every 30 minutes to catch passive changes
   schedule:
     - cron: '*/30 * * * *'
-  
-  # 2. THE WEBHOOK: Allows Zapier/Make to trigger this instantly
   repository_dispatch:
     types: [calendar_update]
-    
-  # 3. MANUAL: Allows you to click "Run Workflow" in GitHub
   workflow_dispatch:
+
+# --- THE ARMOR: Prevents double-triggers from crashing the system ---
+concurrency:
+  group: map-generation
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -28,15 +28,26 @@ jobs:
         run: |
           pip install requests googlemaps folium pytz icalendar
 
-      - name: Run Desktop Map Generator
+      - name: Run Mobile Map Generator
+        env:
+          GMAPS_API_KEY: ${{ secrets.GMAPS_API_KEY }}
+        run: python daily_map.py
+
+      - name: Run Desktop Map Generator & Update CSV
         env:
           GMAPS_API_KEY: ${{ secrets.GMAPS_API_KEY }}
         run: python desktop_map.py
 
-      - name: Commit and Push Changes
+      - name: Commit and Push All Changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add desktop_map*.html distances.csv
-          git commit -m "Auto-update desktop planning map" -a || exit 0
-          git push
+          
+          # Add all HTML files and the CSV
+          git add *.html distances.csv
+          
+          git commit -m "Real-time update: Mobile, Desktop, and Distances" -a || exit 0
+          
+          git pull origin main --rebase
+          
+          git push origin main
