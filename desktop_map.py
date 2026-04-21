@@ -8,6 +8,7 @@ import pytz
 from icalendar import Calendar
 import locale
 
+# Try to set locale for Spanish dates, fallback to default if not available
 try:
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 except:
@@ -26,6 +27,7 @@ MECHANICS = {
     'Seba': {'palette': ['#007bff', '#28a745', '#17a2b8', '#20c997', '#004085'], 'initial': 'S', 'offset': (-0.00012, -0.00012)}
 }
 
+# Full 48-Item Dictionary mapped from Mobile app
 SERVICE_MAP = {
     "Armado de Bicicleta a Domicilio Con Cambios": "ARC",
     "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
@@ -163,6 +165,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     
     day_apps = [a for a in all_apps if a['start_dt'].date() == target_date]
     
+    # 1. LAYER PICKER FIX: Set tiles=None here, add cartodbpositron with control=False
     m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
@@ -205,20 +208,19 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 points = apply_offset(raw_pts, info['offset'])
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
-                # Waze / Traffic Pill
+                # 2 & 3. TRAFFIC & APPOINTMENT PILLS (Exact match to mobile version)
                 mid = points[len(points)//2]
                 waze_link = f"https://waze.com/ul?ll={leg['end_location']['lat']},{leg['end_location']['lng']}&navigate=yes"
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:{leg_color}; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{label_id} / {departure_dt.strftime('%H:%M')} / {buffered_mins} min</div></a>''')).add_to(fg)
 
-                # Appointment Pill (Matches Mobile format)
                 short_cust_name = app['name'][:20]
                 display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:none;">{app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1} / {app["abbrev"]}</div>')).add_to(fg)
 
-                # Desktop Side Panel Card (Uncapped, precise variables)
+                # 4. RIGHT PANEL TABLE (Uncapped variables, clean format)
                 full_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
-                full_address = re.sub(r'\s+', ' ', full_address) # Collapse double spaces if Address2 is empty
+                full_address = re.sub(r'\s+', ' ', full_address) # Collapse double spaces safely
                 
                 side_panel_html += f"""
                 <div style="padding: 10px 15px; border-bottom: 1px solid #ddd; background: white; font-family: sans-serif; display: flex; align-items: center;">
@@ -226,7 +228,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                     <div style="flex-grow: 1;">
                         <div style="font-weight: bold; font-size: 13px; color: #333;">{app['start_dt'].strftime('%H:%M')} - {app['name']}</div>
                         <div style="font-size: 11px; color: #666; margin-top: 3px;">{full_address}</div>
-                        <div style="font-size: 10px; color: #888; margin-top: 2px;">{app['service']} | {app['comuna']}</div>
+                        <div style="font-size: 11px; color: #555; margin-top: 2px;">{app['service']}</div>
                     </div>
                 </div>
                 """
@@ -248,7 +250,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </div>
     """
     
-    # Layer Picker formatting (Ruta title) is added into the CSS here
     desktop_layout = f"""
     <style>
         body, html {{ margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; }}
