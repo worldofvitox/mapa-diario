@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_c919e27884c44f6ebc388ea642991a58 {
+                #map_aa0b9f6b0d1a52d0a60004b7665a8eee {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -55,13 +55,37 @@
     
     
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; }
-        .leaflet-container { width: 70vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; font-family: sans-serif; }
+        .leaflet-container { width: 65vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }
         .leaflet-control-layers-list::before { content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: sans-serif;}
         .leaflet-control-layers-base { display: none; }
+        
+        /* Custom scrollbar for planner */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #aaa; }
     </style>
-    <div id="desktop-side-panel" style="width: 30vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; overflow-y: auto; border-left: 2px solid #ddd; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05);">
-        <div style='padding:15px; background:#343a40; color:white; font-size:18px; font-weight:bold;'>Planificación: Sat, 25 apr</div><div style='padding:20px; text-align:center; color:#888; font-family:sans-serif;'>No hay rutas programadas para este día.</div>
+    
+    <div id="desktop-side-panel" style="width: 35vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+        <div style="padding: 12px 15px; background: #343a40; color: white; font-size: 16px; font-weight: bold; flex-shrink: 0; text-align: center;">
+            Planificación Diaria: Sat, 25 apr
+        </div>
+        <div style="display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; width: 100%;">
+            
+        <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ddd; min-width: 0;">
+            <div style="background: #dc3545; color: white; font-weight: bold; font-size: 13px; text-align: center; height: 35px; box-sizing: border-box; flex-shrink: 0; display:flex; align-items:center; justify-content:center;">Ruta Juan</div>
+            <div style="flex-grow: 1; overflow-y: auto; overflow-x: hidden; background: white; position: relative;">
+                <div style="height: 810px; position: relative; width: 100%;">
+                    <div style="position:absolute; top:0px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:2px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">09:00</div><div style="position:absolute; top:90px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:92px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">10:00</div><div style="position:absolute; top:180px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:182px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">11:00</div><div style="position:absolute; top:270px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:272px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">12:00</div><div style="position:absolute; top:360px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:362px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">13:00</div><div style="position:absolute; top:450px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:452px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">14:00</div><div style="position:absolute; top:540px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:542px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">15:00</div><div style="position:absolute; top:630px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:632px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">16:00</div><div style="position:absolute; top:720px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:722px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">17:00</div><div style="position:absolute; top:810px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:812px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">18:00</div>
+        </div></div></div>
+        <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ddd; min-width: 0;">
+            <div style="background: #007bff; color: white; font-weight: bold; font-size: 13px; text-align: center; height: 35px; box-sizing: border-box; flex-shrink: 0; display:flex; align-items:center; justify-content:center;">Ruta Seba</div>
+            <div style="flex-grow: 1; overflow-y: auto; overflow-x: hidden; background: white; position: relative;">
+                <div style="height: 810px; position: relative; width: 100%;">
+                    <div style="position:absolute; top:0px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:2px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">09:00</div><div style="position:absolute; top:90px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:92px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">10:00</div><div style="position:absolute; top:180px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:182px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">11:00</div><div style="position:absolute; top:270px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:272px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">12:00</div><div style="position:absolute; top:360px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:362px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">13:00</div><div style="position:absolute; top:450px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:452px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">14:00</div><div style="position:absolute; top:540px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:542px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">15:00</div><div style="position:absolute; top:630px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:632px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">16:00</div><div style="position:absolute; top:720px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:722px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">17:00</div><div style="position:absolute; top:810px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:812px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">18:00</div>
+        </div></div></div>
+        </div>
     </div>
     
     <div style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 8px 20px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 20px; font-family: sans-serif; font-weight: bold; font-size: 14px; border: 1px solid #eee;">
@@ -72,14 +96,14 @@
     
     
     
-            <div class="folium-map" id="map_c919e27884c44f6ebc388ea642991a58" ></div>
+            <div class="folium-map" id="map_aa0b9f6b0d1a52d0a60004b7665a8eee" ></div>
         
 </body>
 <script>
     
     
-            var map_c919e27884c44f6ebc388ea642991a58 = L.map(
-                "map_c919e27884c44f6ebc388ea642991a58",
+            var map_aa0b9f6b0d1a52d0a60004b7665a8eee = L.map(
+                "map_aa0b9f6b0d1a52d0a60004b7665a8eee",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -96,7 +120,7 @@
 
         
     
-            var tile_layer_b10790015468f8754afecd4cd12b9ffe = L.tileLayer(
+            var tile_layer_6637f48102a1dc773798837c9daa07a8 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -113,17 +137,17 @@
             );
         
     
-            tile_layer_b10790015468f8754afecd4cd12b9ffe.addTo(map_c919e27884c44f6ebc388ea642991a58);
+            tile_layer_6637f48102a1dc773798837c9daa07a8.addTo(map_aa0b9f6b0d1a52d0a60004b7665a8eee);
         
     
-            var marker_e14c7a93378afa658e4cefade7b0eff2 = L.marker(
+            var marker_153fdd921fa9bce3cc2e69ef3fa501f5 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_c919e27884c44f6ebc388ea642991a58);
+            ).addTo(map_aa0b9f6b0d1a52d0a60004b7665a8eee);
         
     
-            var icon_344110f2f31e0fcfea5fb1ba56f66680 = L.AwesomeMarkers.icon(
+            var icon_3cb1c245d5fdeae0ff8f6aa38f35c032 = L.AwesomeMarkers.icon(
                 {
   "markerColor": "black",
   "iconColor": "white",
@@ -134,44 +158,44 @@
             );
         
     
-                marker_e14c7a93378afa658e4cefade7b0eff2.setIcon(icon_344110f2f31e0fcfea5fb1ba56f66680);
+                marker_153fdd921fa9bce3cc2e69ef3fa501f5.setIcon(icon_3cb1c245d5fdeae0ff8f6aa38f35c032);
             
     
-            var feature_group_67bbcda38fe3f005e185fe46a8a674a6 = L.featureGroup(
+            var feature_group_90fd948cf9c7d80d5383e047848391a1 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_67bbcda38fe3f005e185fe46a8a674a6.addTo(map_c919e27884c44f6ebc388ea642991a58);
+            feature_group_90fd948cf9c7d80d5383e047848391a1.addTo(map_aa0b9f6b0d1a52d0a60004b7665a8eee);
         
     
-            var feature_group_fe643801f56a835d49b7574a7fd0085d = L.featureGroup(
+            var feature_group_d3edfc8cd4a84cb9fc74b0bec28ea052 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_fe643801f56a835d49b7574a7fd0085d.addTo(map_c919e27884c44f6ebc388ea642991a58);
+            feature_group_d3edfc8cd4a84cb9fc74b0bec28ea052.addTo(map_aa0b9f6b0d1a52d0a60004b7665a8eee);
         
     
-            var layer_control_91d3a3c0ccdc568aee82d4bd98803648_layers = {
+            var layer_control_05bd990b24c2d83ed5fcaafa7b29dd3e_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_67bbcda38fe3f005e185fe46a8a674a6,
-                    "Seba" : feature_group_fe643801f56a835d49b7574a7fd0085d,
+                    "Juan" : feature_group_90fd948cf9c7d80d5383e047848391a1,
+                    "Seba" : feature_group_d3edfc8cd4a84cb9fc74b0bec28ea052,
                 },
             };
-            let layer_control_91d3a3c0ccdc568aee82d4bd98803648 = L.control.layers(
-                layer_control_91d3a3c0ccdc568aee82d4bd98803648_layers.base_layers,
-                layer_control_91d3a3c0ccdc568aee82d4bd98803648_layers.overlays,
+            let layer_control_05bd990b24c2d83ed5fcaafa7b29dd3e = L.control.layers(
+                layer_control_05bd990b24c2d83ed5fcaafa7b29dd3e_layers.base_layers,
+                layer_control_05bd990b24c2d83ed5fcaafa7b29dd3e_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_c919e27884c44f6ebc388ea642991a58);
+            ).addTo(map_aa0b9f6b0d1a52d0a60004b7665a8eee);
 
         
 </script>

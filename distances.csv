@@ -1,7 +1,17 @@
-Date,Juan_km,Seba_km,Total_km
-2026-04-20,0.0,0.0,0.0
-2026-04-21,26.4,22.65,49.05
-2026-04-22,42.87,34.52,77.39
-2026-04-23,7.77,0.0,7.77
-2026-04-24,29.5,17.49,46.99
-2026-04-25,0.0,0.0,0.0
+Date,Mechanic,ID,Client,Type,Distance_km
+2026-04-23,Juan,16778674,Nicolas Garrido,Ruta a Cliente,4.26
+2026-04-23,Juan,16785889,Jose Goycoolea,Ruta a Cliente,5.01
+2026-04-23,Juan,16785983,Emilio Chavez Northland,Ruta a Cliente,5.53
+2026-04-23,Juan,16786279,Felipe Valencia Cornejo,Ruta a Cliente,3.06
+2026-04-23,Juan,RETURN,BASE,Retorno a Base,3.39
+2026-04-23,Seba,16750815,Claudio Rojas Palma,Ruta a Cliente,6.69
+2026-04-23,Seba,16785871,Hernan Vergara Peña,Ruta a Cliente,11.98
+2026-04-23,Seba,16786548,Samuel Mora Arribillaga,Ruta a Cliente,7.01
+2026-04-23,Seba,16786702,Maria Jose Muñoz,Ruta a Cliente,6.76
+2026-04-23,Seba,RETURN,BASE,Retorno a Base,6.39
+2026-04-24,Juan,16779259,Gabriela Ketter Acevedo,Ruta a Cliente,5.11
+2026-04-24,Juan,16787917,Gabriel Valenzuela,Ruta a Cliente,4.62
+2026-04-24,Juan,RETURN,BASE,Retorno a Base,6.88
+2026-04-24,Seba,16781277,Antonio Menares,Ruta a Cliente,6.8
+2026-04-24,Seba,16786991,Julian Silva Espejo,Ruta a Cliente,6.41
+2026-04-24,Seba,RETURN,BASE,Retorno a Base,9.1
