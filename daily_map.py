@@ -22,54 +22,29 @@ MECHANICS = {
 }
 
 SERVICE_MAP = {
-    "Armado de Bicicleta a Domicilio Con Cambios": "ARC",
-    "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
-    "Armado de Bicicleta a Domicilio Armado con Optimizado": "ARO",
-    "Armado de Bicicleta a Domicilio Armado Bici Eléctrica Rigida": "ARE",
-    "Armado de Bicicleta a Domicilio Con Retráctil y/o Bloqueo Remoto": "ARB",
-    "Cambio de Juego de Dirección o Horquilla Cambio de Horquilla": "DIR",
-    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion": "DIR",
-    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion y Horquilla": "DIR",
-    "Conversion a Tubeless 1 Rueda": "TUB",
-    "Conversion a Tubeless Con Inserto / Cushcore": "TUB",
-    "Conversion a Tubeless": "TUB",
-    "Desenrayado y Enrayado de Rueda de Bicicleta": "DES",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 1 Bici": "CL1",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 2 Bicis": "CL2",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 3 Bicis": "CL3",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 4 Bicis": "CL4",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 5 Bicis": "CL5",
-    "Mantencion Clasica de Bicicleta": "CL1",
-    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 1 Bici": "PR1",
-    "Mantención de Bicicleta a Domicilio Mantencion Clasica 1 Bici": "CL1",
-    "Mantención de Bicicleta a Domicilio Mantencion Profunda 1 Bici": "PF1",
-    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 2 Bicis": "PR2",
-    "Mantención de Bicicleta a Domicilio Mantencion Clasica 2 Bicis": "CL2",
-    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 3 Bicis": "PR3",
-    "Mantención de Bicicleta a Domicilio Mantencion Base Electrica": "ELR",
-    "Mantención de Bicicleta a Domicilio Mantencion Base Ruta Aero / Triatlon": "TR1",
-    "Mantención de Bicicleta a Domicilio Mantencion Profunda 2 Bicis": "PF2",
-    "Mantención de Bicicleta a Domicilio Mantencion Clasica 3 Bicis": "CL3",
-    "Mantención de Bicicleta a Domicilio Mantencion Profunda 3 Bicis": "PF3",
-    "Mantención de Bicicleta Electrica Mant. Electrica Rigida": "ELR",
-    "Mantención de Bicicleta Electrica Mant. Elect. Doble Susp.": "ELD",
-    "Mantencion de Bicicleta Ruta Aero o de Triatlón 1 Bicicleta": "TR1",
-    "Mantencion de Bicicleta Ruta Aero o de Triatlón 2 Bicicletas": "TR2",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 1 Bici": "PR1",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 2 Bicis": "PR2",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 3 Bicis": "PR3",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 4 Bicis": "PR4",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 5 Bicis": "PR5",
-    "Mantención Preventiva de Bicicletas": "PR1",
-    "Mantencion Profunda de Bicicleta Mant. Profunda 1 Bici": "PF1",
-    "Mantencion Profunda de Bicicleta Mant. Profunda 2 Bicis": "PF2",
-    "Mantencion Profunda de Bicicleta Mant. Profunda 4 Bicis": "PF4",
-    "Reparacion de Hilo (Inserto Helicoil)": "HEL",
-    "Reparacion de Hilo de Cuadro/Horquilla (Rivnut)": "RIV",
-    "Sangrado de Freno Hidráulico": "SAN",
-    "Servicio de Amortiguador Trasero / Shock de aire": "SUR",
-    "Servicio de Horquilla de Suspension": "SUF",
-    "Visita Mecanica": "VM"
+    "Armado de Bicicleta a Domicilio Con Cambios": "ARC", "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
+    "Armado de Bicicleta a Domicilio Armado con Optimizado": "ARO", "Armado de Bicicleta a Domicilio Armado Bici Eléctrica Rigida": "ARE",
+    "Armado de Bicicleta a Domicilio Con Retráctil y/o Bloqueo Remoto": "ARB", "Cambio de Juego de Dirección o Horquilla Cambio de Horquilla": "DIR",
+    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion": "DIR", "Cambio de Juego de Dirección o Horquilla Cambio de Direccion y Horquilla": "DIR",
+    "Conversion a Tubeless 1 Rueda": "TUB", "Conversion a Tubeless Con Inserto / Cushcore": "TUB", "Conversion a Tubeless": "TUB",
+    "Desenrayado y Enrayado de Rueda de Bicicleta": "DES", "Mantencion Clasica de Bicicleta Mant. Clasica 1 Bici": "CL1",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 2 Bicis": "CL2", "Mantencion Clasica de Bicicleta Mant. Clasica 3 Bicis": "CL3",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 4 Bicis": "CL4", "Mantencion Clasica de Bicicleta Mant. Clasica 5 Bicis": "CL5",
+    "Mantencion Clasica de Bicicleta": "CL1", "Mantención de Bicicleta a Domicilio Mantencion Preventiva 1 Bici": "PR1",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 1 Bici": "CL1", "Mantención de Bicicleta a Domicilio Mantencion Profunda 1 Bici": "PF1",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 2 Bicis": "PR2", "Mantención de Bicicleta a Domicilio Mantencion Clasica 2 Bicis": "CL2",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 3 Bicis": "PR3", "Mantención de Bicicleta a Domicilio Mantencion Base Electrica": "ELR",
+    "Mantención de Bicicleta a Domicilio Mantencion Base Ruta Aero / Triatlon": "TR1", "Mantención de Bicicleta a Domicilio Mantencion Profunda 2 Bicis": "PF2",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 3 Bicis": "CL3", "Mantención de Bicicleta a Domicilio Mantencion Profunda 3 Bicis": "PF3",
+    "Mantención de Bicicleta Electrica Mant. Electrica Rigida": "ELR", "Mantención de Bicicleta Electrica Mant. Elect. Doble Susp.": "ELD",
+    "Mantencion de Bicicleta Ruta Aero o de Triatlón 1 Bicicleta": "TR1", "Mantencion de Bicicleta Ruta Aero o de Triatlón 2 Bicicletas": "TR2",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 1 Bici": "PR1", "Mantención Preventiva de Bicicletas Mant. Preventiva 2 Bicis": "PR2",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 3 Bicis": "PR3", "Mantención Preventiva de Bicicletas Mant. Preventiva 4 Bicis": "PR4",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 5 Bicis": "PR5", "Mantención Preventiva de Bicicletas": "PR1",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 1 Bici": "PF1", "Mantencion Profunda de Bicicleta Mant. Profunda 2 Bicis": "PF2",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 4 Bicis": "PF4", "Reparacion de Hilo (Inserto Helicoil)": "HEL",
+    "Reparacion de Hilo de Cuadro/Horquilla (Rivnut)": "RIV", "Sangrado de Freno Hidráulico": "SAN",
+    "Servicio de Amortiguador Trasero / Shock de aire": "SUR", "Servicio de Horquilla de Suspension": "SUF", "Visita Mecanica": "VM"
 }
 
 CARD_STYLE = (
@@ -151,7 +126,6 @@ def get_appointments():
                     })
     except Exception as e: print(f"Error fetching live ICS: {e}")
 
-    # --- MEMORY CACHE LOGIC ---
     cache = {}
     if os.path.exists(CACHE_FILE):
         try:
@@ -174,7 +148,7 @@ def get_appointments():
     final_apps = []
     for uid, app in merged.items():
         app['start_dt'] = datetime.fromisoformat(app['start_dt'])
-        if app['start_dt'].date() == target_date: # Mobile filter
+        if app['start_dt'].date() == target_date: 
             final_apps.append(app)
 
     return final_apps
@@ -242,7 +216,6 @@ def generate_map():
                 """
                 current_loc = app['route_address']
 
-        # --- RETURN TO BASE LOGIC ---
         if mech_apps:
             base_str = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
             return_target = mech_apps[-1]['start_dt'] + timedelta(hours=1)
@@ -265,11 +238,10 @@ def generate_map():
                 mid = points[len(points)//2]
                 waze_link = f"https://waze.com/ul?ll={BASE_LOCATION[0]},{BASE_LOCATION[1]}&navigate=yes"
                 
-                # ISSUE 2 FIX: ADD J4 / S5 to Base Return
-                base_label = f"{info['initial']}{len(mech_apps)}"
+                # BUGFIX: Added + 1 to the len()
+                base_label = f"{info['initial']}{len(mech_apps) + 1}"
                 
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#666; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{base_label} / Base / {buffered_mins} min</div></a>''')).add_to(fg)
-
 
     folium.LayerControl(collapsed=False).add_to(m)
 
