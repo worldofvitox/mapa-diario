@@ -7,7 +7,6 @@ on:
     types: [calendar_update]
   workflow_dispatch:
 
-# --- THE ARMOR: Prevents double-triggers from crashing the system ---
 concurrency:
   group: map-generation
   cancel-in-progress: true
@@ -43,10 +42,10 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          # Add all HTML files and the CSV and the distance cache
-          git add *.html distances.csv appointments_cache.json
+          # Use -A to tell Git "Add whatever files you see, ignore the rest"
+          git add -A
           
-          git commit -m "Real-time update: Mobile, Desktop, and Distances" -a || exit 0
+          git commit -m "Real-time update: Mobile, Desktop, Distances, and Memory Cache" -a || exit 0
           
           git pull origin main --rebase
           

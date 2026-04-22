@@ -29,29 +29,54 @@ MECHANICS = {
 }
 
 SERVICE_MAP = {
-    "Armado de Bicicleta a Domicilio Con Cambios": "ARC", "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
-    "Armado de Bicicleta a Domicilio Armado con Optimizado": "ARO", "Armado de Bicicleta a Domicilio Armado Bici Eléctrica Rigida": "ARE",
-    "Armado de Bicicleta a Domicilio Con Retráctil y/o Bloqueo Remoto": "ARB", "Cambio de Juego de Dirección o Horquilla Cambio de Horquilla": "DIR",
-    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion": "DIR", "Cambio de Juego de Dirección o Horquilla Cambio de Direccion y Horquilla": "DIR",
-    "Conversion a Tubeless 1 Rueda": "TUB", "Conversion a Tubeless Con Inserto / Cushcore": "TUB", "Conversion a Tubeless": "TUB",
-    "Desenrayado y Enrayado de Rueda de Bicicleta": "DES", "Mantencion Clasica de Bicicleta Mant. Clasica 1 Bici": "CL1",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 2 Bicis": "CL2", "Mantencion Clasica de Bicicleta Mant. Clasica 3 Bicis": "CL3",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 4 Bicis": "CL4", "Mantencion Clasica de Bicicleta Mant. Clasica 5 Bicis": "CL5",
-    "Mantencion Clasica de Bicicleta": "CL1", "Mantención de Bicicleta a Domicilio Mantencion Preventiva 1 Bici": "PR1",
-    "Mantención de Bicicleta a Domicilio Mantencion Clasica 1 Bici": "CL1", "Mantención de Bicicleta a Domicilio Mantencion Profunda 1 Bici": "PF1",
-    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 2 Bicis": "PR2", "Mantención de Bicicleta a Domicilio Mantencion Clasica 2 Bicis": "CL2",
-    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 3 Bicis": "PR3", "Mantención de Bicicleta a Domicilio Mantencion Base Electrica": "ELR",
-    "Mantención de Bicicleta a Domicilio Mantencion Base Ruta Aero / Triatlon": "TR1", "Mantención de Bicicleta a Domicilio Mantencion Profunda 2 Bicis": "PF2",
-    "Mantención de Bicicleta a Domicilio Mantencion Clasica 3 Bicis": "CL3", "Mantención de Bicicleta a Domicilio Mantencion Profunda 3 Bicis": "PF3",
-    "Mantención de Bicicleta Electrica Mant. Electrica Rigida": "ELR", "Mantención de Bicicleta Electrica Mant. Elect. Doble Susp.": "ELD",
-    "Mantencion de Bicicleta Ruta Aero o de Triatlón 1 Bicicleta": "TR1", "Mantencion de Bicicleta Ruta Aero o de Triatlón 2 Bicicletas": "TR2",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 1 Bici": "PR1", "Mantención Preventiva de Bicicletas Mant. Preventiva 2 Bicis": "PR2",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 3 Bicis": "PR3", "Mantención Preventiva de Bicicletas Mant. Preventiva 4 Bicis": "PR4",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 5 Bicis": "PR5", "Mantención Preventiva de Bicicletas": "PR1",
-    "Mantencion Profunda de Bicicleta Mant. Profunda 1 Bici": "PF1", "Mantencion Profunda de Bicicleta Mant. Profunda 2 Bicis": "PF2",
-    "Mantencion Profunda de Bicicleta Mant. Profunda 4 Bicis": "PF4", "Reparacion de Hilo (Inserto Helicoil)": "HEL",
-    "Reparacion de Hilo de Cuadro/Horquilla (Rivnut)": "RIV", "Sangrado de Freno Hidráulico": "SAN",
-    "Servicio de Amortiguador Trasero / Shock de aire": "SUR", "Servicio de Horquilla de Suspension": "SUF", "Visita Mecanica": "VM"
+    "Armado de Bicicleta a Domicilio Con Cambios": "ARC",
+    "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
+    "Armado de Bicicleta a Domicilio Armado con Optimizado": "ARO",
+    "Armado de Bicicleta a Domicilio Armado Bici Eléctrica Rigida": "ARE",
+    "Armado de Bicicleta a Domicilio Con Retráctil y/o Bloqueo Remoto": "ARB",
+    "Cambio de Juego de Dirección o Horquilla Cambio de Horquilla": "DIR",
+    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion": "DIR",
+    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion y Horquilla": "DIR",
+    "Conversion a Tubeless 1 Rueda": "TUB",
+    "Conversion a Tubeless Con Inserto / Cushcore": "TUB",
+    "Conversion a Tubeless": "TUB",
+    "Desenrayado y Enrayado de Rueda de Bicicleta": "DES",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 1 Bici": "CL1",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 2 Bicis": "CL2",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 3 Bicis": "CL3",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 4 Bicis": "CL4",
+    "Mantencion Clasica de Bicicleta Mant. Clasica 5 Bicis": "CL5",
+    "Mantencion Clasica de Bicicleta": "CL1",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 1 Bici": "PR1",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 1 Bici": "CL1",
+    "Mantención de Bicicleta a Domicilio Mantencion Profunda 1 Bici": "PF1",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 2 Bicis": "PR2",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 2 Bicis": "CL2",
+    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 3 Bicis": "PR3",
+    "Mantención de Bicicleta a Domicilio Mantencion Base Electrica": "ELR",
+    "Mantención de Bicicleta a Domicilio Mantencion Base Ruta Aero / Triatlon": "TR1",
+    "Mantención de Bicicleta a Domicilio Mantencion Profunda 2 Bicis": "PF2",
+    "Mantención de Bicicleta a Domicilio Mantencion Clasica 3 Bicis": "CL3",
+    "Mantención de Bicicleta a Domicilio Mantencion Profunda 3 Bicis": "PF3",
+    "Mantención de Bicicleta Electrica Mant. Electrica Rigida": "ELR",
+    "Mantención de Bicicleta Electrica Mant. Elect. Doble Susp.": "ELD",
+    "Mantencion de Bicicleta Ruta Aero o de Triatlón 1 Bicicleta": "TR1",
+    "Mantencion de Bicicleta Ruta Aero o de Triatlón 2 Bicicletas": "TR2",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 1 Bici": "PR1",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 2 Bicis": "PR2",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 3 Bicis": "PR3",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 4 Bicis": "PR4",
+    "Mantención Preventiva de Bicicletas Mant. Preventiva 5 Bicis": "PR5",
+    "Mantención Preventiva de Bicicletas": "PR1",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 1 Bici": "PF1",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 2 Bicis": "PF2",
+    "Mantencion Profunda de Bicicleta Mant. Profunda 4 Bicis": "PF4",
+    "Reparacion de Hilo (Inserto Helicoil)": "HEL",
+    "Reparacion de Hilo de Cuadro/Horquilla (Rivnut)": "RIV",
+    "Sangrado de Freno Hidráulico": "SAN",
+    "Servicio de Amortiguador Trasero / Shock de aire": "SUR",
+    "Servicio de Horquilla de Suspension": "SUF",
+    "Visita Mecanica": "VM"
 }
 
 CARD_STYLE = (
@@ -145,15 +170,12 @@ def get_all_appointments():
     for app in live_apps: merged[app['uid']] = app
     for uid, cached_app in cache.items():
         if uid not in merged:
-            # If past event missing from live feed, it dropped off. Keep it!
-            # If future event missing from live feed, it was cancelled. Toss it.
             if cached_app['start_timestamp'] < now_ts:
                 merged[uid] = cached_app
 
     with open(CACHE_FILE, 'w', encoding='utf-8') as f:
         json.dump(merged, f, ensure_ascii=False, indent=2)
 
-    # Re-hydrate datetimes
     final_apps = []
     for uid, app in merged.items():
         app['start_dt'] = datetime.fromisoformat(app['start_dt'])
@@ -199,7 +221,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 
                 # APPEND TO CSV DATABASE
                 all_legs_data.append({
-                    'Date': date_str, 'Mechanic': name, 'ID': app.get('booking_id', 'MANUAL'),
+                    'Date': date_str, 'Mechanic': name, 'ID': app.get('booking_id') or 'MANUAL',
                     'Client': app['name'], 'Type': 'Ruta a Cliente', 'Distance_km': round(dist_m / 1000, 2)
                 })
                 
@@ -304,21 +326,28 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
 def update_distance_csv():
     file_name = 'distances.csv'
     historical_data = {}
+    expected_fields = ['Date', 'Mechanic', 'ID', 'Client', 'Type', 'Distance_km']
     
+    # 1. Safely parse existing CSV - Ignoring format if it doesn't match EXACTLY
     if os.path.exists(file_name):
-        with open(file_name, 'r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                key = f"{row['Date']}_{row['Mechanic']}_{row['ID']}_{row['Type']}"
-                historical_data[key] = row
+        try:
+            with open(file_name, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                if reader.fieldnames and all(field in reader.fieldnames for field in expected_fields):
+                    for row in reader:
+                        key = f"{row['Date']}_{row['Mechanic']}_{row['ID']}_{row['Type']}"
+                        historical_data[key] = row
+        except Exception as e:
+            print(f"Ignored old CSV format to prevent crash: {e}")
                 
+    # 2. Add in the new legs calculated in this run
     for leg in all_legs_data:
         key = f"{leg['Date']}_{leg['Mechanic']}_{leg['ID']}_{leg['Type']}"
         historical_data[key] = leg
         
+    # 3. Write output safely
     with open(file_name, 'w', newline='', encoding='utf-8') as f:
-        fieldnames = ['Date', 'Mechanic', 'ID', 'Client', 'Type', 'Distance_km']
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=expected_fields)
         writer.writeheader()
         for key in sorted(historical_data.keys()):
             writer.writerow(historical_data[key])
