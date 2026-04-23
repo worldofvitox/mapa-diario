@@ -7,7 +7,8 @@ from datetime import datetime, timedelta
 import pytz
 from icalendar import Calendar
 import json
-import urllib.parse  # NEW: Required to safely encode addresses for Waze
+import urllib.parse
+import csv
 
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
@@ -16,61 +17,11 @@ timezone = pytz.timezone('America/Santiago')
 BASE_LOCATION = [-33.45219480797122, -70.5787333882418] 
 CALENDAR_URL = 'https://calendar.google.com/calendar/ical/c_0e3e9c70ab1527edfef805c43e9fd06dabb0fdfab8e5081f4feb40565337708b%40group.calendar.google.com/private-a534c46e66604fef2e96a3dc4810f688/basic.ics'
 CACHE_FILE = 'appointments_cache.json'
+CONFIG_URL = 'https://docs.google.com/spreadsheets/d/1Sgtl_4Fm88-vVMfCrGxULl1Tg0ekD6rXT-P59hUlVSw/export?format=csv'
 
 MECHANICS = {
-    'Juan': {'palette': ['#dc3545', '#fd7e14', '#e83e8c', '#6f42c1', '#b02a37'], 'initial': 'J', 'offset': (0.00012, 0.00012)},
-    'Seba': {'palette': ['#007bff', '#28a745', '#17a2b8', '#20c997', '#004085'], 'initial': 'S', 'offset': (-0.00012, -0.00012)}
-}
-
-SERVICE_MAP = {
-    "Armado de Bicicleta a Domicilio Con Cambios": "ARC",
-    "Armado de Bicicleta a Domicilio Sin Cambios": "ARS",
-    "Armado de Bicicleta a Domicilio Armado con Optimizado": "ARO",
-    "Armado de Bicicleta a Domicilio Armado Bici Eléctrica Rigida": "ARE",
-    "Armado de Bicicleta a Domicilio Con Retráctil y/o Bloqueo Remoto": "ARB",
-    "Cambio de Juego de Dirección o Horquilla Cambio de Horquilla": "DIR",
-    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion": "DIR",
-    "Cambio de Juego de Dirección o Horquilla Cambio de Direccion y Horquilla": "DIR",
-    "Conversion a Tubeless 1 Rueda": "TUB",
-    "Conversion a Tubeless Con Inserto / Cushcore": "TUB",
-    "Conversion a Tubeless": "TUB",
-    "Desenrayado y Enrayado de Rueda de Bicicleta": "DES",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 1 Bici": "CL1",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 2 Bicis": "CL2",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 3 Bicis": "CL3",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 4 Bicis": "CL4",
-    "Mantencion Clasica de Bicicleta Mant. Clasica 5 Bicis": "CL5",
-    "Mantencion Clasica de Bicicleta": "CL1",
-    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 1 Bici": "PR1",
-    "Mantención de Bicicleta a Domicilio Mantencion Clasica 1 Bici": "CL1",
-    "Mantención de Bicicleta a Domicilio Mantencion Profunda 1 Bici": "PF1",
-    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 2 Bicis": "PR2",
-    "Mantención de Bicicleta a Domicilio Mantencion Clasica 2 Bicis": "CL2",
-    "Mantención de Bicicleta a Domicilio Mantencion Preventiva 3 Bicis": "PR3",
-    "Mantención de Bicicleta a Domicilio Mantencion Base Electrica": "ELR",
-    "Mantención de Bicicleta a Domicilio Mantencion Base Ruta Aero / Triatlon": "TR1",
-    "Mantención de Bicicleta a Domicilio Mantencion Profunda 2 Bicis": "PF2",
-    "Mantención de Bicicleta a Domicilio Mantencion Clasica 3 Bicis": "CL3",
-    "Mantención de Bicicleta a Domicilio Mantencion Profunda 3 Bicis": "PF3",
-    "Mantención de Bicicleta Electrica Mant. Electrica Rigida": "ELR",
-    "Mantención de Bicicleta Electrica Mant. Elect. Doble Susp.": "ELD",
-    "Mantencion de Bicicleta Ruta Aero o de Triatlón 1 Bicicleta": "TR1",
-    "Mantencion de Bicicleta Ruta Aero o de Triatlón 2 Bicicletas": "TR2",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 1 Bici": "PR1",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 2 Bicis": "PR2",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 3 Bicis": "PR3",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 4 Bicis": "PR4",
-    "Mantención Preventiva de Bicicletas Mant. Preventiva 5 Bicis": "PR5",
-    "Mantención Preventiva de Bicicletas": "PR1",
-    "Mantencion Profunda de Bicicleta Mant. Profunda 1 Bici": "PF1",
-    "Mantencion Profunda de Bicicleta Mant. Profunda 2 Bicis": "PF2",
-    "Mantencion Profunda de Bicicleta Mant. Profunda 4 Bicis": "PF4",
-    "Reparacion de Hilo (Inserto Helicoil)": "HEL",
-    "Reparacion de Hilo de Cuadro/Horquilla (Rivnut)": "RIV",
-    "Sangrado de Freno Hidráulico": "SAN",
-    "Servicio de Amortiguador Trasero / Shock de aire": "SUR",
-    "Servicio de Horquilla de Suspension": "SUF",
-    "Visita Mecanica": "VM"
+    'Juan': {'palette': ['#dc3545', '#c82333', '#a71d2a', '#e4606d', '#eb8c95'], 'initial': 'J', 'offset': (0.00012, 0.00012)},
+    'Seba': {'palette': ['#007bff', '#0056b3', '#004085', '#3399ff', '#66b2ff'], 'initial': 'S', 'offset': (-0.00012, -0.00012)}
 }
 
 CARD_STYLE = (
@@ -81,6 +32,38 @@ CARD_STYLE = (
 )
 
 WAZE_ICON_URL = "waze.png" 
+
+# --- DYNAMIC API FETCHER ---
+def get_service_config():
+    config = {}
+    try:
+        response = requests.get(CONFIG_URL, timeout=10)
+        if response.status_code == 200:
+            lines = response.content.decode('utf-8').splitlines()
+            reader = csv.reader(lines)
+            headers = next(reader)
+            
+            srv_idx = next((i for i, h in enumerate(headers) if 'servicio' in h.lower() or 'service' in h.lower() or 'name' in h.lower()), 0)
+            abbr_idx = next((i for i, h in enumerate(headers) if 'abbrev' in h.lower() or 'id' in h.lower()), 1)
+            dur_idx = next((i for i, h in enumerate(headers) if 'duration' in h.lower() or 'duración' in h.lower()), 2)
+            short_idx = next((i for i, h in enumerate(headers) if 'shorthand' in h.lower() or 'corto' in h.lower()), -1)
+            
+            for row in reader:
+                if len(row) > srv_idx:
+                    srv_name = row[srv_idx].strip()
+                    if not srv_name: continue
+                    
+                    abbrev = row[abbr_idx].strip() if abbr_idx != -1 and len(row) > abbr_idx else "SRV"
+                    shorthand = row[short_idx].strip() if short_idx != -1 and len(row) > short_idx else srv_name
+                    
+                    try: duration = int(row[dur_idx].strip())
+                    except: duration = 60
+                    
+                    config[srv_name] = {'abbrev': abbrev, 'duration': duration, 'shorthand': shorthand}
+    except: pass
+    return config
+
+GLOBAL_CONFIG = get_service_config()
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -140,10 +123,15 @@ def get_appointments():
                     elif "juandechum" in desc_lower or "juandechum" in sum_lower: mechanic_name = "Juan"
                     else: continue 
 
-                    abbrev = "SRV" 
-                    for key, code in sorted(SERVICE_MAP.items(), key=lambda x: len(x[0]), reverse=True):
+                    abbrev = "SRV"
+                    duration = 60
+                    shorthand = servicio
+                    
+                    for key, data in sorted(GLOBAL_CONFIG.items(), key=lambda x: len(x[0]), reverse=True):
                         if key.lower() in servicio.lower():
-                            abbrev = code
+                            abbrev = data['abbrev']
+                            duration = data['duration']
+                            shorthand = data['shorthand']
                             break
                             
                     uid = booking_id if booking_id else f"{start_dt.timestamp()}_{mechanic_name}_{cliente}"
@@ -154,7 +142,7 @@ def get_appointments():
                         'route_address': f"{address1}, {comuna}, Santiago, Chile".strip(', '),
                         'service': servicio, 'mechanic': mechanic_name, 
                         'start_dt': start_dt.isoformat(), 'start_timestamp': start_dt.timestamp(), 
-                        'abbrev': abbrev, 'phone': clean_phone
+                        'abbrev': abbrev, 'duration': duration, 'shorthand': shorthand, 'phone': clean_phone
                     })
     except Exception as e: print(f"Error fetching live ICS: {e}")
 
@@ -228,8 +216,6 @@ def generate_map():
 
                 mid = points[len(points)//2]
                 
-                # --- NEW WAZE ADDRESS ENCODING ---
-                # Converts "Address, Comuna, Santiago, Chile" into a URL-safe Waze query
                 encoded_address = urllib.parse.quote(app['route_address'])
                 waze_link = f"https://waze.com/ul?q={encoded_address}&navigate=yes"
                 
@@ -239,6 +225,7 @@ def generate_map():
                 display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
                 
+                # USING SPREADSHEET ABBREV FOR MOBILE MAP PILL
                 pill_content = f'{app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1} / {app["abbrev"]}'
                 
                 if app.get('phone'):
@@ -251,6 +238,7 @@ def generate_map():
                 
                 table_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
                 
+                # USING SPREADSHEET ABBREV FOR BOTTOM TABLE
                 table_rows_html += f"""
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 4px 2px; color: {leg_color}; width: 6%; white-space: nowrap; vertical-align: middle;">{label_id}</td>
@@ -283,13 +271,10 @@ def generate_map():
                 
                 mid = points[len(points)//2]
                 
-                # Base is left as coordinates since there isn't a text address.
                 waze_link = f"https://waze.com/ul?ll={BASE_LOCATION[0]},{BASE_LOCATION[1]}&navigate=yes"
-                
                 base_label = f"{info['initial']}{len(mech_apps) + 1}"
                 
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#666; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{base_label} / Base / {buffered_mins} min</div></a>''')).add_to(fg)
-
 
     folium.LayerControl(collapsed=False).add_to(m)
 
