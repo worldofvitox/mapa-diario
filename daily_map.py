@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import pytz
 from icalendar import Calendar
 import json
+import urllib.parse  # NEW: Required to safely encode addresses for Waze
 
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
@@ -121,7 +122,6 @@ def get_appointments():
                     servicio = extract_var(clean_desc, "Servicio")
                     booking_id = extract_var(clean_desc, "Booking")
                     
-                    # Extract Phone Number
                     raw_phone = extract_var(clean_desc, "Telefono") or extract_var(clean_desc, "Teléfono")
                     clean_phone = re.sub(r'\D', '', raw_phone)
                     if len(clean_phone) == 9:
@@ -227,14 +227,18 @@ def generate_map():
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
                 mid = points[len(points)//2]
-                waze_link = f"https://waze.com/ul?ll={leg['end_location']['lat']},{leg['end_location']['lng']}&navigate=yes"
+                
+                # --- NEW WAZE ADDRESS ENCODING ---
+                # Converts "Address, Comuna, Santiago, Chile" into a URL-safe Waze query
+                encoded_address = urllib.parse.quote(app['route_address'])
+                waze_link = f"https://waze.com/ul?q={encoded_address}&navigate=yes"
+                
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:{leg_color}; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{label_id} / {departure_dt.strftime('%H:%M')} / {buffered_mins} min</div></a>''')).add_to(fg)
 
                 short_cust_name = app['name'][:20]
                 display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
                 
-                # --- NEW WHATSAPP PILL LOGIC ---
                 pill_content = f'{app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1} / {app["abbrev"]}'
                 
                 if app.get('phone'):
@@ -278,6 +282,8 @@ def generate_map():
                 folium.PolyLine(points, color=info['palette'][0], weight=5, opacity=0.6, dash_array='7, 7').add_to(fg)
                 
                 mid = points[len(points)//2]
+                
+                # Base is left as coordinates since there isn't a text address.
                 waze_link = f"https://waze.com/ul?ll={BASE_LOCATION[0]},{BASE_LOCATION[1]}&navigate=yes"
                 
                 base_label = f"{info['initial']}{len(mech_apps) + 1}"
