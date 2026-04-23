@@ -9,6 +9,7 @@ from icalendar import Calendar
 import locale
 import csv
 import json
+import io
 
 try:
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
@@ -22,10 +23,14 @@ timezone = pytz.timezone('America/Santiago')
 BASE_LOCATION = [-33.45219480797122, -70.5787333882418] 
 CALENDAR_URL = 'https://calendar.google.com/calendar/ical/c_0e3e9c70ab1527edfef805c43e9fd06dabb0fdfab8e5081f4feb40565337708b%40group.calendar.google.com/private-a534c46e66604fef2e96a3dc4810f688/basic.ics'
 CACHE_FILE = 'appointments_cache.json'
+DURATION_URL = 'https://docs.google.com/spreadsheets/d/1Sgtl_4Fm88-vVMfCrGxULl1Tg0ekD6rXT-P59hUlVSw/export?format=csv'
 
+# REQUIREMENT 5: NARROWED PALETTES
 MECHANICS = {
-    'Juan': {'palette': ['#dc3545', '#fd7e14', '#e83e8c', '#6f42c1', '#b02a37'], 'initial': 'J', 'offset': (0.00012, 0.00012)},
-    'Seba': {'palette': ['#007bff', '#28a745', '#17a2b8', '#20c997', '#004085'], 'initial': 'S', 'offset': (-0.00012, -0.00012)}
+    'Juan': {'palette': ['#dc3545', '#c82333', '#a71d2a', '#e4606d', '#eb8c95'], 'initial': 'J', 'offset': (0.00012, 0.00012)},
+    'Seba': {'palette': ['#007bff', '#0056b3', '#004085', '#3399ff', '#66b2ff'], 'initial': 'S', 'offset': (-0.00012, -0.00012)},
+    'Mech3': {'palette': ['#28a745', '#1e7e34', '#155724', '#5cd08d', '#8fd19e'], 'initial': 'M', 'offset': (0.00024, -0.00024)},
+    'Mech4': {'palette': ['#ffc107', '#d39e00', '#856404', '#ffda6a', '#ffeeba'], 'initial': 'A', 'offset': (-0.00024, 0.00024)}
 }
 
 SERVICE_MAP = {
@@ -63,6 +68,46 @@ CARD_STYLE = (
 
 WAZE_ICON_URL = "waze.png" 
 all_legs_data = []
+
+# REQUIREMENT 1: DYNAMIC DURATION FETCHER
+def get_service_durations():
+    durations = {}
+    try:
+        response = requests.get(DURATION_URL, timeout=10)
+        if response.status_code == 200:
+            lines = response.content.decode('utf-8').splitlines()
+            reader = csv.reader(lines)
+            headers = next(reader)
+            dur_idx = next((i for i, h in enumerate(headers) if 'duration' in h.lower()), -1)
+            abbr_idx = next((i for i, h in enumerate(headers) if 'abbrev' in h.lower() or 'id' in h.lower()), 0)
+            if dur_idx != -1:
+                for row in reader:
+                    if len(row) > max(abbr_idx, dur_idx):
+                        try: durations[row[abbr_idx].strip()] = int(row[dur_idx].strip())
+                        except: pass
+    except: pass
+    return durations
+
+global_durations = get_service_durations()
+
+# REQUIREMENT 3: OVERLAP CLUSTERING ENGINE
+def group_overlapping(items):
+    clusters = []
+    for item in items:
+        placed = False
+        for cluster in clusters:
+            overlaps = False
+            for c_item in cluster:
+                if max(item['top'], c_item['top']) < min(item['top'] + item['height'], c_item['top'] + c_item['height']):
+                    overlaps = True
+                    break
+            if overlaps:
+                cluster.append(item)
+                placed = True
+                break
+        if not placed:
+            clusters.append([item])
+    return clusters
 
 def apply_offset(points, offset_tuple, multiplier=1):
     return [(p[0] + (offset_tuple[0] * multiplier), p[1] + (offset_tuple[1] * multiplier)) for p in points]
@@ -159,7 +204,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     global all_legs_data
     date_str = target_date.strftime('%Y-%m-%d')
     display_date = target_date.strftime('%a, %d %b').capitalize()
-    
     day_apps = [a for a in all_apps if a['start_dt'].date() == target_date]
     
     m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
@@ -167,8 +211,8 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
     
     all_points = [BASE_LOCATION]
+    global_max_n = 1
     
-    # Pre-build background grid (1 min = 1.5px -> 1 hour = 90px)
     grid_lines_html = ""
     for h in range(9, 19):
         top_px = (h - 9) * 90
@@ -183,17 +227,20 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         mech_apps = sorted([a for a in day_apps if a['mechanic'] == name], key=lambda x: x['start_dt'])
         current_loc = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
         
-        # Calculate routing and prep UI data
+        ui_apps = []
+        ui_transits = []
+        
         for i, app in enumerate(mech_apps):
             label_id = f"{info['initial']}{i+1}"
             leg_color = info['palette'][i % len(info['palette'])]
             app['label_id'] = label_id
             app['leg_color'] = leg_color
-            
             arrival_target = app['start_dt']
             
-            # Pre-calculate UI grid positions
+            # REQUIREMENT 1: MAP SPREADSHEET DURATIONS TO PIXELS (1 min = 1.5px)
+            duration_mins = global_durations.get(app['abbrev'], 60)
             app['panel_top'] = max(0, ((arrival_target.hour - 9) * 60 + arrival_target.minute) * 1.5)
+            app['panel_height'] = duration_mins * 1.5
             
             if arrival_target.date() > now_dt.date(): directions = gmaps.directions(current_loc, app['route_address'], mode="driving")
             elif arrival_target > now_dt: directions = gmaps.directions(current_loc, app['route_address'], mode="driving", arrival_time=arrival_target)
@@ -234,6 +281,13 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             else:
                 app['transit_mins'] = 0
 
+            ui_apps.append({'top': app['panel_top'], 'height': app['panel_height'], 'app': app})
+            
+            # REQUIREMENT 2: TRANSIT PILLS LOCK TO APPOINTMENT TOP, MIN 15 MIN HEIGHT
+            t_height = max(15, app.get('transit_mins', 0)) * 1.5
+            t_top = app['panel_top'] - t_height
+            ui_transits.append({'top': t_top, 'height': t_height, 'mins': app.get('transit_mins', 0)})
+
         if mech_apps:
             base_str = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
             return_target = mech_apps[-1]['start_dt'] + timedelta(hours=1)
@@ -262,13 +316,28 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 
                 mid = points[len(points)//2]
                 waze_link = f"https://waze.com/ul?ll={BASE_LOCATION[0]},{BASE_LOCATION[1]}&navigate=yes"
-                
-                # BUGFIX: Added + 1
                 base_label = f"{info['initial']}{len(mech_apps) + 1}"
-                
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#666; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{base_label} / Base / {buffered_mins} min</div></a>''')).add_to(fg)
 
-        # --- BUILD MECHANIC DAILY PLANNER HTML ---
+                # REQUIREMENT 6: ADD BACK THE RETURN TO BASE DESKTOP PILL
+                base_transit_h = max(15, buffered_mins) * 1.5
+                base_transit_top = mech_apps[-1]['panel_top'] + mech_apps[-1]['panel_height']
+                ui_transits.append({'top': base_transit_top, 'height': base_transit_h, 'mins': buffered_mins})
+
+        # REQUIREMENT 3: ASSIGN CLUSTER ANIMATION CLASSES
+        app_clusters = group_overlapping(ui_apps)
+        trans_clusters = group_overlapping(ui_transits)
+        
+        for cluster in app_clusters:
+            n = len(cluster)
+            global_max_n = max(global_max_n, n)
+            for j, item in enumerate(cluster): item['anim_class'] = f"fade-{n}-{j}" if n > 1 else ""
+                
+        for cluster in trans_clusters:
+            n = len(cluster)
+            global_max_n = max(global_max_n, n)
+            for j, item in enumerate(cluster): item['anim_class'] = f"fade-{n}-{j}" if n > 1 else ""
+
         planner_html = f"""
         <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ddd; min-width: 0;">
             <div style="background: {info['palette'][0]}; color: white; font-weight: bold; font-size: 13px; text-align: center; height: 35px; box-sizing: border-box; flex-shrink: 0; display:flex; align-items:center; justify-content:center;">Ruta {name}</div>
@@ -277,38 +346,25 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                     {grid_lines_html}
         """
 
-        # Pre-cluster overlapping appointments (detects collisions within 90px/60min)
-        clusters = []
-        for app in mech_apps:
-            if not clusters:
-                clusters.append([app])
-            else:
-                if app['panel_top'] < clusters[-1][-1]['panel_top'] + 90:
-                    clusters[-1].append(app)
-                else:
-                    clusters.append([app])
-
-        # 1. Render Transit Pills (Left 10%)
-        for i, app in enumerate(mech_apps):
-            transit_top = max(0, app['panel_top'] - 45) if i == 0 else mech_apps[i-1]['panel_top'] + 90
-            planner_html += f"""
-            <div style="position: absolute; top: {transit_top}px; left: 1%; width: 10%; height: 45px; display: flex; align-items: center; justify-content: center; z-index: 2;">
-                <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 4px; font-size: 9px; color: #444; width: 100%; height: 80%; display: flex; align-items: center; justify-content: center; font-weight: bold;">{app.get('transit_mins', 0)}m</div>
-            </div>
-            """
+        # REQUIREMENT 4: +30% CORNER RADIUS ON TRANSITS (border-radius: 5px)
+        for cluster in trans_clusters:
+            for item in cluster:
+                planner_html += f"""
+                <div class="{item['anim_class']}" style="position: absolute; top: {item['top']}px; left: 1%; width: 9%; height: {item['height']}px; display: flex; align-items: flex-end; justify-content: center; z-index: 2; padding-bottom: 2px; box-sizing: border-box;">
+                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; font-weight: bold; overflow: hidden;">{item['mins']}m</div>
+                </div>
+                """
             
-        # 2. Render Panel Appointment Pills (Right 88%)
-        for cluster in clusters:
-            cols = len(cluster)
-            width_pct = 88 / cols
-            for j, app in enumerate(cluster):
-                left_pct = 12 + (j * width_pct)
+        # REQUIREMENT 4: +30% CORNER RADIUS ON APPOINTMENTS (border-radius: 20px 10px 10px 20px)
+        for cluster in app_clusters:
+            for item in cluster:
+                app = item['app']
                 full_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
                 full_address = re.sub(r'\s+', ' ', full_address)
                 
                 planner_html += f"""
-                <div style="position: absolute; top: {app['panel_top']}px; left: {left_pct}%; width: {width_pct}%; height: 90px; padding: 2px; box-sizing: border-box; z-index: 3;">
-                    <div style="background: white; border: 1px solid #ddd; border-radius: 15px 8px 8px 15px; height: 100%; display: flex; align-items: stretch; box-shadow: 0 2px 4px rgba(0,0,0,0.08); overflow: hidden;">
+                <div class="{item['anim_class']}" style="position: absolute; top: {item['top']}px; left: 10%; width: 88%; height: {item['height']}px; padding: 2px; box-sizing: border-box; z-index: 3;">
+                    <div style="background: white; border: 1px solid #ddd; border-radius: 20px 10px 10px 20px; height: 100%; display: flex; align-items: stretch; box-shadow: 0 2px 4px rgba(0,0,0,0.08); overflow: hidden;">
                         <div style="background: {app['leg_color']}; width: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; flex-shrink: 0; font-size: 11px;">
                             {app['label_id']}
                         </div>
@@ -329,6 +385,18 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     folium.LayerControl(collapsed=False).add_to(m)
     if len(all_points) > 1: m.fit_bounds(all_points)
 
+    # REQUIREMENT 3: GENERATE THE DYNAMIC OVERLAP Z-AXIS ANIMATION CSS
+    anim_css = ""
+    for n in range(2, global_max_n + 1):
+        anim_css += f"@keyframes fade{n} {{\n"
+        visible_pct = (1.0 / n) * 100
+        anim_css += f"  0%, {max(0, visible_pct - 5)}% {{ opacity: 1; z-index: 10; }}\n"
+        anim_css += f"  {visible_pct}%, {100 - (5.0/n)}% {{ opacity: 0; z-index: 1; }}\n"
+        anim_css += f"  100% {{ opacity: 1; z-index: 10; }}\n"
+        anim_css += "}\n"
+        for j in range(n):
+            anim_css += f".fade-{n}-{j} {{ animation: fade{n} {n*3}s infinite; animation-delay: {j*3}s; opacity: 0; }}\n"
+
     carousel_html = f"""
     <div style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 8px 20px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 20px; font-family: sans-serif; font-weight: bold; font-size: 14px; border: 1px solid #eee;">
         <a href="desktop_map_{prev_date.strftime('%Y-%m-%d')}.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&lt;</a>
@@ -343,12 +411,11 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         .leaflet-container {{ width: 65vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }}
         .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: sans-serif;}}
         .leaflet-control-layers-base {{ display: none; }}
-        
-        /* Custom scrollbar for planner */
         ::-webkit-scrollbar {{ width: 6px; }}
         ::-webkit-scrollbar-track {{ background: #f1f1f1; }}
         ::-webkit-scrollbar-thumb {{ background: #ccc; border-radius: 3px; }}
         ::-webkit-scrollbar-thumb:hover {{ background: #aaa; }}
+        {anim_css}
     </style>
     
     <div id="desktop-side-panel" style="width: 35vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
@@ -378,8 +445,7 @@ def update_distance_csv():
                     for row in reader:
                         key = f"{row['Date']}_{row['Mechanic']}_{row['ID']}_{row['Type']}"
                         historical_data[key] = row
-        except Exception as e:
-            print(f"Ignored old CSV format to prevent crash: {e}")
+        except Exception as e: pass
                 
     for leg in all_legs_data:
         key = f"{leg['Date']}_{leg['Mechanic']}_{leg['ID']}_{leg['Type']}"
