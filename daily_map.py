@@ -9,6 +9,7 @@ from icalendar import Calendar
 import json
 import urllib.parse
 import csv
+import unicodedata
 
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
@@ -33,9 +34,14 @@ CARD_STYLE = (
 
 WAZE_ICON_URL = "waze.png" 
 
-# --- DYNAMIC API FETCHER ---
+def normalize_text(text):
+    if not text: return ""
+    text = str(text).lower().strip()
+    return ''.join(c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn')
+
+# --- CASCADING API FETCHER ---
 def get_service_config():
-    config = {}
+    config = []
     try:
         response = requests.get(CONFIG_URL, timeout=10)
         if response.status_code == 200:
@@ -43,23 +49,33 @@ def get_service_config():
             reader = csv.reader(lines)
             headers = next(reader)
             
-            srv_idx = next((i for i, h in enumerate(headers) if 'servicio' in h.lower() or 'service' in h.lower() or 'name' in h.lower()), 0)
-            abbr_idx = next((i for i, h in enumerate(headers) if 'abbrev' in h.lower() or 'id' in h.lower()), 1)
-            dur_idx = next((i for i, h in enumerate(headers) if 'duration' in h.lower() or 'duración' in h.lower()), 2)
-            short_idx = next((i for i, h in enumerate(headers) if 'shorthand' in h.lower() or 'corto' in h.lower()), -1)
+            abbr_idx, prod_idx, var_idx, comb_idx, short_idx, dur_idx = 0, 1, 2, 3, 4, 5
+            
+            for i, h in enumerate(headers):
+                h_norm = normalize_text(h)
+                if any(kw in h_norm for kw in ['abbreviation', 'abbrev', 'sigla']): abbr_idx = i
+                elif any(kw in h_norm for kw in ['product title', 'producto']): prod_idx = i
+                elif any(kw in h_norm for kw in ['variant', 'variante']): var_idx = i
+                elif any(kw in h_norm for kw in ['combined', 'combinado']): comb_idx = i
+                elif any(kw in h_norm for kw in ['shorthand', 'corto']): short_idx = i
+                elif any(kw in h_norm for kw in ['duration', 'minutos', 'minutes']): dur_idx = i
             
             for row in reader:
-                if len(row) > srv_idx:
-                    srv_name = row[srv_idx].strip()
-                    if not srv_name: continue
-                    
-                    abbrev = row[abbr_idx].strip() if abbr_idx != -1 and len(row) > abbr_idx else "SRV"
-                    shorthand = row[short_idx].strip() if short_idx != -1 and len(row) > short_idx else srv_name
-                    
-                    try: duration = int(row[dur_idx].strip())
-                    except: duration = 60
-                    
-                    config[srv_name] = {'abbrev': abbrev, 'duration': duration, 'shorthand': shorthand}
+                abbrev = row[abbr_idx].strip() if len(row) > abbr_idx else "SRV"
+                prod = row[prod_idx].strip() if len(row) > prod_idx else ""
+                var = row[var_idx].strip() if len(row) > var_idx else ""
+                comb = row[comb_idx].strip() if len(row) > comb_idx else ""
+                shorthand = row[short_idx].strip() if len(row) > short_idx else ""
+                
+                try: 
+                    duration_str = row[dur_idx].strip() if len(row) > dur_idx else ""
+                    duration = int(re.sub(r'\D', '', duration_str)) if duration_str else 60
+                except: duration = 60
+                
+                config.append({
+                    'abbrev': abbrev, 'prod': prod, 'var': var, 
+                    'comb': comb, 'shorthand': shorthand, 'duration': duration
+                })
     except: pass
     return config
 
@@ -123,16 +139,38 @@ def get_appointments():
                     elif "juandechum" in desc_lower or "juandechum" in sum_lower: mechanic_name = "Juan"
                     else: continue 
 
+                    # --- CASCADING WATERFALL MATCH ENGINE ---
+                    norm_servicio = normalize_text(servicio)
                     abbrev = "SRV"
                     duration = 60
                     shorthand = servicio
+                    match_found = False
                     
-                    for key, data in sorted(GLOBAL_CONFIG.items(), key=lambda x: len(x[0]), reverse=True):
-                        if key.lower() in servicio.lower():
-                            abbrev = data['abbrev']
-                            duration = data['duration']
-                            shorthand = data['shorthand']
-                            break
+                    if not match_found:
+                        sorted_by_comb = sorted(GLOBAL_CONFIG, key=lambda x: len(x['comb']), reverse=True)
+                        for row in sorted_by_comb:
+                            if row['comb'] and normalize_text(row['comb']) in norm_servicio:
+                                abbrev, duration, shorthand = row['abbrev'], row['duration'], row['shorthand']
+                                match_found = True
+                                break
+                    
+                    if not match_found:
+                        sorted_by_prod = sorted(GLOBAL_CONFIG, key=lambda x: len(x['prod']), reverse=True)
+                        for row in sorted_by_prod:
+                            if row['prod'] and normalize_text(row['prod']) in norm_servicio:
+                                abbrev, duration, shorthand = row['abbrev'], row['duration'], row['shorthand']
+                                match_found = True
+                                break
+                                
+                    if not match_found:
+                        sorted_by_var = sorted(GLOBAL_CONFIG, key=lambda x: len(x['var']), reverse=True)
+                        for row in sorted_by_var:
+                            if row['var'] and normalize_text(row['var']) in norm_servicio:
+                                abbrev, duration, shorthand = row['abbrev'], row['duration'], row['shorthand']
+                                match_found = True
+                                break
+                                
+                    if not shorthand: shorthand = servicio
                             
                     uid = booking_id if booking_id else f"{start_dt.timestamp()}_{mechanic_name}_{cliente}"
                             
@@ -225,7 +263,6 @@ def generate_map():
                 display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
                 
-                # USING SPREADSHEET ABBREV FOR MOBILE MAP PILL
                 pill_content = f'{app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1} / {app["abbrev"]}'
                 
                 if app.get('phone'):
@@ -238,7 +275,6 @@ def generate_map():
                 
                 table_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
                 
-                # USING SPREADSHEET ABBREV FOR BOTTOM TABLE
                 table_rows_html += f"""
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 4px 2px; color: {leg_color}; width: 6%; white-space: nowrap; vertical-align: middle;">{label_id}</td>
