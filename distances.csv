@@ -1,11 +1,11 @@
 Date,Mechanic,ID,Client,Type,Distance_km
-2026-04-23,Juan,16778674,Nicolas Garrido,Ruta a Cliente,3.46
-2026-04-23,Juan,16785889,Jose Goycoolea,Ruta a Cliente,5.01
+2026-04-23,Juan,16778674,Nicolas Garrido,Ruta a Cliente,3.8
+2026-04-23,Juan,16785889,Jose Goycoolea,Ruta a Cliente,4.99
 2026-04-23,Juan,16785983,Emilio Chavez Northland,Ruta a Cliente,5.53
 2026-04-23,Juan,16786279,Felipe Valencia Cornejo,Ruta a Cliente,0.0
-2026-04-23,Juan,16792115,Felipe Valencia Cornejo,Ruta a Cliente,3.12
-2026-04-23,Juan,RETURN,BASE,Retorno a Base,4.37
-2026-04-23,Seba,16750815,Claudio Rojas Palma,Ruta a Cliente,6.69
+2026-04-23,Juan,16792115,Felipe Valencia Cornejo,Ruta a Cliente,3.06
+2026-04-23,Juan,RETURN,BASE,Retorno a Base,4.42
+2026-04-23,Seba,16750815,Claudio Rojas Palma,Ruta a Cliente,6.74
 2026-04-23,Seba,16785871,Hernan Vergara Peña,Ruta a Cliente,11.96
 2026-04-23,Seba,16786548,Samuel Mora Arribillaga,Ruta a Cliente,7.01
 2026-04-23,Seba,16786702,Maria Jose Muñoz,Ruta a Cliente,6.76
