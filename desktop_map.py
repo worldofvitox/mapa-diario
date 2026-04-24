@@ -10,6 +10,7 @@ import locale
 import csv
 import json
 import unicodedata
+import urllib.parse
 
 try:
     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
@@ -47,7 +48,6 @@ def normalize_text(text):
     text = str(text).lower().strip()
     return ''.join(c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn')
 
-# --- CASCADING API FETCHER ---
 def get_service_config():
     config = []
     try:
@@ -57,10 +57,8 @@ def get_service_config():
             reader = csv.reader(lines)
             headers = next(reader)
             
-            # Default indices based on your exact layout
             abbr_idx, prod_idx, var_idx, comb_idx, short_idx, dur_idx = 0, 1, 2, 3, 4, 5
             
-            # Fuzzy match just in case columns move
             for i, h in enumerate(headers):
                 h_norm = normalize_text(h)
                 if any(kw in h_norm for kw in ['abbreviation', 'abbrev', 'sigla']): abbr_idx = i
@@ -82,7 +80,6 @@ def get_service_config():
                     duration = int(re.sub(r'\D', '', duration_str)) if duration_str else 60
                 except: duration = 60
                 
-                # Append row as a dictionary to our waterfall list
                 config.append({
                     'abbrev': abbrev, 'prod': prod, 'var': var, 
                     'comb': comb, 'shorthand': shorthand, 'duration': duration
@@ -146,6 +143,12 @@ def get_all_appointments():
                     servicio = extract_var(clean_desc, "Servicio")
                     booking_id = extract_var(clean_desc, "Booking") 
                     
+                    # --- MULTI-LINE EXTRACTOR FOR NOTAS ---
+                    raw_notas = ""
+                    notas_match = re.search(r'(?i)Notas?:(.*?)(?=Booking:|Telefono:|Teléfono:|Cliente:|Address1:|Address2:|Comuna:|Servicio:|$)', clean_desc, re.DOTALL | re.IGNORECASE)
+                    if notas_match:
+                        raw_notas = notas_match.group(1).strip()
+                    
                     if not cliente:
                         name_match = re.search(r'Cliente:\s*(.*?)\s*\(', summary)
                         cliente = name_match.group(1).strip() if name_match else summary.split(',')[0]
@@ -159,14 +162,12 @@ def get_all_appointments():
                     elif "juandechum" in desc_lower or "juandechum" in sum_lower: mechanic_name = "Juan"
                     else: continue
                     
-                    # --- CASCADING WATERFALL MATCH ENGINE ---
                     norm_servicio = normalize_text(servicio)
                     abbrev = "SRV"
                     duration = 60
-                    shorthand = servicio # Fallback to raw calendar name
+                    shorthand = servicio 
                     match_found = False
                     
-                    # Pass 1: Match 'Combined'
                     if not match_found:
                         sorted_by_comb = sorted(GLOBAL_CONFIG, key=lambda x: len(x['comb']), reverse=True)
                         for row in sorted_by_comb:
@@ -175,7 +176,6 @@ def get_all_appointments():
                                 match_found = True
                                 break
                     
-                    # Pass 2: Match 'Product title'
                     if not match_found:
                         sorted_by_prod = sorted(GLOBAL_CONFIG, key=lambda x: len(x['prod']), reverse=True)
                         for row in sorted_by_prod:
@@ -184,7 +184,6 @@ def get_all_appointments():
                                 match_found = True
                                 break
                                 
-                    # Pass 3: Match 'Product variant title'
                     if not match_found:
                         sorted_by_var = sorted(GLOBAL_CONFIG, key=lambda x: len(x['var']), reverse=True)
                         for row in sorted_by_var:
@@ -193,7 +192,6 @@ def get_all_appointments():
                                 match_found = True
                                 break
                     
-                    # Clean up shorthand just in case spreadsheet is empty
                     if not shorthand: shorthand = servicio
                     
                     uid = booking_id if booking_id else f"{start_dt.timestamp()}_{mechanic_name}_{cliente}"
@@ -204,7 +202,7 @@ def get_all_appointments():
                         'route_address': f"{address1}, {comuna}, Santiago, Chile".strip(', '),
                         'service': servicio, 'mechanic': mechanic_name, 
                         'start_dt': start_dt.isoformat(), 'start_timestamp': start_dt.timestamp(), 
-                        'abbrev': abbrev, 'duration': duration, 'shorthand': shorthand
+                        'abbrev': abbrev, 'duration': duration, 'shorthand': shorthand, 'notas': raw_notas
                     })
     except Exception as e: print(f"Error fetching live ICS: {e}")
 
@@ -389,8 +387,11 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 full_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
                 full_address = re.sub(r'\s+', ' ', full_address)
                 
+                # --- URL ENCODE NOTES FOR SAFE JS INJECTION ---
+                encoded_notas = urllib.parse.quote(app.get('notas', ''))
+                
                 planner_html += f"""
-                <div class="{item['anim_class']}" style="position: absolute; top: {item['top']}px; left: 10%; width: 88%; height: {item['height']}px; padding: 2px; box-sizing: border-box; z-index: 3;">
+                <div class="{item['anim_class']}" onclick="showNotes(decodeURIComponent('{encoded_notas}'))" style="position: absolute; top: {item['top']}px; left: 10%; width: 88%; height: {item['height']}px; padding: 2px; box-sizing: border-box; z-index: 3; cursor: pointer;">
                     <div style="background: white; border: 1px solid #ddd; border-radius: 20px 10px 10px 20px; height: 100%; display: flex; align-items: stretch; box-shadow: 0 2px 4px rgba(0,0,0,0.08); overflow: hidden;">
                         <div style="background: {app['leg_color']}; width: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; flex-shrink: 0; font-size: 11px;">
                             {app['label_id']}
@@ -431,6 +432,30 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </div>
     """
     
+    # --- MODAL HTML & JS FOR NOTES ---
+    modal_html = """
+    <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:100000;"></div>
+    <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Helvetica', sans-serif; font-size:14px; font-weight:normal; color:#333; border: 2px solid #ccc;">
+        <div style="margin-bottom: 10px; font-size: 11px; color: #888; text-transform: uppercase; font-weight:bold;">Notas de la Cita</div>
+        <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
+        <div style="margin-top: 15px; text-align: right;">
+            <button onclick="closeNotes()" style="background:#007bff; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">Cerrar</button>
+        </div>
+    </div>
+    <script>
+        function showNotes(text) {
+            if(!text || text.trim() === '') text = 'Sin notas para esta cita.';
+            document.getElementById('notes-content').textContent = text;
+            document.getElementById('notes-backdrop').style.display = 'block';
+            document.getElementById('notes-modal').style.display = 'block';
+        }
+        function closeNotes() {
+            document.getElementById('notes-backdrop').style.display = 'none';
+            document.getElementById('notes-modal').style.display = 'none';
+        }
+    </script>
+    """
+    
     desktop_layout = f"""
     <style>
         body, html {{ margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; font-family: sans-serif; }}
@@ -453,6 +478,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         </div>
     </div>
     {carousel_html}
+    {modal_html}
     """
     
     m.get_root().html.add_child(folium.Element(desktop_layout))

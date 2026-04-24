@@ -39,7 +39,6 @@ def normalize_text(text):
     text = str(text).lower().strip()
     return ''.join(c for c in unicodedata.normalize('NFD', text) if unicodedata.category(c) != 'Mn')
 
-# --- CASCADING API FETCHER ---
 def get_service_config():
     config = []
     try:
@@ -121,6 +120,12 @@ def get_appointments():
                     servicio = extract_var(clean_desc, "Servicio")
                     booking_id = extract_var(clean_desc, "Booking")
                     
+                    # --- MULTI-LINE EXTRACTOR FOR NOTAS ---
+                    raw_notas = ""
+                    notas_match = re.search(r'(?i)Notas?:(.*?)(?=Booking:|Telefono:|Teléfono:|Cliente:|Address1:|Address2:|Comuna:|Servicio:|$)', clean_desc, re.DOTALL | re.IGNORECASE)
+                    if notas_match:
+                        raw_notas = notas_match.group(1).strip()
+                    
                     raw_phone = extract_var(clean_desc, "Telefono") or extract_var(clean_desc, "Teléfono")
                     clean_phone = re.sub(r'\D', '', raw_phone)
                     if len(clean_phone) == 9:
@@ -139,7 +144,6 @@ def get_appointments():
                     elif "juandechum" in desc_lower or "juandechum" in sum_lower: mechanic_name = "Juan"
                     else: continue 
 
-                    # --- CASCADING WATERFALL MATCH ENGINE ---
                     norm_servicio = normalize_text(servicio)
                     abbrev = "SRV"
                     duration = 60
@@ -180,7 +184,7 @@ def get_appointments():
                         'route_address': f"{address1}, {comuna}, Santiago, Chile".strip(', '),
                         'service': servicio, 'mechanic': mechanic_name, 
                         'start_dt': start_dt.isoformat(), 'start_timestamp': start_dt.timestamp(), 
-                        'abbrev': abbrev, 'duration': duration, 'shorthand': shorthand, 'phone': clean_phone
+                        'abbrev': abbrev, 'duration': duration, 'shorthand': shorthand, 'phone': clean_phone, 'notas': raw_notas
                     })
     except Exception as e: print(f"Error fetching live ICS: {e}")
 
@@ -275,8 +279,11 @@ def generate_map():
                 
                 table_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
                 
+                # --- URL ENCODE NOTES FOR MOBILE TABLE ONCLICK ---
+                encoded_notas = urllib.parse.quote(app.get('notas', ''))
+                
                 table_rows_html += f"""
-                <tr style="border-bottom: 1px solid #eee;">
+                <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent('{encoded_notas}'))">
                     <td style="padding: 4px 2px; color: {leg_color}; width: 6%; white-space: nowrap; vertical-align: middle;">{label_id}</td>
                     <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">{app['start_dt'].strftime('%H:%M')}</td>
                     <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">{short_cust_name}</td>
@@ -324,12 +331,37 @@ def generate_map():
     if not table_rows_html:
         table_rows_html = f'<tr><td colspan="5" style="text-align:left; padding: 10px; font-weight:normal; font-size:10px;"><b>No hay rutas para este dia.</b></td></tr>'
 
+    # --- MODAL HTML & JS FOR NOTES (MOBILE VERSION) ---
+    modal_html = """
+    <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:100000;"></div>
+    <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Helvetica', sans-serif; font-size:14px; font-weight:normal; color:#333; border: 2px solid #ccc;">
+        <div style="margin-bottom: 10px; font-size: 11px; color: #888; text-transform: uppercase; font-weight:bold;">Notas de la Cita</div>
+        <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
+        <div style="margin-top: 15px; text-align: right;">
+            <button onclick="closeNotes()" style="background:#007bff; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">Cerrar</button>
+        </div>
+    </div>
+    <script>
+        function showNotes(text) {
+            if(!text || text.trim() === '') text = 'Sin notas para esta cita.';
+            document.getElementById('notes-content').textContent = text;
+            document.getElementById('notes-backdrop').style.display = 'block';
+            document.getElementById('notes-modal').style.display = 'block';
+        }
+        function closeNotes() {
+            document.getElementById('notes-backdrop').style.display = 'none';
+            document.getElementById('notes-modal').style.display = 'none';
+        }
+    </script>
+    """
+
     table_html = f"""
     <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid #ddd;">
         <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
             <tbody>{table_rows_html}</tbody>
         </table>
     </div>
+    {modal_html}
     <style>.leaflet-bottom {{ bottom: 28% !important; }} .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; }} .leaflet-control-layers-base {{ display: none; }}</style>
     """
     js_filter = "<script>function autoFilter(){const p=new URLSearchParams(window.location.search);const m=p.get('mechanic');if(!m)return;const t=m.toLowerCase();const s=document.querySelectorAll('.leaflet-control-layers-selector');if(s.length===0){setTimeout(autoFilter,300);return}s.forEach(i=>{const l=i.nextElementSibling.innerText.trim().toLowerCase();if((l==='juan'||l==='seba')&&l!==t){if(i.checked)i.click()}})}window.addEventListener('load',autoFilter)</script>"
