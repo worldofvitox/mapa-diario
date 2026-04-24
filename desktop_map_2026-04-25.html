@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_ea764dae641aaeeacbcba1926bd38e9d {
+                #map_6a1b4f567a14189f8825afccfd52c89f {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -94,15 +94,37 @@
     </div>
     
     
+    <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:100000;"></div>
+    <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Helvetica', sans-serif; font-size:14px; font-weight:normal; color:#333; border: 2px solid #ccc;">
+        <div style="margin-bottom: 10px; font-size: 11px; color: #888; text-transform: uppercase; font-weight:bold;">Notas de la Cita</div>
+        <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
+        <div style="margin-top: 15px; text-align: right;">
+            <button onclick="closeNotes()" style="background:#007bff; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">Cerrar</button>
+        </div>
+    </div>
+    <script>
+        function showNotes(text) {
+            if(!text || text.trim() === '') text = 'Sin notas para esta cita.';
+            document.getElementById('notes-content').textContent = text;
+            document.getElementById('notes-backdrop').style.display = 'block';
+            document.getElementById('notes-modal').style.display = 'block';
+        }
+        function closeNotes() {
+            document.getElementById('notes-backdrop').style.display = 'none';
+            document.getElementById('notes-modal').style.display = 'none';
+        }
+    </script>
     
-            <div class="folium-map" id="map_ea764dae641aaeeacbcba1926bd38e9d" ></div>
+    
+    
+            <div class="folium-map" id="map_6a1b4f567a14189f8825afccfd52c89f" ></div>
         
 </body>
 <script>
     
     
-            var map_ea764dae641aaeeacbcba1926bd38e9d = L.map(
-                "map_ea764dae641aaeeacbcba1926bd38e9d",
+            var map_6a1b4f567a14189f8825afccfd52c89f = L.map(
+                "map_6a1b4f567a14189f8825afccfd52c89f",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -119,7 +141,7 @@
 
         
     
-            var tile_layer_7026f30529bdcb9aba37a59170c84e7c = L.tileLayer(
+            var tile_layer_d3b54a5d1881430b1f602c91128c4bd8 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -136,17 +158,17 @@
             );
         
     
-            tile_layer_7026f30529bdcb9aba37a59170c84e7c.addTo(map_ea764dae641aaeeacbcba1926bd38e9d);
+            tile_layer_d3b54a5d1881430b1f602c91128c4bd8.addTo(map_6a1b4f567a14189f8825afccfd52c89f);
         
     
-            var marker_07bea7d0028197fc9ac4c7644ace4403 = L.marker(
+            var marker_338115abd3d5d334bfea1dc543408ea9 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_ea764dae641aaeeacbcba1926bd38e9d);
+            ).addTo(map_6a1b4f567a14189f8825afccfd52c89f);
         
     
-            var icon_4e6c7b487153f45ab1f7edc856ba0877 = L.AwesomeMarkers.icon(
+            var icon_bdd1a6fae27cffdb41af0201b4f41e2e = L.AwesomeMarkers.icon(
                 {
   "markerColor": "black",
   "iconColor": "white",
@@ -157,44 +179,44 @@
             );
         
     
-                marker_07bea7d0028197fc9ac4c7644ace4403.setIcon(icon_4e6c7b487153f45ab1f7edc856ba0877);
+                marker_338115abd3d5d334bfea1dc543408ea9.setIcon(icon_bdd1a6fae27cffdb41af0201b4f41e2e);
             
     
-            var feature_group_5ccde0002c1ee49a303b8904b57e4c1f = L.featureGroup(
+            var feature_group_d39ac7d575cce7832538582916f1e4cb = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_5ccde0002c1ee49a303b8904b57e4c1f.addTo(map_ea764dae641aaeeacbcba1926bd38e9d);
+            feature_group_d39ac7d575cce7832538582916f1e4cb.addTo(map_6a1b4f567a14189f8825afccfd52c89f);
         
     
-            var feature_group_fbc933d1798a2978fe005ed311950780 = L.featureGroup(
+            var feature_group_b69aa6ebbddbdf4e69f1b7f9edb1e7c0 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_fbc933d1798a2978fe005ed311950780.addTo(map_ea764dae641aaeeacbcba1926bd38e9d);
+            feature_group_b69aa6ebbddbdf4e69f1b7f9edb1e7c0.addTo(map_6a1b4f567a14189f8825afccfd52c89f);
         
     
-            var layer_control_68d02b90d3157e861edd43bc2aa123db_layers = {
+            var layer_control_1e524baa0ac0e4d0ac88b8f99d6692b9_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_5ccde0002c1ee49a303b8904b57e4c1f,
-                    "Seba" : feature_group_fbc933d1798a2978fe005ed311950780,
+                    "Juan" : feature_group_d39ac7d575cce7832538582916f1e4cb,
+                    "Seba" : feature_group_b69aa6ebbddbdf4e69f1b7f9edb1e7c0,
                 },
             };
-            let layer_control_68d02b90d3157e861edd43bc2aa123db = L.control.layers(
-                layer_control_68d02b90d3157e861edd43bc2aa123db_layers.base_layers,
-                layer_control_68d02b90d3157e861edd43bc2aa123db_layers.overlays,
+            let layer_control_1e524baa0ac0e4d0ac88b8f99d6692b9 = L.control.layers(
+                layer_control_1e524baa0ac0e4d0ac88b8f99d6692b9_layers.base_layers,
+                layer_control_1e524baa0ac0e4d0ac88b8f99d6692b9_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_ea764dae641aaeeacbcba1926bd38e9d);
+            ).addTo(map_6a1b4f567a14189f8825afccfd52c89f);
 
         
 </script>
