@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_fbfe2ab9f1c65e8139b756490d3fe642 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; font-family: sans-serif; }
+        .leaflet-container { width: 65vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }
+        .leaflet-control-layers-list::before { content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: sans-serif;}
+        .leaflet-control-layers-base { display: none; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #aaa; }
+        
+    </style>
+    
+    <div id="desktop-side-panel" style="width: 35vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+        <div style="padding: 12px 15px; background: #343a40; color: white; font-size: 16px; font-weight: bold; flex-shrink: 0; text-align: center;">
+            Planificación Diaria: Wed, 29 apr
+        </div>
+        <div style="display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; width: 100%;">
+            
+        <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ddd; min-width: 0;">
+            <div style="background: #dc3545; color: white; font-weight: bold; font-size: 13px; text-align: center; height: 35px; box-sizing: border-box; flex-shrink: 0; display:flex; align-items:center; justify-content:center;">Ruta Juan</div>
+            <div style="flex-grow: 1; overflow-y: auto; overflow-x: hidden; background: white; position: relative;">
+                <div style="height: 810px; position: relative; width: 100%;">
+                    <div style="position:absolute; top:0px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:2px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">09:00</div><div style="position:absolute; top:90px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:92px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">10:00</div><div style="position:absolute; top:180px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:182px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">11:00</div><div style="position:absolute; top:270px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:272px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">12:00</div><div style="position:absolute; top:360px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:362px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">13:00</div><div style="position:absolute; top:450px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:452px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">14:00</div><div style="position:absolute; top:540px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:542px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">15:00</div><div style="position:absolute; top:630px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:632px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">16:00</div><div style="position:absolute; top:720px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:722px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">17:00</div><div style="position:absolute; top:810px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:812px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">18:00</div>
+        
+                <div class="" style="position: absolute; top: 67.5px; left: 1%; width: 9%; height: 22.5px; display: flex; align-items: flex-end; justify-content: center; z-index: 2; padding-bottom: 2px; box-sizing: border-box;">
+                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; font-weight: bold; overflow: hidden;">15m</div>
+                </div>
+                
+                <div class="" style="position: absolute; top: 405.0px; left: 1%; width: 9%; height: 22.5px; display: flex; align-items: flex-end; justify-content: center; z-index: 2; padding-bottom: 2px; box-sizing: border-box;">
+                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; font-weight: bold; overflow: hidden;">12m</div>
+                </div>
+                
+                <div class="" onclick="showNotes(decodeURIComponent('Proforma'))" style="position: absolute; top: 90.0px; left: 10%; width: 88%; height: 315.0px; padding: 2px; box-sizing: border-box; z-index: 3; cursor: pointer;">
+                    <div style="background: white; border: 1px solid #ddd; border-radius: 20px 10px 10px 20px; height: 100%; display: flex; align-items: stretch; box-shadow: 0 2px 4px rgba(0,0,0,0.08); overflow: hidden;">
+                        <div style="background: #dc3545; width: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; flex-shrink: 0; font-size: 11px;">
+                            J1
+                        </div>
+                        <div style="flex-grow: 1; padding: 5px 8px; display: flex; flex-direction: column; justify-content: center; overflow: hidden;">
+                            <div style="font-weight: bold; font-size: 11px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">10:00 - Rayen Aranguiz Borgeaud</div>
+                            <div style="font-size: 10px; color: #666; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; line-height: 1.1;">Carlos Alvarado 5953 D 702 Las Condes</div>
+                        </div>
+                        <div style="width: 25%; padding: 5px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 9px; font-weight: bold; color: #555; border-left: 1px dashed #eee; flex-shrink: 0;">
+                            Clasica 3 Bicis
+                        </div>
+                    </div>
+                </div>
+                </div></div></div>
+        <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ddd; min-width: 0;">
+            <div style="background: #007bff; color: white; font-weight: bold; font-size: 13px; text-align: center; height: 35px; box-sizing: border-box; flex-shrink: 0; display:flex; align-items:center; justify-content:center;">Ruta Seba</div>
+            <div style="flex-grow: 1; overflow-y: auto; overflow-x: hidden; background: white; position: relative;">
+                <div style="height: 810px; position: relative; width: 100%;">
+                    <div style="position:absolute; top:0px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:2px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">09:00</div><div style="position:absolute; top:90px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:92px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">10:00</div><div style="position:absolute; top:180px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:182px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">11:00</div><div style="position:absolute; top:270px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:272px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">12:00</div><div style="position:absolute; top:360px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:362px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">13:00</div><div style="position:absolute; top:450px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:452px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">14:00</div><div style="position:absolute; top:540px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:542px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">15:00</div><div style="position:absolute; top:630px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:632px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">16:00</div><div style="position:absolute; top:720px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:722px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">17:00</div><div style="position:absolute; top:810px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div><div style="position:absolute; top:812px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">18:00</div>
+        </div></div></div>
+        </div>
+    </div>
+    
+    <div style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 8px 20px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 20px; font-family: sans-serif; font-weight: bold; font-size: 14px; border: 1px solid #eee;">
+        <a href="desktop_map_2026-04-28.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&lt;</a>
+        <span style="color: #333; min-width: 120px; text-align: center;">Wed, 29 apr</span>
+        <a href="desktop_map_2026-04-30.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&gt;</a>
+    </div>
+    
+    
+    <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:100000;"></div>
+    <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Helvetica', sans-serif; font-size:14px; font-weight:normal; color:#333; border: 2px solid #ccc;">
+        <div style="margin-bottom: 10px; font-size: 11px; color: #888; text-transform: uppercase; font-weight:bold;">Notas de la Cita</div>
+        <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
+        <div style="margin-top: 15px; text-align: right;">
+            <button onclick="closeNotes()" style="background:#007bff; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">Cerrar</button>
+        </div>
+    </div>
+    <script>
+        function showNotes(text) {
+            if(!text || text.trim() === '') text = 'Sin notas para esta cita.';
+            document.getElementById('notes-content').textContent = text;
+            document.getElementById('notes-backdrop').style.display = 'block';
+            document.getElementById('notes-modal').style.display = 'block';
+        }
+        function closeNotes() {
+            document.getElementById('notes-backdrop').style.display = 'none';
+            document.getElementById('notes-modal').style.display = 'none';
+        }
+    </script>
+    
+    
+    
+            <div class="folium-map" id="map_fbfe2ab9f1c65e8139b756490d3fe642" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_fbfe2ab9f1c65e8139b756490d3fe642 = L.map(
+                "map_fbfe2ab9f1c65e8139b756490d3fe642",
+                {
+                    center: [-33.45219480797122, -70.5787333882418],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 12,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_36ce0c541a4c3d9a121cea3ff53eda6b = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_36ce0c541a4c3d9a121cea3ff53eda6b.addTo(map_fbfe2ab9f1c65e8139b756490d3fe642);
+        
+    
+            var marker_782527e117f5bdd3b48f6eed1243ded1 = L.marker(
+                [-33.45219480797122, -70.5787333882418],
+                {
+}
+            ).addTo(map_fbfe2ab9f1c65e8139b756490d3fe642);
+        
+    
+            var icon_acfb3227de1ee0ec6595d362074f5e08 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "black",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+                marker_782527e117f5bdd3b48f6eed1243ded1.setIcon(icon_acfb3227de1ee0ec6595d362074f5e08);
+            
+    
+            var feature_group_2e85f190173e19f2f42cf78231392f92 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var poly_line_a3d33f85b8c79f102b9ec15489ae3856 = L.polyline(
+                [[-33.45205, -70.57865000000001], [-33.45202, -70.57860000000001], [-33.452, -70.57827], [-33.45134, -70.57835000000001], [-33.45105, -70.57835000000001], [-33.4507, -70.57834000000001], [-33.44903, -70.57845], [-33.44632, -70.57864000000001], [-33.44537, -70.57870000000001], [-33.44443, -70.57877], [-33.44436, -70.57714000000001], [-33.44434, -70.57668000000001], [-33.44431, -70.57601000000001], [-33.44422, -70.57498000000001], [-33.44398, -70.57302000000001], [-33.44394, -70.57256000000001], [-33.44388, -70.57229000000001], [-33.44381, -70.57222000000002], [-33.44376, -70.57218000000002], [-33.44373, -70.57213000000002], [-33.44132, -70.57255], [-33.44013, -70.57276000000002], [-33.43941, -70.57283000000001], [-33.43894, -70.57291000000001], [-33.43851, -70.57301000000001], [-33.43797, -70.57321000000002], [-33.437310000000004, -70.57344], [-33.43643, -70.57359000000001], [-33.43626, -70.57359000000001], [-33.43594, -70.57357], [-33.435340000000004, -70.57359000000001], [-33.43437, -70.57370000000002], [-33.432900000000004, -70.57398], [-33.43118, -70.57425], [-33.43078, -70.57433], [-33.42958, -70.57451], [-33.4295, -70.57452], [-33.42947, -70.57391000000001], [-33.4294, -70.57271000000001], [-33.42922, -70.56944000000001], [-33.42903, -70.56578], [-33.42902, -70.5656]],
+                {"bubblingMouseEvents": true, "color": "#dc3545", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#dc3545", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(feature_group_2e85f190173e19f2f42cf78231392f92);
+        
+    
+            var marker_241496765ea862bfc9c5db8b24765d1e = L.marker(
+                [-33.44013, -70.57276000000002],
+                {
+}
+            ).addTo(feature_group_2e85f190173e19f2f42cf78231392f92);
+        
+    
+            var div_icon_25a65f30f982779597e17003052e744a = L.divIcon({
+  "html": "\u003ca href=\"https://waze.com/ul?ll=-33.4291366,-70.56571799999999\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#dc3545; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ1 / 09:44 / 15 min\u003c/div\u003e\u003c/a\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_241496765ea862bfc9c5db8b24765d1e.setIcon(div_icon_25a65f30f982779597e17003052e744a);
+            
+    
+            var marker_8213676060f521909ece0f08fe189281 = L.marker(
+                [-33.4290166, -70.565598],
+                {
+}
+            ).addTo(feature_group_2e85f190173e19f2f42cf78231392f92);
+        
+    
+            var div_icon_d201dd16579603bb49313134993ff204 = L.divIcon({
+  "html": "\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:none;\"\u003e10:00 / Rayen Aranguiz Borge / Carlos Alvarado 5953 / CL3\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_8213676060f521909ece0f08fe189281.setIcon(div_icon_d201dd16579603bb49313134993ff204);
+            
+    
+            var poly_line_3293c0015468f38faac5a31fd537d666 = L.polyline(
+                [[-33.42902, -70.5656], [-33.4292, -70.56905], [-33.42925, -70.57001000000001], [-33.42926, -70.57012000000002], [-33.43009, -70.57008], [-33.43094, -70.57004], [-33.43095, -70.57084], [-33.431, -70.57260000000001], [-33.43103, -70.57353], [-33.43104, -70.57427000000001], [-33.43106, -70.57457000000001], [-33.43106, -70.5747], [-33.43118, -70.57468000000001], [-33.43153, -70.57462000000001], [-33.43191, -70.57456], [-33.43268, -70.57441000000001], [-33.43338, -70.57428000000002], [-33.43432, -70.57415000000002], [-33.43598, -70.57386000000001], [-33.43677, -70.57376000000001], [-33.43713, -70.57369000000001], [-33.43775, -70.57351000000001], [-33.43811, -70.57335], [-33.43843, -70.57325000000002], [-33.43906, -70.57312000000002], [-33.44133, -70.57273], [-33.44353, -70.57236], [-33.44492, -70.5721], [-33.44578, -70.57194000000001], [-33.44721, -70.5717], [-33.44925, -70.57135000000001], [-33.45022, -70.57118000000001], [-33.45036, -70.57243000000001], [-33.4505, -70.57375], [-33.4505, -70.57529000000001], [-33.45051, -70.57638000000001], [-33.451010000000004, -70.57632000000001], [-33.45153, -70.57625000000002], [-33.45236, -70.57616000000002], [-33.45305, -70.57607000000002], [-33.45296, -70.5772], [-33.4529, -70.57811000000001], [-33.45286, -70.57861000000001], [-33.45244, -70.57865000000001], [-33.45208, -70.57867000000002]],
+                {"bubblingMouseEvents": true, "color": "#dc3545", "dashArray": "7, 7", "dashOffset": null, "fill": false, "fillColor": "#dc3545", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.6, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(feature_group_2e85f190173e19f2f42cf78231392f92);
+        
+    
+            var marker_d5e0b6d4ce42265aeb5aa95fe9fb416c = L.marker(
+                [-33.43811, -70.57335],
+                {
+}
+            ).addTo(feature_group_2e85f190173e19f2f42cf78231392f92);
+        
+    
+            var div_icon_720d269528db7ba328ece9b81f2eee42 = L.divIcon({
+  "html": "\u003ca href=\"https://waze.com/ul?ll=-33.45219480797122,-70.5787333882418\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#666; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ2 / Base / 12 min\u003c/div\u003e\u003c/a\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_d5e0b6d4ce42265aeb5aa95fe9fb416c.setIcon(div_icon_720d269528db7ba328ece9b81f2eee42);
+            
+    
+            feature_group_2e85f190173e19f2f42cf78231392f92.addTo(map_fbfe2ab9f1c65e8139b756490d3fe642);
+        
+    
+            var feature_group_d86db0fb2823ee85157c8ed23fbdf0c1 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            feature_group_d86db0fb2823ee85157c8ed23fbdf0c1.addTo(map_fbfe2ab9f1c65e8139b756490d3fe642);
+        
+    
+            var layer_control_0dfb669bdbb53136ebfa68c753bbcaba_layers = {
+                base_layers : {
+                },
+                overlays :  {
+                    "Juan" : feature_group_2e85f190173e19f2f42cf78231392f92,
+                    "Seba" : feature_group_d86db0fb2823ee85157c8ed23fbdf0c1,
+                },
+            };
+            let layer_control_0dfb669bdbb53136ebfa68c753bbcaba = L.control.layers(
+                layer_control_0dfb669bdbb53136ebfa68c753bbcaba_layers.base_layers,
+                layer_control_0dfb669bdbb53136ebfa68c753bbcaba_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_fbfe2ab9f1c65e8139b756490d3fe642);
+
+        
+    
+            map_fbfe2ab9f1c65e8139b756490d3fe642.fitBounds(
+                [[-33.45219480797122, -70.5787333882418], [-33.45217, -70.57877], [-33.45214, -70.57872], [-33.45212, -70.57839], [-33.451460000000004, -70.57847000000001], [-33.451170000000005, -70.57847000000001], [-33.45082, -70.57846], [-33.44915, -70.57857], [-33.44644, -70.57876], [-33.44549, -70.57882000000001], [-33.44455, -70.57889], [-33.444480000000006, -70.57726000000001], [-33.44446, -70.5768], [-33.444430000000004, -70.57613], [-33.444340000000004, -70.5751], [-33.444100000000006, -70.57314000000001], [-33.44406, -70.57268], [-33.444, -70.57241], [-33.44393, -70.57234000000001], [-33.44388, -70.57230000000001], [-33.443850000000005, -70.57225000000001], [-33.44144, -70.57267], [-33.440250000000006, -70.57288000000001], [-33.439530000000005, -70.57295], [-33.439060000000005, -70.57303], [-33.43863, -70.57313], [-33.43809, -70.57333000000001], [-33.437430000000006, -70.57356], [-33.436550000000004, -70.57371], [-33.43638, -70.57371], [-33.436060000000005, -70.57369], [-33.435460000000006, -70.57371], [-33.434490000000004, -70.57382000000001], [-33.433020000000006, -70.5741], [-33.4313, -70.57437], [-33.4309, -70.57445], [-33.429700000000004, -70.57463], [-33.42962, -70.57464], [-33.429590000000005, -70.57403000000001], [-33.429520000000004, -70.57283000000001], [-33.42934, -70.56956000000001], [-33.42915, -70.5659], [-33.429140000000004, -70.56572], [-33.429140000000004, -70.56572], [-33.429320000000004, -70.56917], [-33.429370000000006, -70.57013], [-33.42938, -70.57024000000001], [-33.43021, -70.5702], [-33.43106, -70.57016], [-33.431070000000005, -70.57096], [-33.43112, -70.57272], [-33.43115, -70.57365], [-33.431160000000006, -70.57439000000001], [-33.431180000000005, -70.57469], [-33.431180000000005, -70.57482], [-33.4313, -70.57480000000001], [-33.431650000000005, -70.57474], [-33.432030000000005, -70.57468], [-33.4328, -70.57453000000001], [-33.4335, -70.57440000000001], [-33.43444, -70.57427000000001], [-33.4361, -70.57398], [-33.436890000000005, -70.57388], [-33.437250000000006, -70.57381000000001], [-33.437870000000004, -70.57363000000001], [-33.438230000000004, -70.57347], [-33.43855, -70.57337000000001], [-33.43918, -70.57324000000001], [-33.44145, -70.57285], [-33.443650000000005, -70.57248], [-33.445040000000006, -70.57222], [-33.4459, -70.57206000000001], [-33.44733, -70.57182], [-33.44937, -70.57147], [-33.450340000000004, -70.57130000000001], [-33.450480000000006, -70.57255], [-33.45062, -70.57387], [-33.45062, -70.57541], [-33.450630000000004, -70.57650000000001], [-33.451130000000006, -70.57644], [-33.45165, -70.57637000000001], [-33.45248, -70.57628000000001], [-33.45317, -70.57619000000001], [-33.45308, -70.57732], [-33.45302, -70.57823], [-33.452980000000004, -70.57873000000001], [-33.452560000000005, -70.57877], [-33.452200000000005, -70.57879000000001]],
+                {}
+            );
+        
+</script>
+</html>
