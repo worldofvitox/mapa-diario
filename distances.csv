@@ -1,15 +1,15 @@
 Date,Mechanic,ID,Client,Type,Distance_km
-2026-04-23,Juan,16778674,Nicolas Garrido,Ruta a Cliente,3.68
-2026-04-23,Juan,16785889,Jose Goycoolea,Ruta a Cliente,5.93
+2026-04-23,Juan,16778674,Nicolas Garrido,Ruta a Cliente,3.42
+2026-04-23,Juan,16785889,Jose Goycoolea,Ruta a Cliente,5.0
 2026-04-23,Juan,16785983,Emilio Chavez Northland,Ruta a Cliente,5.53
 2026-04-23,Juan,16786279,Felipe Valencia Cornejo,Ruta a Cliente,0.0
-2026-04-23,Juan,16792115,Felipe Valencia Cornejo,Ruta a Cliente,3.12
-2026-04-23,Juan,RETURN,BASE,Retorno a Base,5.07
-2026-04-23,Seba,16750815,Claudio Rojas Palma,Ruta a Cliente,6.74
-2026-04-23,Seba,16785871,Hernan Vergara Peña,Ruta a Cliente,12.56
-2026-04-23,Seba,16786548,Samuel Mora Arribillaga,Ruta a Cliente,7.01
-2026-04-23,Seba,16786702,Maria Jose Muñoz,Ruta a Cliente,7.0
-2026-04-23,Seba,RETURN,BASE,Retorno a Base,5.7
+2026-04-23,Juan,16792115,Felipe Valencia Cornejo,Ruta a Cliente,3.06
+2026-04-23,Juan,RETURN,BASE,Retorno a Base,4.5
+2026-04-23,Seba,16750815,Claudio Rojas Palma,Ruta a Cliente,6.69
+2026-04-23,Seba,16785871,Hernan Vergara Peña,Ruta a Cliente,11.99
+2026-04-23,Seba,16786548,Samuel Mora Arribillaga,Ruta a Cliente,7.02
+2026-04-23,Seba,16786702,Maria Jose Muñoz,Ruta a Cliente,7.03
+2026-04-23,Seba,RETURN,BASE,Retorno a Base,5.81
 2026-04-24,Juan,16779259,Gabriela Ketter Acevedo,Ruta a Cliente,13.6
 2026-04-24,Juan,16787917,Gabriel Valenzuela,Ruta a Cliente,6.53
 2026-04-24,Juan,16788489,Eduardo Galleguillos,Ruta a Cliente,7.83
@@ -23,3 +23,5 @@ Date,Mechanic,ID,Client,Type,Distance_km
 2026-04-24,Seba,RETURN,BASE,Retorno a Base,3.39
 2026-04-27,Juan,16791780,Isadora Rui-Wamba,Ruta a Cliente,2.71
 2026-04-27,Juan,RETURN,BASE,Retorno a Base,3.03
+2026-04-28,Seba,16795509,Samuel Mora A,Ruta a Cliente,5.03
+2026-04-28,Seba,RETURN,BASE,Retorno a Base,5.98
