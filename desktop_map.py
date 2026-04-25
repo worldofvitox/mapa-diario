@@ -17,6 +17,9 @@ try:
 except:
     pass
 
+# ⚠️ PASTE YOUR FIREBASE URL HERE (KEEP /vans.json AT THE END!)
+FIREBASE_URL = 'https://vantracker-7cdef-default-rtdb.firebaseio.com/vans.json'
+
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
@@ -143,7 +146,6 @@ def get_all_appointments():
                     servicio = extract_var(clean_desc, "Servicio")
                     booking_id = extract_var(clean_desc, "Booking") 
                     
-                    # --- MULTI-LINE EXTRACTOR FOR NOTAS ---
                     raw_notas = ""
                     notas_match = re.search(r'(?i)Notas?:(.*?)(?=Booking:|Telefono:|Teléfono:|Cliente:|Address1:|Address2:|Comuna:|Servicio:|$)', clean_desc, re.DOTALL | re.IGNORECASE)
                     if notas_match:
@@ -241,6 +243,9 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
+    
+    # Grab the actual javascript variable name Folium generated for this map
+    map_var_name = m.get_name()
     
     all_points = [BASE_LOCATION]
     global_max_n = 1
@@ -386,8 +391,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 app = item['app']
                 full_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
                 full_address = re.sub(r'\s+', ' ', full_address)
-                
-                # --- URL ENCODE NOTES FOR SAFE JS INJECTION ---
                 encoded_notas = urllib.parse.quote(app.get('notas', ''))
                 
                 planner_html += f"""
@@ -432,7 +435,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </div>
     """
     
-    # --- MODAL HTML & JS FOR NOTES ---
     modal_html = """
     <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:100000;"></div>
     <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Helvetica', sans-serif; font-size:14px; font-weight:normal; color:#333; border: 2px solid #ccc;">
@@ -453,6 +455,37 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             document.getElementById('notes-backdrop').style.display = 'none';
             document.getElementById('notes-modal').style.display = 'none';
         }
+    </script>
+    """
+
+    # --- THE LIVE TRACKING JAVASCRIPT INJECTION ---
+    live_tracking_js = f"""
+    <script>
+        var vanMarkers = {{}};
+        function updateVans() {{
+            fetch("{FIREBASE_URL}")
+                .then(response => response.json())
+                .then(data => {{
+                    if(!data) return;
+                    for (const [mechanic, coords] of Object.entries(data)) {{
+                        if (vanMarkers[mechanic]) {{
+                            // Move the existing van marker across the map
+                            vanMarkers[mechanic].setLatLng([coords.lat, coords.lng]);
+                        }} else {{
+                            // Create the van marker for the first time
+                            var iconHtml = `<div style="background-color:#212529; color:white; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid #28a745; box-shadow: 0 3px 6px rgba(0,0,0,0.4); z-index:99999;">🚐${{mechanic.charAt(0)}}</div>`;
+                            var vanIcon = L.divIcon({{html: iconHtml, className: 'van-tracker', iconSize: [30, 30], iconAnchor: [15, 15]}});
+                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {{icon: vanIcon, zIndexOffset: 10000}}).addTo({map_var_name});
+                        }}
+                    }}
+                }})
+                .catch(err => console.error("Live Tracking Error: ", err));
+        }}
+        // Start the heartbeat when the map loads
+        window.addEventListener('load', function() {{
+            setInterval(updateVans, 5000);
+            updateVans();
+        }});
     </script>
     """
     
@@ -479,6 +512,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </div>
     {carousel_html}
     {modal_html}
+    {live_tracking_js}
     """
     
     m.get_root().html.add_child(folium.Element(desktop_layout))
