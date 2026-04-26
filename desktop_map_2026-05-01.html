@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_87f00aa40c13aea497403c8f54763e3a {
+                #map_0e108e871ca536ad27b76b505f464fc6 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -68,7 +68,7 @@
     
     <div id="desktop-side-panel" style="width: 35vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
         <div style="padding: 12px 15px; background: #343a40; color: white; font-size: 16px; font-weight: bold; flex-shrink: 0; text-align: center;">
-            Planificación Diaria: Sun, 26 apr
+            Planificación Diaria: Fri, 01 may
         </div>
         <div style="display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; width: 100%;">
             
@@ -88,9 +88,9 @@
     </div>
     
     <div style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 8px 20px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 20px; font-family: sans-serif; font-weight: bold; font-size: 14px; border: 1px solid #eee;">
-        <a href="desktop_map_2026-04-25.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&lt;</a>
-        <span style="color: #333; min-width: 120px; text-align: center;">Sun, 26 apr</span>
-        <a href="desktop_map_2026-04-27.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&gt;</a>
+        <a href="desktop_map_2026-04-30.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&lt;</a>
+        <span style="color: #333; min-width: 120px; text-align: center;">Fri, 01 may</span>
+        <a href="desktop_map_2026-05-02.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&gt;</a>
     </div>
     
     
@@ -131,7 +131,7 @@
                             // Create the van marker for the first time
                             var iconHtml = `<div style="background-color:#212529; color:white; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid #28a745; box-shadow: 0 3px 6px rgba(0,0,0,0.4); z-index:99999;">🚐${mechanic.charAt(0)}</div>`;
                             var vanIcon = L.divIcon({html: iconHtml, className: 'van-tracker', iconSize: [30, 30], iconAnchor: [15, 15]});
-                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_87f00aa40c13aea497403c8f54763e3a);
+                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_0e108e871ca536ad27b76b505f464fc6);
                         }
                     }
                 })
@@ -146,14 +146,14 @@
     
     
     
-            <div class="folium-map" id="map_87f00aa40c13aea497403c8f54763e3a" ></div>
+            <div class="folium-map" id="map_0e108e871ca536ad27b76b505f464fc6" ></div>
         
 </body>
 <script>
     
     
-            var map_87f00aa40c13aea497403c8f54763e3a = L.map(
-                "map_87f00aa40c13aea497403c8f54763e3a",
+            var map_0e108e871ca536ad27b76b505f464fc6 = L.map(
+                "map_0e108e871ca536ad27b76b505f464fc6",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -170,7 +170,7 @@
 
         
     
-            var tile_layer_52cb2aa6686e6dc01e327195fe603bb5 = L.tileLayer(
+            var tile_layer_ee913cb860a6d91b99bd3563334f5633 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -187,17 +187,17 @@
             );
         
     
-            tile_layer_52cb2aa6686e6dc01e327195fe603bb5.addTo(map_87f00aa40c13aea497403c8f54763e3a);
+            tile_layer_ee913cb860a6d91b99bd3563334f5633.addTo(map_0e108e871ca536ad27b76b505f464fc6);
         
     
-            var marker_3a69bb32684a98d22222b2710446b72b = L.marker(
+            var marker_b9f7412ad7d57c64d901871a89c58fef = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_87f00aa40c13aea497403c8f54763e3a);
+            ).addTo(map_0e108e871ca536ad27b76b505f464fc6);
         
     
-            var icon_700b822bb2b3086e2f5c6ab455e471ff = L.AwesomeMarkers.icon(
+            var icon_8b5ce36b8314c9e9f9769505a67224ce = L.AwesomeMarkers.icon(
                 {
   "markerColor": "black",
   "iconColor": "white",
@@ -208,44 +208,44 @@
             );
         
     
-                marker_3a69bb32684a98d22222b2710446b72b.setIcon(icon_700b822bb2b3086e2f5c6ab455e471ff);
+                marker_b9f7412ad7d57c64d901871a89c58fef.setIcon(icon_8b5ce36b8314c9e9f9769505a67224ce);
             
     
-            var feature_group_4d71aef66c6eb4ad89df2311a802df8d = L.featureGroup(
+            var feature_group_b8ed1cbe624c406fab8ce307689ec995 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_4d71aef66c6eb4ad89df2311a802df8d.addTo(map_87f00aa40c13aea497403c8f54763e3a);
+            feature_group_b8ed1cbe624c406fab8ce307689ec995.addTo(map_0e108e871ca536ad27b76b505f464fc6);
         
     
-            var feature_group_0dc30cb5bd3968b999598e112c6e15e4 = L.featureGroup(
+            var feature_group_ca781d7ee5691d5aabeb8dfe07f5fb38 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_0dc30cb5bd3968b999598e112c6e15e4.addTo(map_87f00aa40c13aea497403c8f54763e3a);
+            feature_group_ca781d7ee5691d5aabeb8dfe07f5fb38.addTo(map_0e108e871ca536ad27b76b505f464fc6);
         
     
-            var layer_control_dd1283be56486e67f3b16643c084c15d_layers = {
+            var layer_control_860a2d72d37f0133fc163d6b8f266180_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_4d71aef66c6eb4ad89df2311a802df8d,
-                    "Seba" : feature_group_0dc30cb5bd3968b999598e112c6e15e4,
+                    "Juan" : feature_group_b8ed1cbe624c406fab8ce307689ec995,
+                    "Seba" : feature_group_ca781d7ee5691d5aabeb8dfe07f5fb38,
                 },
             };
-            let layer_control_dd1283be56486e67f3b16643c084c15d = L.control.layers(
-                layer_control_dd1283be56486e67f3b16643c084c15d_layers.base_layers,
-                layer_control_dd1283be56486e67f3b16643c084c15d_layers.overlays,
+            let layer_control_860a2d72d37f0133fc163d6b8f266180 = L.control.layers(
+                layer_control_860a2d72d37f0133fc163d6b8f266180_layers.base_layers,
+                layer_control_860a2d72d37f0133fc163d6b8f266180_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_87f00aa40c13aea497403c8f54763e3a);
+            ).addTo(map_0e108e871ca536ad27b76b505f464fc6);
 
         
 </script>

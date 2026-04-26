@@ -17,7 +17,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_4cf7b7667d1aef7d9d82615576a1029e {
+                #map_fc75438076c0a9bd18bae7ec6617ac96 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -56,7 +56,39 @@
     
     <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid #ddd;">
         <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
-            <tbody><tr><td colspan="5" style="text-align:left; padding: 10px; font-weight:normal; font-size:10px;"><b>No hay rutas para este dia.</b></td></tr></tbody>
+            <tbody>
+                <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent(''))">
+                    <td style="padding: 4px 2px; color: #dc3545; width: 6%; white-space: nowrap; vertical-align: middle;">J1</td>
+                    <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">10:00</td>
+                    <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">Hector Castañeda</td>
+                    <td style="padding: 4px 2px; width: 51%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">Plaza Pedro Montt 4952 Comuna: Ñuñoa Ñuñoa</td>
+                    <td style="padding: 4px 2px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right; vertical-align: middle;">PR1</td>
+                </tr>
+                
+                <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent('2x%20conversion%20a%20tubeless'))">
+                    <td style="padding: 4px 2px; color: #c82333; width: 6%; white-space: nowrap; vertical-align: middle;">J2</td>
+                    <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">11:30</td>
+                    <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">Manuel Hernandez Oya</td>
+                    <td style="padding: 4px 2px; width: 51%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">Las Violetas 2165 D 606 Providencia</td>
+                    <td style="padding: 4px 2px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right; vertical-align: middle;">CL1</td>
+                </tr>
+                
+                <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent('ver%20foto%20llevar%20tapabarros%20para%20instalar'))">
+                    <td style="padding: 4px 2px; color: #a71d2a; width: 6%; white-space: nowrap; vertical-align: middle;">J3</td>
+                    <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">14:00</td>
+                    <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">Augusto Oyarzun</td>
+                    <td style="padding: 4px 2px; width: 51%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">Camino la Meseta Norte 10812 Comuna: Peñalolén Peñalolén</td>
+                    <td style="padding: 4px 2px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right; vertical-align: middle;">CL1</td>
+                </tr>
+                
+                <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent('pidi%C3%B3%20preventiva'))">
+                    <td style="padding: 4px 2px; color: #e4606d; width: 6%; white-space: nowrap; vertical-align: middle;">J4</td>
+                    <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">16:00</td>
+                    <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">Isadora Rui-Wamba</td>
+                    <td style="padding: 4px 2px; width: 51%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">General José Artigas 3124 D 43 Ñuñoa</td>
+                    <td style="padding: 4px 2px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right; vertical-align: middle;">PR1</td>
+                </tr>
+                </tbody>
         </table>
     </div>
     
@@ -84,14 +116,14 @@
     <style>.leaflet-bottom { bottom: 28% !important; } .leaflet-control-layers-list::before { content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; } .leaflet-control-layers-base { display: none; }</style>
     <script>function autoFilter(){const p=new URLSearchParams(window.location.search);const m=p.get('mechanic');if(!m)return;const t=m.toLowerCase();const s=document.querySelectorAll('.leaflet-control-layers-selector');if(s.length===0){setTimeout(autoFilter,300);return}s.forEach(i=>{const l=i.nextElementSibling.innerText.trim().toLowerCase();if((l==='juan'||l==='seba')&&l!==t){if(i.checked)i.click()}})}window.addEventListener('load',autoFilter)</script>
     
-            <div class="folium-map" id="map_4cf7b7667d1aef7d9d82615576a1029e" ></div>
+            <div class="folium-map" id="map_fc75438076c0a9bd18bae7ec6617ac96" ></div>
         
 </body>
 <script>
     
     
-            var map_4cf7b7667d1aef7d9d82615576a1029e = L.map(
-                "map_4cf7b7667d1aef7d9d82615576a1029e",
+            var map_fc75438076c0a9bd18bae7ec6617ac96 = L.map(
+                "map_fc75438076c0a9bd18bae7ec6617ac96",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -108,7 +140,7 @@
 
         
     
-            var tile_layer_16b8c9db2e8f7663e7c2a0ea345fe4ae = L.tileLayer(
+            var tile_layer_38e8929ba4bbbff3696133669723eb1c = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -125,17 +157,17 @@
             );
         
     
-            tile_layer_16b8c9db2e8f7663e7c2a0ea345fe4ae.addTo(map_4cf7b7667d1aef7d9d82615576a1029e);
+            tile_layer_38e8929ba4bbbff3696133669723eb1c.addTo(map_fc75438076c0a9bd18bae7ec6617ac96);
         
     
-            var marker_2bf94c50d187784ca4178ab0d893db89 = L.marker(
+            var marker_579ecc8e5324a7446d4699cf3c40bd05 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_4cf7b7667d1aef7d9d82615576a1029e);
+            ).addTo(map_fc75438076c0a9bd18bae7ec6617ac96);
         
     
-            var icon_3f6c525f48bae66048cccdf936605a95 = L.AwesomeMarkers.icon(
+            var icon_7064d479a0dc7f10f5a505a90bbc3dc4 = L.AwesomeMarkers.icon(
                 {
   "markerColor": "black",
   "iconColor": "white",
@@ -146,45 +178,225 @@
             );
         
     
-                marker_2bf94c50d187784ca4178ab0d893db89.setIcon(icon_3f6c525f48bae66048cccdf936605a95);
+                marker_579ecc8e5324a7446d4699cf3c40bd05.setIcon(icon_7064d479a0dc7f10f5a505a90bbc3dc4);
             
     
-            var feature_group_257afdfeb19471d66286450bef8b68df = L.featureGroup(
+            var feature_group_d0e941599c9026dd40f9414e09336c6a = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_257afdfeb19471d66286450bef8b68df.addTo(map_4cf7b7667d1aef7d9d82615576a1029e);
+            var poly_line_69def2fefbbfdf1304eeb736a74f996c = L.polyline(
+                [[-33.45205, -70.57865000000001], [-33.45202, -70.57860000000001]],
+                {"bubblingMouseEvents": true, "color": "#dc3545", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#dc3545", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
         
     
-            var feature_group_fb1b88f0e216dd5ec63f4bca85ab389c = L.featureGroup(
+            var marker_ab4157b9405f5a97f0aceb5dbd5bd3a4 = L.marker(
+                [-33.45202, -70.57860000000001],
+                {
+}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var div_icon_4918840572e63d47880ad2d991b35b54 = L.divIcon({
+  "html": "\u003ca href=\"https://waze.com/ul?q=Plaza%20Pedro%20Montt%204952%2C%20%C3%91u%C3%B1oa%2C%20Santiago%2C%20Chile\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#dc3545; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ1 / 09:56 / 3 min\u003c/div\u003e\u003c/a\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_ab4157b9405f5a97f0aceb5dbd5bd3a4.setIcon(div_icon_4918840572e63d47880ad2d991b35b54);
+            
+    
+            var marker_894b7b31ec17340237210b76ff8ff814 = L.marker(
+                [-33.4520172, -70.5785985],
+                {
+}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var div_icon_63a95d4d480fb609a0ef282316151045 = L.divIcon({
+  "html": "\u003ca href=\"https://wa.me/56966270685\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:auto; cursor:pointer;\"\u003e10:00 / Hector Casta\u00f1eda / Plaza Pedro Montt 49... / PR1\u003c/div\u003e\u003c/a\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_894b7b31ec17340237210b76ff8ff814.setIcon(div_icon_63a95d4d480fb609a0ef282316151045);
+            
+    
+            var poly_line_ce3c4d8e29d6097c08dd4931e5b34863 = L.polyline(
+                [[-33.45202, -70.57860000000001], [-33.452, -70.57827], [-33.45134, -70.57835000000001], [-33.4507, -70.57834000000001], [-33.44858, -70.57848000000001], [-33.44632, -70.57864000000001], [-33.44642, -70.58087], [-33.44657, -70.58463], [-33.44654, -70.58515000000001], [-33.44648, -70.58561000000002], [-33.44635, -70.58618000000001], [-33.44617, -70.58666000000001], [-33.44606, -70.58693000000001], [-33.44526, -70.58848], [-33.44396, -70.59093000000001], [-33.44338, -70.59200000000001], [-33.44261, -70.59348000000001], [-33.44256, -70.59362000000002], [-33.44256, -70.59379000000001], [-33.4407, -70.59407000000002], [-33.44039, -70.59416000000002], [-33.44031, -70.59423000000001], [-33.44027, -70.59434000000002], [-33.44025, -70.59449000000001], [-33.440220000000004, -70.59464000000001], [-33.44016, -70.59474000000002], [-33.44004, -70.59486000000001], [-33.43962, -70.59523000000002], [-33.43932, -70.59544000000001], [-33.43885, -70.59570000000001], [-33.43855, -70.59583], [-33.43773, -70.59611000000001], [-33.43686, -70.59638000000001], [-33.43603, -70.59663], [-33.43632, -70.59871000000001], [-33.43679, -70.60065000000002], [-33.4375, -70.60375], [-33.43639, -70.60415], [-33.43527, -70.6046], [-33.43406, -70.60505], [-33.43365, -70.60521000000001], [-33.43368, -70.60535000000002], [-33.43382, -70.60587000000001]],
+                {"bubblingMouseEvents": true, "color": "#c82333", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#c82333", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var marker_718c512b70471e2bb0bf6e44a2ad6862 = L.marker(
+                [-33.44031, -70.59423000000001],
+                {
+}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var div_icon_7ef3422e248fba1461a73d0df8cbe314 = L.divIcon({
+  "html": "\u003ca href=\"https://waze.com/ul?q=Las%20Violetas%202165%2C%20Providencia%2C%20Santiago%2C%20Chile\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#c82333; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ2 / 11:14 / 16 min\u003c/div\u003e\u003c/a\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_718c512b70471e2bb0bf6e44a2ad6862.setIcon(div_icon_7ef3422e248fba1461a73d0df8cbe314);
+            
+    
+            var marker_e510d22979a7b11c7e4d4895256e6258 = L.marker(
+                [-33.4338152, -70.6058719],
+                {
+}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var div_icon_ee711d4f1de362cb80bf5e3ca8eb3fa7 = L.divIcon({
+  "html": "\u003ca href=\"https://wa.me/56942896809\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:auto; cursor:pointer;\"\u003e11:30 / Manuel Hernandez Oya / Las Violetas 2165 / CL1\u003c/div\u003e\u003c/a\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_e510d22979a7b11c7e4d4895256e6258.setIcon(div_icon_ee711d4f1de362cb80bf5e3ca8eb3fa7);
+            
+    
+            var poly_line_f02bdbf89bd662c57d4e2410dc99942c = L.polyline(
+                [[-33.43382, -70.60587000000001], [-33.43365, -70.60521000000001], [-33.43317, -70.60539000000001], [-33.43286, -70.60408000000001], [-33.43238, -70.60201], [-33.43236, -70.60192], [-33.4315, -70.60215000000001], [-33.43064, -70.60238000000001], [-33.42987, -70.60259], [-33.42803, -70.60309000000001], [-33.42699, -70.60335], [-33.4268, -70.6025], [-33.42658, -70.60149000000001], [-33.42591, -70.59849000000001], [-33.42676, -70.59821000000001], [-33.42693, -70.59810000000002], [-33.42783, -70.5978], [-33.4294, -70.59728000000001], [-33.43029, -70.59701000000001], [-33.43042, -70.59702000000001], [-33.430930000000004, -70.59686], [-33.4316, -70.59664000000001], [-33.43301, -70.59619], [-33.4341, -70.59585000000001], [-33.43586, -70.59528000000002], [-33.43657, -70.59503000000001], [-33.43714, -70.59479], [-33.43771, -70.59444], [-33.438250000000004, -70.59404], [-33.43872, -70.59364000000001], [-33.43927, -70.59307000000001], [-33.44007, -70.59221000000001], [-33.44034, -70.59190000000001], [-33.44052, -70.59161000000002], [-33.44063, -70.59131000000001], [-33.44068, -70.59111000000001], [-33.44073, -70.59064000000001], [-33.44074, -70.59046000000001], [-33.44079, -70.59018], [-33.44086, -70.58991], [-33.44096, -70.58966000000001], [-33.44129, -70.58893], [-33.4415, -70.58848], [-33.4429, -70.58938], [-33.44404, -70.5901], [-33.44478, -70.59058000000002], [-33.44546, -70.59101000000001], [-33.44711, -70.59116000000002], [-33.44838, -70.59127000000001], [-33.44896, -70.59015000000001], [-33.44978, -70.58844], [-33.45077, -70.58638], [-33.45132, -70.58522], [-33.45214, -70.58379000000001], [-33.45255, -70.58314000000001], [-33.452890000000004, -70.58253], [-33.45328, -70.58189000000002], [-33.45419, -70.58031000000001], [-33.45437, -70.58011], [-33.45445, -70.58005000000001], [-33.45444, -70.57989], [-33.45458, -70.57967000000001], [-33.45464, -70.57957], [-33.45646, -70.57679000000002], [-33.45732, -70.57549000000002], [-33.45791, -70.5746], [-33.45814, -70.57419000000002], [-33.45838, -70.57367], [-33.45856, -70.57316000000002], [-33.45882, -70.57241], [-33.45886, -70.57229000000001], [-33.45904, -70.57236], [-33.45925, -70.57243000000001], [-33.45938, -70.57248000000001], [-33.45973, -70.57260000000001], [-33.46029, -70.57284000000001], [-33.46087, -70.57312000000002], [-33.46145, -70.57343000000002], [-33.46192, -70.57369000000001], [-33.46262, -70.57397000000002], [-33.46366, -70.57437000000002], [-33.46535, -70.57502000000001], [-33.46671, -70.57552000000001], [-33.46745, -70.57580000000002], [-33.46823, -70.57615000000001], [-33.4684, -70.57623000000001], [-33.46857, -70.57626], [-33.46873, -70.57631], [-33.46912, -70.57643000000002], [-33.4701, -70.57666], [-33.47102, -70.57685000000001], [-33.47113, -70.57687000000001], [-33.47144, -70.57696000000001], [-33.47252, -70.57717000000001], [-33.47273, -70.57721000000001], [-33.47657, -70.57797000000001], [-33.48022, -70.57880000000002], [-33.48311, -70.57939], [-33.48424, -70.57964000000001], [-33.4843, -70.57969000000001], [-33.48474, -70.5798], [-33.48516, -70.57990000000001], [-33.48574, -70.58003000000001], [-33.4865, -70.58022000000001], [-33.48739, -70.58039000000001], [-33.48758, -70.58046000000002], [-33.4877, -70.58055000000002], [-33.48792, -70.58077000000002], [-33.48804, -70.58101], [-33.48819, -70.58121000000001], [-33.48827, -70.58130000000001], [-33.48841, -70.58140000000002], [-33.48856, -70.58147000000001], [-33.48872, -70.58151000000001], [-33.48889, -70.58151000000001], [-33.48907, -70.58147000000001], [-33.48924, -70.58140000000002], [-33.4894, -70.58129000000001], [-33.48959, -70.5811], [-33.48978, -70.58081000000001], [-33.48988, -70.58058000000001], [-33.48992, -70.58037000000002], [-33.48993, -70.58021000000001], [-33.48988, -70.57995000000001], [-33.48975, -70.57964000000001], [-33.48966, -70.57951000000001], [-33.48961, -70.57936000000001], [-33.48961, -70.57920000000001], [-33.48981, -70.57864000000001], [-33.49033, -70.57728000000002], [-33.49042, -70.57702], [-33.49049, -70.57667000000001], [-33.4906, -70.57626], [-33.49073, -70.57597000000001], [-33.49094, -70.57542000000001], [-33.49127, -70.57451], [-33.491460000000004, -70.57391000000001], [-33.4917, -70.57323000000001], [-33.49198, -70.57240000000002], [-33.49251, -70.57094000000001], [-33.49288, -70.56983000000001], [-33.49293, -70.56971000000001], [-33.493, -70.56962000000001], [-33.49314, -70.56951000000001], [-33.49325, -70.56947000000001], [-33.49349, -70.56948000000001], [-33.49358, -70.56952000000001], [-33.49456, -70.57019000000001], [-33.49584, -70.57108000000001], [-33.49605, -70.57127000000001], [-33.49627, -70.57137000000002], [-33.49632, -70.57138], [-33.49641, -70.57134], [-33.49645, -70.57129], [-33.4966, -70.57102], [-33.49746, -70.56856], [-33.49754, -70.56849000000001], [-33.49778, -70.56818000000001], [-33.49788, -70.56801000000002], [-33.49797, -70.56781000000001], [-33.49812, -70.56734000000002], [-33.49837, -70.56521000000001], [-33.49868, -70.56263000000001], [-33.498870000000004, -70.56112000000002], [-33.49891, -70.56032], [-33.49891, -70.56011000000001], [-33.49893, -70.55975000000001], [-33.499, -70.55933000000002], [-33.49951, -70.55556000000001], [-33.4996, -70.55502000000001], [-33.49999, -70.55228000000001], [-33.50002, -70.55215000000001], [-33.5, -70.55197000000001], [-33.50029, -70.54998], [-33.5006, -70.54785000000001], [-33.50069, -70.54687000000001], [-33.50107, -70.54421], [-33.50121, -70.54379000000002], [-33.50125, -70.54360000000001], [-33.50126, -70.54334000000001], [-33.50124, -70.54278000000001], [-33.50125, -70.54238000000001], [-33.50128, -70.54215], [-33.50133, -70.54193000000001], [-33.50145, -70.54157000000001], [-33.50181, -70.54062], [-33.50195, -70.54013], [-33.50198, -70.53978000000001], [-33.50195, -70.53891000000002], [-33.5019, -70.53748000000002], [-33.50188, -70.53668], [-33.50188, -70.53634000000001], [-33.5019, -70.53609000000002], [-33.50193, -70.53598000000001], [-33.50238, -70.53450000000001], [-33.50256, -70.53396000000001], [-33.50303, -70.53241000000001], [-33.50325, -70.53168000000001], [-33.50335, -70.53108000000002], [-33.50336, -70.53081000000002], [-33.50334, -70.5306], [-33.503280000000004, -70.53039000000001], [-33.503190000000004, -70.53006], [-33.50303, -70.52969000000002], [-33.50233, -70.52821000000002], [-33.50204, -70.5276], [-33.50169, -70.52681000000001], [-33.50219, -70.52648], [-33.50199, -70.52599000000001]],
+                {"bubblingMouseEvents": true, "color": "#a71d2a", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#a71d2a", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var marker_5ecfe676ca1660ac4b1dc55f09c418fa = L.marker(
+                [-33.48739, -70.58039000000001],
+                {
+}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var div_icon_3de021a139324ee5db373dfe66db0ca0 = L.divIcon({
+  "html": "\u003ca href=\"https://waze.com/ul?q=Camino%20la%20Meseta%20Norte%2010812%2C%20Pe%C3%B1alol%C3%A9n%2C%20Santiago%2C%20Chile\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#a71d2a; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ3 / 13:17 / 42 min\u003c/div\u003e\u003c/a\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_5ecfe676ca1660ac4b1dc55f09c418fa.setIcon(div_icon_3de021a139324ee5db373dfe66db0ca0);
+            
+    
+            var marker_1f440490b6d9aa5079d9b5b03aad0472 = L.marker(
+                [-33.501986499999994, -70.5259861],
+                {
+}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var div_icon_d478bd968ef1b941f9f0eab3e6662f30 = L.divIcon({
+  "html": "\u003ca href=\"https://wa.me/56992188724\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:auto; cursor:pointer;\"\u003e14:00 / Augusto Oyarzun / Camino la Meseta Nor... / CL1\u003c/div\u003e\u003c/a\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_1f440490b6d9aa5079d9b5b03aad0472.setIcon(div_icon_d478bd968ef1b941f9f0eab3e6662f30);
+            
+    
+            var poly_line_c0e48beb41cf1bc71e3207499728c9de = L.polyline(
+                [[-33.50199, -70.52599000000001], [-33.50208, -70.52622000000001], [-33.50219, -70.52648], [-33.50176, -70.52676000000001], [-33.50169, -70.52681000000001], [-33.50203, -70.52755], [-33.50204, -70.5276], [-33.50197, -70.52762000000001], [-33.50188, -70.52761000000001], [-33.501780000000004, -70.5276], [-33.50141, -70.52747000000001], [-33.50069, -70.52717000000001], [-33.49979, -70.52683], [-33.49918, -70.52661], [-33.49812, -70.52617000000001], [-33.49793, -70.52610000000001], [-33.49776, -70.52609000000001], [-33.49745, -70.52617000000001], [-33.49677, -70.52651000000002], [-33.49592, -70.52688], [-33.4956, -70.52783000000001], [-33.49517, -70.52933000000002], [-33.49492, -70.53018000000002], [-33.4946, -70.53117000000002], [-33.4942, -70.53249000000001], [-33.49392, -70.53340000000001], [-33.49351, -70.53479000000002], [-33.49276, -70.53720000000001], [-33.49239, -70.53839], [-33.49235, -70.53841000000001], [-33.49225, -70.53850000000001], [-33.49221, -70.53855000000001], [-33.49212, -70.53876000000001], [-33.49186, -70.53958000000002], [-33.4916, -70.54042000000001], [-33.49148, -70.54079000000002], [-33.49144, -70.54081000000001], [-33.49142, -70.54085], [-33.49142, -70.54086000000001], [-33.49141, -70.54089], [-33.49143, -70.54095000000001], [-33.49144, -70.54097000000002], [-33.49136, -70.54114000000001], [-33.49123, -70.54154000000001], [-33.49112, -70.54192], [-33.49086, -70.54275000000001], [-33.49044, -70.54410000000001], [-33.49008, -70.54523], [-33.48982, -70.54597000000001], [-33.48921, -70.54797], [-33.48869, -70.54965000000001], [-33.48863, -70.54987000000001], [-33.48854, -70.55030000000001], [-33.48785, -70.55253], [-33.48738, -70.55396], [-33.48664, -70.55631000000001], [-33.4865, -70.55676000000001], [-33.48624, -70.55766000000001], [-33.48462, -70.55756000000001], [-33.48438, -70.55753000000001], [-33.48244, -70.55736000000002], [-33.48098, -70.55720000000001], [-33.47949, -70.55705], [-33.47934, -70.55704000000001], [-33.47867, -70.55696], [-33.47846, -70.55689000000001], [-33.47815, -70.55673000000002], [-33.47717, -70.55617000000001], [-33.47604, -70.55554000000001], [-33.47517, -70.55502000000001], [-33.474940000000004, -70.55492000000001], [-33.47452, -70.55474000000001], [-33.4742, -70.55456000000001], [-33.47352, -70.55430000000001], [-33.47346, -70.55428], [-33.47328, -70.55426000000001], [-33.47291, -70.55415], [-33.47265, -70.55405], [-33.47236, -70.55387], [-33.47141, -70.55317000000001], [-33.47062, -70.55254000000001], [-33.46998, -70.55204], [-33.46951, -70.55159], [-33.46927, -70.55212000000002], [-33.468090000000004, -70.55118000000002], [-33.46696, -70.55027000000001], [-33.46664, -70.55009000000001], [-33.46653, -70.55005000000001], [-33.46628, -70.55005000000001], [-33.46611, -70.55007], [-33.46595, -70.55010000000001], [-33.46512, -70.55031000000001], [-33.46479, -70.55041000000001], [-33.46434, -70.55064000000002], [-33.46345, -70.55111000000001], [-33.46253, -70.55158000000002], [-33.46169, -70.55211000000001], [-33.46152, -70.55226], [-33.46004, -70.55326000000001], [-33.4596, -70.55356], [-33.45818, -70.55456000000001], [-33.45712, -70.55521000000002], [-33.45628, -70.55581000000001], [-33.45592, -70.55604000000001], [-33.4549, -70.55677000000001], [-33.45373, -70.55761000000001], [-33.45348, -70.55776000000002], [-33.4521, -70.55871], [-33.45153, -70.55918000000001], [-33.45106, -70.55961], [-33.45085, -70.55983], [-33.4508, -70.55992], [-33.44908, -70.56155000000001], [-33.44891, -70.56168000000001], [-33.44866, -70.56194], [-33.44854, -70.56207], [-33.44818, -70.56256], [-33.44718, -70.56393000000001], [-33.44643, -70.56490000000001], [-33.4462, -70.56519000000002], [-33.4459, -70.56553000000001], [-33.44516, -70.56627000000002], [-33.44473, -70.56668], [-33.44485, -70.56769000000001], [-33.445, -70.56894000000001], [-33.44515, -70.57017], [-33.44527, -70.57115000000002], [-33.44527, -70.5712], [-33.44542, -70.57131000000001], [-33.445660000000004, -70.57152], [-33.44573, -70.57165], [-33.44578, -70.57194000000001], [-33.44597, -70.57345000000001], [-33.446130000000004, -70.5747], [-33.44617, -70.57519], [-33.44637, -70.57983000000002], [-33.4465, -70.58321000000001], [-33.44657, -70.58470000000001], [-33.44652, -70.58538000000001], [-33.44641, -70.58596000000001], [-33.44624, -70.58650000000002], [-33.44612, -70.58679000000001], [-33.44572, -70.58759], [-33.4443, -70.59027], [-33.44367, -70.59148], [-33.44272, -70.59325000000001], [-33.44258, -70.59357000000001], [-33.44256, -70.59369000000001], [-33.44263, -70.59466], [-33.44272, -70.59550000000002], [-33.4429, -70.59745000000001], [-33.4433, -70.59739], [-33.44512, -70.59715000000001], [-33.44708, -70.59688000000001], [-33.44774, -70.59735], [-33.44772, -70.59749000000001], [-33.44778, -70.59806], [-33.44783, -70.59857000000001], [-33.44753, -70.59861000000001]],
+                {"bubblingMouseEvents": true, "color": "#e4606d", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#e4606d", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var marker_43912e9f52aa54927d66d5fa9a06df02 = L.marker(
+                [-33.47141, -70.55317000000001],
+                {
+}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var div_icon_45bbf7d5bdde96c78ab26f42bce3b835 = L.divIcon({
+  "html": "\u003ca href=\"https://waze.com/ul?q=General%20Jos%C3%A9%20Artigas%203124%2C%20%C3%91u%C3%B1oa%2C%20Santiago%2C%20Chile\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#e4606d; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ4 / 15:23 / 36 min\u003c/div\u003e\u003c/a\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_43912e9f52aa54927d66d5fa9a06df02.setIcon(div_icon_45bbf7d5bdde96c78ab26f42bce3b835);
+            
+    
+            var marker_7d00b256cf933856e003bc5c87e451d8 = L.marker(
+                [-33.4475304, -70.598611],
+                {
+}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var div_icon_11c8f8e3a552d923b557ca888ba2137f = L.divIcon({
+  "html": "\u003ca href=\"https://wa.me/56974995980\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:auto; cursor:pointer;\"\u003e16:00 / Isadora Rui-Wamba / General Jos\u00e9 Artigas... / PR1\u003c/div\u003e\u003c/a\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_7d00b256cf933856e003bc5c87e451d8.setIcon(div_icon_11c8f8e3a552d923b557ca888ba2137f);
+            
+    
+            var poly_line_babafe97aeafc54a55c070e2d4f26faa = L.polyline(
+                [[-33.44753, -70.59861000000001], [-33.44617, -70.59880000000001], [-33.44612, -70.59826000000001], [-33.44607, -70.59783000000002], [-33.44599, -70.59703], [-33.44627, -70.59699], [-33.44708, -70.59688000000001], [-33.4487, -70.59582], [-33.44877, -70.59579000000001], [-33.44884, -70.59579000000001], [-33.44871, -70.59506], [-33.44841, -70.59322000000002], [-33.44839, -70.59298000000001], [-33.44838, -70.59127000000001], [-33.44836, -70.58611], [-33.44832, -70.58485000000002], [-33.44822, -70.58220000000001], [-33.44817, -70.58042], [-33.448100000000004, -70.57851000000001], [-33.44881, -70.57847000000001], [-33.45049, -70.57835000000001], [-33.45089, -70.57835000000001], [-33.45119, -70.57836], [-33.45142, -70.57834000000001], [-33.452, -70.57827], [-33.45198, -70.57789000000001], [-33.45198, -70.57785000000001], [-33.45199, -70.57781000000001], [-33.45204, -70.57777000000002], [-33.45293, -70.57766000000001], [-33.452890000000004, -70.57822000000002], [-33.45286, -70.57861000000001], [-33.45279, -70.57862000000002], [-33.45209, -70.57867000000002], [-33.45208, -70.57867000000002]],
+                {"bubblingMouseEvents": true, "color": "#dc3545", "dashArray": "7, 7", "dashOffset": null, "fill": false, "fillColor": "#dc3545", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.6, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var marker_fbb534d089595a0184afbec3bbc2bef6 = L.marker(
+                [-33.44817, -70.58042],
+                {
+}
+            ).addTo(feature_group_d0e941599c9026dd40f9414e09336c6a);
+        
+    
+            var div_icon_975f3d2304fe5302b5cff9e765f623ac = L.divIcon({
+  "html": "\u003ca href=\"https://waze.com/ul?ll=-33.45219480797122,-70.5787333882418\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#666; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ5 / Base / 9 min\u003c/div\u003e\u003c/a\u003e",
+  "className": "empty",
+});
+        
+    
+                marker_fbb534d089595a0184afbec3bbc2bef6.setIcon(div_icon_975f3d2304fe5302b5cff9e765f623ac);
+            
+    
+            feature_group_d0e941599c9026dd40f9414e09336c6a.addTo(map_fc75438076c0a9bd18bae7ec6617ac96);
+        
+    
+            var feature_group_cd70dbb25c380833960a5cc1fe147365 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_fb1b88f0e216dd5ec63f4bca85ab389c.addTo(map_4cf7b7667d1aef7d9d82615576a1029e);
+            feature_group_cd70dbb25c380833960a5cc1fe147365.addTo(map_fc75438076c0a9bd18bae7ec6617ac96);
         
     
-            var layer_control_2300ecdae468ecf05834799a7d2f8138_layers = {
+            var layer_control_059fba765a193c6bb23a5b82baa85b8a_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_257afdfeb19471d66286450bef8b68df,
-                    "Seba" : feature_group_fb1b88f0e216dd5ec63f4bca85ab389c,
+                    "Juan" : feature_group_d0e941599c9026dd40f9414e09336c6a,
+                    "Seba" : feature_group_cd70dbb25c380833960a5cc1fe147365,
                 },
             };
-            let layer_control_2300ecdae468ecf05834799a7d2f8138 = L.control.layers(
-                layer_control_2300ecdae468ecf05834799a7d2f8138_layers.base_layers,
-                layer_control_2300ecdae468ecf05834799a7d2f8138_layers.overlays,
+            let layer_control_059fba765a193c6bb23a5b82baa85b8a = L.control.layers(
+                layer_control_059fba765a193c6bb23a5b82baa85b8a_layers.base_layers,
+                layer_control_059fba765a193c6bb23a5b82baa85b8a_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_4cf7b7667d1aef7d9d82615576a1029e);
+            ).addTo(map_fc75438076c0a9bd18bae7ec6617ac96);
 
+        
+    
+            map_fc75438076c0a9bd18bae7ec6617ac96.fitBounds(
+                [[-33.5383325, -70.60599], [-33.426030000000004, -70.52611]],
+                {}
+            );
         
 </script>
 </html>
