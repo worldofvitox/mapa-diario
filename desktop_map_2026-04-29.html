@@ -23,7 +23,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_d3f3de49ca5c72ff54792187a09a7ca2 {
+                #map_96046b29d68d5cab597b6f2a33801a39 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -160,7 +160,7 @@
                             // Create the van marker for the first time
                             var iconHtml = `<div style="background-color:#212529; color:white; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid #28a745; box-shadow: 0 3px 6px rgba(0,0,0,0.4); z-index:99999;">🚐${mechanic.charAt(0)}</div>`;
                             var vanIcon = L.divIcon({html: iconHtml, className: 'van-tracker', iconSize: [30, 30], iconAnchor: [15, 15]});
-                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_d3f3de49ca5c72ff54792187a09a7ca2);
+                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_96046b29d68d5cab597b6f2a33801a39);
                         }
                     }
                 })
@@ -175,14 +175,14 @@
     
     
     
-            <div class="folium-map" id="map_d3f3de49ca5c72ff54792187a09a7ca2" ></div>
+            <div class="folium-map" id="map_96046b29d68d5cab597b6f2a33801a39" ></div>
         
 </body>
 <script>
     
     
-            var map_d3f3de49ca5c72ff54792187a09a7ca2 = L.map(
-                "map_d3f3de49ca5c72ff54792187a09a7ca2",
+            var map_96046b29d68d5cab597b6f2a33801a39 = L.map(
+                "map_96046b29d68d5cab597b6f2a33801a39",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -199,7 +199,7 @@
 
         
     
-            var tile_layer_dc52f22690d8dbcc92fa01a5f662ea57 = L.tileLayer(
+            var tile_layer_8a2b6cecf0931aee468cee33c89d899b = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -216,17 +216,17 @@
             );
         
     
-            tile_layer_dc52f22690d8dbcc92fa01a5f662ea57.addTo(map_d3f3de49ca5c72ff54792187a09a7ca2);
+            tile_layer_8a2b6cecf0931aee468cee33c89d899b.addTo(map_96046b29d68d5cab597b6f2a33801a39);
         
     
-            var marker_cf09f6c98762ca3f888170861ecc39f5 = L.marker(
+            var marker_422b699d574b021dc25463088d6b1290 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_d3f3de49ca5c72ff54792187a09a7ca2);
+            ).addTo(map_96046b29d68d5cab597b6f2a33801a39);
         
     
-            var icon_14cbeb499c17b6427910e816064e26bf = L.AwesomeMarkers.icon(
+            var icon_8713b1817c882b1955fb9ffcd267a406 = L.AwesomeMarkers.icon(
                 {
   "markerColor": "black",
   "iconColor": "white",
@@ -237,108 +237,108 @@
             );
         
     
-                marker_cf09f6c98762ca3f888170861ecc39f5.setIcon(icon_14cbeb499c17b6427910e816064e26bf);
+                marker_422b699d574b021dc25463088d6b1290.setIcon(icon_8713b1817c882b1955fb9ffcd267a406);
             
     
-            var feature_group_58fd448dc349bc826211e71ae5d4dfc4 = L.featureGroup(
+            var feature_group_eb66ca6696088ba88a7c3e92b8c2a2ef = L.featureGroup(
                 {
 }
             );
         
     
-            var poly_line_9b962698df53f033466e96a30f5e3e8f = L.polyline(
+            var poly_line_36bc4914b20b419b23e49116ac254511 = L.polyline(
                 [[-33.45205, -70.57865000000001], [-33.45202, -70.57860000000001], [-33.452, -70.57827], [-33.45134, -70.57835000000001], [-33.45105, -70.57835000000001], [-33.4507, -70.57834000000001], [-33.44903, -70.57845], [-33.44858, -70.57848000000001], [-33.448100000000004, -70.57851000000001], [-33.44806, -70.57761], [-33.448010000000004, -70.57625000000002], [-33.44797, -70.57529000000001], [-33.44791, -70.57158000000001], [-33.44786, -70.57115000000002], [-33.4478, -70.57062], [-33.44777, -70.57035], [-33.44807, -70.57030000000002]],
                 {"bubblingMouseEvents": true, "color": "#dc3545", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#dc3545", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
-            ).addTo(feature_group_58fd448dc349bc826211e71ae5d4dfc4);
+            ).addTo(feature_group_eb66ca6696088ba88a7c3e92b8c2a2ef);
         
     
-            var marker_c90a289f8328b70b16802196c7f572d5 = L.marker(
+            var marker_0adcd8fd149ee4be5730f242799e3e27 = L.marker(
                 [-33.448100000000004, -70.57851000000001],
                 {
 }
-            ).addTo(feature_group_58fd448dc349bc826211e71ae5d4dfc4);
+            ).addTo(feature_group_eb66ca6696088ba88a7c3e92b8c2a2ef);
         
     
-            var div_icon_7137ef3aa6713bcb7bed6a7c63d2a158 = L.divIcon({
+            var div_icon_90a107112468975d0923d51ec0bdfb7e = L.divIcon({
   "html": "\u003ca href=\"https://waze.com/ul?ll=-33.4481869,-70.5704244\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#dc3545; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ1 / 09:52 / 7 min\u003c/div\u003e\u003c/a\u003e",
   "className": "empty",
 });
         
     
-                marker_c90a289f8328b70b16802196c7f572d5.setIcon(div_icon_7137ef3aa6713bcb7bed6a7c63d2a158);
+                marker_0adcd8fd149ee4be5730f242799e3e27.setIcon(div_icon_90a107112468975d0923d51ec0bdfb7e);
             
     
-            var marker_57d5e840a221e7b6d16eef48d51a926e = L.marker(
+            var marker_d76876f7240a41072c9711dd9a9763fd = L.marker(
                 [-33.4480669, -70.5703044],
                 {
 }
-            ).addTo(feature_group_58fd448dc349bc826211e71ae5d4dfc4);
+            ).addTo(feature_group_eb66ca6696088ba88a7c3e92b8c2a2ef);
         
     
-            var div_icon_6cfe9003b5a3e4efbc2bb598d8daf415 = L.divIcon({
+            var div_icon_f0a248d020449494d8295a0cc1239957 = L.divIcon({
   "html": "\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:none;\"\u003e10:00 / Maria Paz Qui\u00f1ones / Mar\u00eda Barrientos 579 / CL2\u003c/div\u003e",
   "className": "empty",
 });
         
     
-                marker_57d5e840a221e7b6d16eef48d51a926e.setIcon(div_icon_6cfe9003b5a3e4efbc2bb598d8daf415);
+                marker_d76876f7240a41072c9711dd9a9763fd.setIcon(div_icon_f0a248d020449494d8295a0cc1239957);
             
     
-            var poly_line_eb2b40559a2a647bb1c82f53390fc0e9 = L.polyline(
+            var poly_line_5b874679c1f52fdce81db79f95b91531 = L.polyline(
                 [[-33.44807, -70.57030000000002], [-33.44777, -70.57035], [-33.44771, -70.56987000000001], [-33.44765, -70.56937], [-33.44779, -70.56935000000001], [-33.44792, -70.56934000000001], [-33.44806, -70.56938000000001], [-33.44826, -70.56937], [-33.44838, -70.56934000000001], [-33.44843, -70.56929000000001], [-33.44843, -70.56914], [-33.44841, -70.56894000000001], [-33.44844, -70.56887], [-33.44856, -70.56879], [-33.44954, -70.56861], [-33.45129, -70.56830000000001], [-33.45257, -70.56807], [-33.45286, -70.56804000000001], [-33.45314, -70.56801000000002], [-33.45323, -70.56896], [-33.45333, -70.56986], [-33.45334, -70.57011000000001], [-33.45328, -70.5708], [-33.45332, -70.57145000000001], [-33.45332, -70.57199000000001], [-33.45327, -70.57267000000002], [-33.45318, -70.57387000000001], [-33.45315, -70.57431000000001], [-33.45326, -70.57468000000001], [-33.45319, -70.57480000000001], [-33.45314, -70.57498000000001], [-33.4529, -70.57811000000001], [-33.45286, -70.57861000000001], [-33.45244, -70.57865000000001], [-33.45208, -70.57867000000002]],
                 {"bubblingMouseEvents": true, "color": "#dc3545", "dashArray": "7, 7", "dashOffset": null, "fill": false, "fillColor": "#dc3545", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.6, "smoothFactor": 1.0, "stroke": true, "weight": 5}
-            ).addTo(feature_group_58fd448dc349bc826211e71ae5d4dfc4);
+            ).addTo(feature_group_eb66ca6696088ba88a7c3e92b8c2a2ef);
         
     
-            var marker_602edebd8c538fc0e276ff88152d7da8 = L.marker(
+            var marker_0c3080d4867a0cfcb13d743ba53eb9f4 = L.marker(
                 [-33.45286, -70.56804000000001],
                 {
 }
-            ).addTo(feature_group_58fd448dc349bc826211e71ae5d4dfc4);
+            ).addTo(feature_group_eb66ca6696088ba88a7c3e92b8c2a2ef);
         
     
-            var div_icon_63e15429c484a64c09331256257dbcb1 = L.divIcon({
+            var div_icon_e11ea2f163b63cc4a9c738b850a02d11 = L.divIcon({
   "html": "\u003ca href=\"https://waze.com/ul?ll=-33.45219480797122,-70.5787333882418\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#666; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ2 / Base / 7 min\u003c/div\u003e\u003c/a\u003e",
   "className": "empty",
 });
         
     
-                marker_602edebd8c538fc0e276ff88152d7da8.setIcon(div_icon_63e15429c484a64c09331256257dbcb1);
+                marker_0c3080d4867a0cfcb13d743ba53eb9f4.setIcon(div_icon_e11ea2f163b63cc4a9c738b850a02d11);
             
     
-            feature_group_58fd448dc349bc826211e71ae5d4dfc4.addTo(map_d3f3de49ca5c72ff54792187a09a7ca2);
+            feature_group_eb66ca6696088ba88a7c3e92b8c2a2ef.addTo(map_96046b29d68d5cab597b6f2a33801a39);
         
     
-            var feature_group_1844c920c9159e11112dc83dace70f87 = L.featureGroup(
+            var feature_group_6fe39a67b473c0f7350e3a7e1e5a83b3 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_1844c920c9159e11112dc83dace70f87.addTo(map_d3f3de49ca5c72ff54792187a09a7ca2);
+            feature_group_6fe39a67b473c0f7350e3a7e1e5a83b3.addTo(map_96046b29d68d5cab597b6f2a33801a39);
         
     
-            var layer_control_5e59efdb8ce69718810d98091aa0a044_layers = {
+            var layer_control_cab7459f9008675a1633ead99acb4d8d_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_58fd448dc349bc826211e71ae5d4dfc4,
-                    "Seba" : feature_group_1844c920c9159e11112dc83dace70f87,
+                    "Juan" : feature_group_eb66ca6696088ba88a7c3e92b8c2a2ef,
+                    "Seba" : feature_group_6fe39a67b473c0f7350e3a7e1e5a83b3,
                 },
             };
-            let layer_control_5e59efdb8ce69718810d98091aa0a044 = L.control.layers(
-                layer_control_5e59efdb8ce69718810d98091aa0a044_layers.base_layers,
-                layer_control_5e59efdb8ce69718810d98091aa0a044_layers.overlays,
+            let layer_control_cab7459f9008675a1633ead99acb4d8d = L.control.layers(
+                layer_control_cab7459f9008675a1633ead99acb4d8d_layers.base_layers,
+                layer_control_cab7459f9008675a1633ead99acb4d8d_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_d3f3de49ca5c72ff54792187a09a7ca2);
+            ).addTo(map_96046b29d68d5cab597b6f2a33801a39);
 
         
     
-            map_d3f3de49ca5c72ff54792187a09a7ca2.fitBounds(
+            map_96046b29d68d5cab597b6f2a33801a39.fitBounds(
                 [[-33.45219480797122, -70.5787333882418], [-33.45217, -70.57877], [-33.45214, -70.57872], [-33.45212, -70.57839], [-33.451460000000004, -70.57847000000001], [-33.451170000000005, -70.57847000000001], [-33.45082, -70.57846], [-33.44915, -70.57857], [-33.4487, -70.57860000000001], [-33.448220000000006, -70.57863], [-33.44818, -70.57773], [-33.448130000000006, -70.57637000000001], [-33.44809, -70.57541], [-33.44803, -70.5717], [-33.44798, -70.57127000000001], [-33.44792, -70.57074], [-33.44789, -70.57047], [-33.448190000000004, -70.57042000000001], [-33.448190000000004, -70.57042000000001], [-33.44789, -70.57047], [-33.44783, -70.56999], [-33.447770000000006, -70.56949], [-33.44791, -70.56947000000001], [-33.448040000000006, -70.56946], [-33.44818, -70.5695], [-33.44838, -70.56949], [-33.4485, -70.56946], [-33.448550000000004, -70.56941], [-33.448550000000004, -70.56926], [-33.448530000000005, -70.56906000000001], [-33.44856, -70.56899], [-33.44868, -70.56891], [-33.44966, -70.56873], [-33.45141, -70.56842], [-33.452690000000004, -70.56819], [-33.452980000000004, -70.56816], [-33.45326, -70.56813000000001], [-33.45335, -70.56908], [-33.453450000000004, -70.56998], [-33.45346, -70.57023000000001], [-33.4534, -70.57092], [-33.45344, -70.57157000000001], [-33.45344, -70.57211000000001], [-33.453390000000006, -70.57279000000001], [-33.453300000000006, -70.57399000000001], [-33.45327, -70.57443], [-33.45338, -70.57480000000001], [-33.45331, -70.57492], [-33.45326, -70.5751], [-33.45302, -70.57823], [-33.452980000000004, -70.57873000000001], [-33.452560000000005, -70.57877], [-33.452200000000005, -70.57879000000001]],
                 {}
             );
