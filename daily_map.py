@@ -218,6 +218,15 @@ def get_appointments():
 def generate_map():
     appointments = get_appointments()
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles=None)
+
+    favicon_html = """
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    """
+    m.get_root().header.add_child(folium.Element(favicon_html))
+
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
     
