@@ -3,6 +3,12 @@
 <head>
     
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -17,7 +23,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_239d833bf50839acebf3626ff6cbc099 {
+                #map_492f12767abd4c8371c6af4f865cece0 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -131,7 +137,7 @@
                             // Create the van marker for the first time
                             var iconHtml = `<div style="background-color:#212529; color:white; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid #28a745; box-shadow: 0 3px 6px rgba(0,0,0,0.4); z-index:99999;">🚐${mechanic.charAt(0)}</div>`;
                             var vanIcon = L.divIcon({html: iconHtml, className: 'van-tracker', iconSize: [30, 30], iconAnchor: [15, 15]});
-                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_239d833bf50839acebf3626ff6cbc099);
+                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_492f12767abd4c8371c6af4f865cece0);
                         }
                     }
                 })
@@ -146,14 +152,14 @@
     
     
     
-            <div class="folium-map" id="map_239d833bf50839acebf3626ff6cbc099" ></div>
+            <div class="folium-map" id="map_492f12767abd4c8371c6af4f865cece0" ></div>
         
 </body>
 <script>
     
     
-            var map_239d833bf50839acebf3626ff6cbc099 = L.map(
-                "map_239d833bf50839acebf3626ff6cbc099",
+            var map_492f12767abd4c8371c6af4f865cece0 = L.map(
+                "map_492f12767abd4c8371c6af4f865cece0",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -170,7 +176,7 @@
 
         
     
-            var tile_layer_bfdf9192b1a6676e50a7cf9ecf04a186 = L.tileLayer(
+            var tile_layer_08811211397b2353382b5727c79fd19e = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -187,17 +193,17 @@
             );
         
     
-            tile_layer_bfdf9192b1a6676e50a7cf9ecf04a186.addTo(map_239d833bf50839acebf3626ff6cbc099);
+            tile_layer_08811211397b2353382b5727c79fd19e.addTo(map_492f12767abd4c8371c6af4f865cece0);
         
     
-            var marker_380a3e6e716c91983646d99350e39093 = L.marker(
+            var marker_816e453e72ade1ed0d81a1cf7ebd1e78 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_239d833bf50839acebf3626ff6cbc099);
+            ).addTo(map_492f12767abd4c8371c6af4f865cece0);
         
     
-            var icon_cd2ddfc34f842479839de2b24721329e = L.AwesomeMarkers.icon(
+            var icon_ad8c84df3b3c31cce075027e20ec92c4 = L.AwesomeMarkers.icon(
                 {
   "markerColor": "black",
   "iconColor": "white",
@@ -208,44 +214,44 @@
             );
         
     
-                marker_380a3e6e716c91983646d99350e39093.setIcon(icon_cd2ddfc34f842479839de2b24721329e);
+                marker_816e453e72ade1ed0d81a1cf7ebd1e78.setIcon(icon_ad8c84df3b3c31cce075027e20ec92c4);
             
     
-            var feature_group_ef7113ac628979604815ccf01de39bf0 = L.featureGroup(
+            var feature_group_403f2aa76c187a778446b7f30685f93a = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_ef7113ac628979604815ccf01de39bf0.addTo(map_239d833bf50839acebf3626ff6cbc099);
+            feature_group_403f2aa76c187a778446b7f30685f93a.addTo(map_492f12767abd4c8371c6af4f865cece0);
         
     
-            var feature_group_b45ea2cf9f75284783149ace913c2cf5 = L.featureGroup(
+            var feature_group_e621608d5709d55a8eec172a1f8054e8 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_b45ea2cf9f75284783149ace913c2cf5.addTo(map_239d833bf50839acebf3626ff6cbc099);
+            feature_group_e621608d5709d55a8eec172a1f8054e8.addTo(map_492f12767abd4c8371c6af4f865cece0);
         
     
-            var layer_control_4ecab2bf3e516e1a76fa27b787c1b051_layers = {
+            var layer_control_56d2cb4fa02519d62e06970a6946b68a_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_ef7113ac628979604815ccf01de39bf0,
-                    "Seba" : feature_group_b45ea2cf9f75284783149ace913c2cf5,
+                    "Juan" : feature_group_403f2aa76c187a778446b7f30685f93a,
+                    "Seba" : feature_group_e621608d5709d55a8eec172a1f8054e8,
                 },
             };
-            let layer_control_4ecab2bf3e516e1a76fa27b787c1b051 = L.control.layers(
-                layer_control_4ecab2bf3e516e1a76fa27b787c1b051_layers.base_layers,
-                layer_control_4ecab2bf3e516e1a76fa27b787c1b051_layers.overlays,
+            let layer_control_56d2cb4fa02519d62e06970a6946b68a = L.control.layers(
+                layer_control_56d2cb4fa02519d62e06970a6946b68a_layers.base_layers,
+                layer_control_56d2cb4fa02519d62e06970a6946b68a_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_239d833bf50839acebf3626ff6cbc099);
+            ).addTo(map_492f12767abd4c8371c6af4f865cece0);
 
         
 </script>
