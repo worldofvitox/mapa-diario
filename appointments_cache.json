@@ -16,22 +16,22 @@
     "shorthand": "Clasica 1 Bici",
     "notas": "ver foto llevar tapabarros para instalar"
   },
-  "16809224": {
-    "uid": "16809224",
-    "booking_id": "16809224",
-    "name": "Isabel Troncoso",
-    "address1": "Fray Martín 12450",
-    "address2": "Comuna: Las Condes",
+  "16809892": {
+    "uid": "16809892",
+    "booking_id": "16809892",
+    "name": "Felipe Vieira",
+    "address1": "Avenida Presidente Kennedy 7447",
+    "address2": "D 212",
     "comuna": "Las Condes",
-    "route_address": "Fray Martín 12450, Las Condes, Santiago, Chile",
-    "service": "Visita Mecanica",
+    "route_address": "Avenida Presidente Kennedy 7447, Las Condes, Santiago, Chile",
+    "service": "Mantencion Clasica de Bicicleta Mant. Clasica 1 Bici",
     "mechanic": "Seba",
-    "start_dt": "2026-04-28T11:00:00-04:00",
-    "start_timestamp": 1777388400.0,
-    "abbrev": "VM",
-    "duration": 60,
-    "shorthand": "Visita Mecanica",
-    "notas": "Arreglar cambios de dos bicis"
+    "start_dt": "2026-04-28T12:00:00-04:00",
+    "start_timestamp": 1777392000.0,
+    "abbrev": "CL1",
+    "duration": 80,
+    "shorthand": "Clasica 1 Bici",
+    "notas": "Mant a 2 bicis, GT Transeo necesita neumatico y camara nueva (bici está nueva pero daño por sol neumaticos)Bianchi 90s mantencionayudar a cliente a configurar su portabici para no dañar bicis"
   },
   "16791780": {
     "uid": "16791780",
@@ -50,6 +50,23 @@
     "shorthand": "Preventiva 1 Bici",
     "notas": "pidió preventiva"
   },
+  "16805982": {
+    "uid": "16805982",
+    "booking_id": "16805982",
+    "name": "Cyntia Escobar",
+    "address1": "Avenida Chamisero 13316 casa 35 Condominio Monteverde",
+    "address2": "Comuna: Colina",
+    "comuna": "Colina",
+    "route_address": "Avenida Chamisero 13316 casa 35 Condominio Monteverde, Colina, Santiago, Chile",
+    "service": "Mantención de Bicicleta a Domicilio Mantencion Profunda 3 Bicis",
+    "mechanic": "Juan",
+    "start_dt": "2026-04-28T11:20:00-04:00",
+    "start_timestamp": 1777389600.0,
+    "abbrev": "PF3",
+    "duration": 280,
+    "shorthand": "Profunda 3 Bicis",
+    "notas": ""
+  },
   "16793779": {
     "uid": "16793779",
     "booking_id": "16793779",
@@ -67,6 +84,23 @@
     "shorthand": "Clasica 3 Bicis",
     "notas": "Proforma"
   },
+  "16809224": {
+    "uid": "16809224",
+    "booking_id": "16809224",
+    "name": "Isabel Troncoso",
+    "address1": "Fray Martín 12450",
+    "address2": "Comuna: Las Condes",
+    "comuna": "Las Condes",
+    "route_address": "Fray Martín 12450, Las Condes, Santiago, Chile",
+    "service": "Visita Mecanica",
+    "mechanic": "Seba",
+    "start_dt": "2026-04-28T11:00:00-04:00",
+    "start_timestamp": 1777388400.0,
+    "abbrev": "VM",
+    "duration": 60,
+    "shorthand": "Visita Mecanica",
+    "notas": "Arreglar cambios de dos bicis"
+  },
   "16795509": {
     "uid": "16795509",
     "booking_id": "16795509",
@@ -83,23 +117,6 @@
     "duration": 60,
     "shorthand": "Postventa de Servicio Transmision",
     "notas": "motor tiene crujido cree"
-  },
-  "16805982": {
-    "uid": "16805982",
-    "booking_id": "16805982",
-    "name": "Cyntia Escobar",
-    "address1": "Avenida Chamisero 13316 casa 35 Condominio Monteverde",
-    "address2": "Comuna: Colina",
-    "comuna": "Colina",
-    "route_address": "Avenida Chamisero 13316 casa 35 Condominio Monteverde, Colina, Santiago, Chile",
-    "service": "Mantención de Bicicleta a Domicilio Mantencion Profunda 3 Bicis",
-    "mechanic": "Juan",
-    "start_dt": "2026-04-28T11:20:00-04:00",
-    "start_timestamp": 1777389600.0,
-    "abbrev": "PF3",
-    "duration": 280,
-    "shorthand": "Profunda 3 Bicis",
-    "notas": ""
   },
   "16798617": {
     "uid": "16798617",
