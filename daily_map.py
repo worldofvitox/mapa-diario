@@ -120,7 +120,6 @@ def get_appointments():
                     servicio = extract_var(clean_desc, "Servicio")
                     booking_id = extract_var(clean_desc, "Booking")
                     
-                    # --- MULTI-LINE EXTRACTOR FOR NOTAS ---
                     raw_notas = ""
                     notas_match = re.search(r'(?i)Notas?:(.*?)(?=Booking:|Telefono:|Teléfono:|Cliente:|Address1:|Address2:|Comuna:|Servicio:|$)', clean_desc, re.DOTALL | re.IGNORECASE)
                     if notas_match:
@@ -218,15 +217,6 @@ def get_appointments():
 def generate_map():
     appointments = get_appointments()
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles=None)
-
-    favicon_html = """
-    <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
-    """
-    m.get_root().header.add_child(folium.Element(favicon_html))
-
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
     
@@ -278,17 +268,21 @@ def generate_map():
                 
                 pill_content = f'{app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1} / {app["abbrev"]}'
                 
+                # --- NEW: Launching WhatsApp Modal via Map Pill ---
                 if app.get('phone'):
-                    wa_link = f"https://wa.me/{app['phone']}"
-                    pill_html = f'<a href="{wa_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:auto; cursor:pointer;">{pill_content}</div></a>'
+                    # Extract just the first name for the text and escape any quotes
+                    cust_first_name = app['name'].split()[0].replace("'", "\\'")
+                    mech_name = app['mechanic'].replace("'", "\\'")
+                    orig_time = app['start_dt'].strftime('%H:%M')
+                    phone = app['phone']
+                    
+                    pill_html = f'<div onclick="openWaModal(\'{phone}\', \'{cust_first_name}\', \'{mech_name}\', \'{orig_time}\')" style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:auto; cursor:pointer; box-shadow: 0px 4px 10px rgba(0,0,0,0.3); border: 1px solid #ddd;">{pill_content}</div>'
                 else:
                     pill_html = f'<div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:none;">{pill_content}</div>'
                 
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=pill_html)).add_to(fg)
                 
                 table_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
-                
-                # --- URL ENCODE NOTES FOR MOBILE TABLE ONCLICK ---
                 encoded_notas = urllib.parse.quote(app.get('notas', ''))
                 
                 table_rows_html += f"""
@@ -340,7 +334,6 @@ def generate_map():
     if not table_rows_html:
         table_rows_html = f'<tr><td colspan="5" style="text-align:left; padding: 10px; font-weight:normal; font-size:10px;"><b>No hay rutas para este dia.</b></td></tr>'
 
-    # --- MODAL HTML & JS FOR NOTES (MOBILE VERSION) ---
     modal_html = """
     <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:100000;"></div>
     <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Helvetica', sans-serif; font-size:14px; font-weight:normal; color:#333; border: 2px solid #ccc;">
@@ -364,6 +357,103 @@ def generate_map():
     </script>
     """
 
+    # --- NEW WHATSAPP ACTION MODAL (HTML + JS) ---
+    wa_modal_html = """
+    <div id="wa-backdrop" onclick="closeWaModal()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:100004;"></div>
+    <div id="wa-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:12px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; width:85%; max-width:350px; font-family:'Helvetica', sans-serif;">
+        <div style="margin-bottom: 15px; font-size: 14px; color: #333; font-weight:bold; text-align:center;">Contactar a <span id="wa-cust-name"></span></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            
+            <button onclick="sendWa('hablar')" style="background:#25D366; color:white; border:none; padding:15px 5px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Hablar</button>
+            
+            <button onclick="sendWa('voy')" style="background:#007bff; color:white; border:none; padding:15px 5px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Voy</button>
+            
+            <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <span style="font-size:13px; font-weight:bold; color:#856404;">Tarde</span>
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <input type="number" id="mins-tarde" placeholder="00" min="1" max="99" style="width:40px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px;">
+                    <span style="font-size:12px; color:#666;">min</span>
+                </div>
+                <button onclick="sendWa('tarde')" style="background:#ffc107; color:#333; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+            </div>
+            
+            <div style="background:#d4edda; border:1px solid #c3e6cb; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <span style="font-size:13px; font-weight:bold; color:#155724;">Temprano</span>
+                <div style="display:flex; align-items:center; gap:5px;">
+                    <input type="number" id="mins-temprano" placeholder="00" min="1" max="99" style="width:40px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px;">
+                    <span style="font-size:12px; color:#666;">min</span>
+                </div>
+                <button onclick="sendWa('temprano')" style="background:#28a745; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+            </div>
+            
+        </div>
+        <div style="margin-top: 15px; text-align: center;">
+            <button onclick="closeWaModal()" style="background:#eee; color:#333; border:none; padding:8px 20px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:12px;">Cancelar</button>
+        </div>
+    </div>
+    
+    <script>
+        let currentWaData = {};
+
+        function openWaModal(phone, custName, mechName, origTime) {
+            currentWaData = { phone, custName, mechName, origTime };
+            document.getElementById('wa-cust-name').innerText = custName;
+            document.getElementById('mins-tarde').value = '';
+            document.getElementById('mins-temprano').value = '';
+            document.getElementById('wa-backdrop').style.display = 'block';
+            document.getElementById('wa-modal').style.display = 'block';
+        }
+
+        function closeWaModal() {
+            document.getElementById('wa-backdrop').style.display = 'none';
+            document.getElementById('wa-modal').style.display = 'none';
+        }
+
+        function calculateNewTime(origTime, minsOffset) {
+            let parts = origTime.split(':');
+            let d = new Date();
+            d.setHours(parseInt(parts[0], 10));
+            d.setMinutes(parseInt(parts[1], 10) + minsOffset);
+            let h = d.getHours().toString().padStart(2, '0');
+            let m = d.getMinutes().toString().padStart(2, '0');
+            return h + ':' + m;
+        }
+
+        function sendWa(type) {
+            let phone = currentWaData.phone;
+            let cName = currentWaData.custName;
+            let mName = currentWaData.mechName;
+            let oTime = currentWaData.origTime;
+            let text = "";
+            
+            if (type === 'hablar') {
+                window.open('https://wa.me/' + phone, '_blank');
+                closeWaModal();
+                return;
+            } 
+            else if (type === 'voy') {
+                text = `Hola ${cName}! Te habla ${mName}, tu mecánico asignado por Chum para el día de hoy, para avisarte que ya estamos en camino hacia ti y tu bici. Cuando hayamos llegado te avisaremos por esta vía. Si hay cualquier instrucción especifica para llegar, porfa avísanos.`;
+            } 
+            else if (type === 'temprano') {
+                let mins = parseInt(document.getElementById('mins-temprano').value, 10);
+                if (isNaN(mins) || mins <= 0) { alert('Ingresa un número válido de minutos.'); return; }
+                let newTime = calculateNewTime(oTime, -mins);
+                text = `Hola ${cName}, por aquí ${mName} tu mecánico de Chum, pasa que vamos un poco adelantados en la ruta de hoy y por lo mismo te queríamos preguntar si te sirve y puedes recibirnos unos ${mins} minutos antes? es decir aproximadamente a las ${newTime}`;
+            } 
+            else if (type === 'tarde') {
+                let mins = parseInt(document.getElementById('mins-tarde').value, 10);
+                if (isNaN(mins) || mins <= 0) { alert('Ingresa un número válido de minutos.'); return; }
+                let newTime = calculateNewTime(oTime, mins);
+                text = `Hola ${cName}, por aquí ${mName} tu mecánico de Chum, lo lamentamos muchisimo pero tenemos que comunicar un retraso de aproximadamente ${mins} minutos. Es posible para tí recibirnos, o prefieres que reagendemos o cancelemos?\\nLa hora prevista modificada en este momento es a las ${newTime}`;
+            }
+
+            let encodedText = encodeURIComponent(text);
+            window.open('https://wa.me/' + phone + '?text=' + encodedText, '_blank');
+            closeWaModal();
+        }
+    </script>
+    """
+
     table_html = f"""
     <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid #ddd;">
         <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
@@ -371,6 +461,7 @@ def generate_map():
         </table>
     </div>
     {modal_html}
+    {wa_modal_html}
     <style>.leaflet-bottom {{ bottom: 28% !important; }} .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; }} .leaflet-control-layers-base {{ display: none; }}</style>
     """
     js_filter = "<script>function autoFilter(){const p=new URLSearchParams(window.location.search);const m=p.get('mechanic');if(!m)return;const t=m.toLowerCase();const s=document.querySelectorAll('.leaflet-control-layers-selector');if(s.length===0){setTimeout(autoFilter,300);return}s.forEach(i=>{const l=i.nextElementSibling.innerText.trim().toLowerCase();if((l==='juan'||l==='seba')&&l!==t){if(i.checked)i.click()}})}window.addEventListener('load',autoFilter)</script>"
