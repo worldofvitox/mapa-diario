@@ -241,6 +241,17 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     day_apps = [a for a in all_apps if a['start_dt'].date() == target_date]
     
     m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
+
+    # --- Inject Favicons into the HTML Head ---
+    favicon_html = """
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    """
+    m.get_root().header.add_child(folium.Element(favicon_html))
+    # ------------------------------------------
+
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
     folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
     
@@ -564,7 +575,13 @@ if __name__ == "__main__":
         f.write(f'''
         <!DOCTYPE html>
         <html>
-        <head><meta http-equiv="refresh" content="0; url=desktop_map_{base_date.strftime('%Y-%m-%d')}.html" /></head>
+        <head>
+        <meta http-equiv="refresh" content="0; url=desktop_map_{base_date.strftime('%Y-%m-%d')}.html" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
+        <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
+        <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+        </head>
         <body style="font-family: sans-serif; text-align: center; padding-top: 20%; color: #666;">
             <h2>Cargando Centro de Control...</h2>
         </body>
