@@ -23,7 +23,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_e48c99c6029986c32abc3e84417f3edc {
+                #map_c2288eeccbe75c6b1f79e582be2a60cc {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -74,7 +74,7 @@
     
     <div id="desktop-side-panel" style="width: 35vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
         <div style="padding: 12px 15px; background: #343a40; color: white; font-size: 16px; font-weight: bold; flex-shrink: 0; text-align: center;">
-            Planificación Diaria: Fri, 01 may
+            Planificación Diaria: Sun, 03 may
         </div>
         <div style="display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; width: 100%;">
             
@@ -94,9 +94,9 @@
     </div>
     
     <div style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 8px 20px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 20px; font-family: sans-serif; font-weight: bold; font-size: 14px; border: 1px solid #eee;">
-        <a href="desktop_map_2026-04-30.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&lt;</a>
-        <span style="color: #333; min-width: 120px; text-align: center;">Fri, 01 may</span>
-        <a href="desktop_map_2026-05-02.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&gt;</a>
+        <a href="desktop_map_2026-05-02.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&lt;</a>
+        <span style="color: #333; min-width: 120px; text-align: center;">Sun, 03 may</span>
+        <a href="desktop_map_2026-05-04.html" style="text-decoration:none; color: #007bff; font-size: 18px; padding: 0 5px;">&gt;</a>
     </div>
     
     
@@ -144,7 +144,7 @@
                                 iconSize: [40, 40],
                                 iconAnchor: [20, 20]
                             });
-                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_e48c99c6029986c32abc3e84417f3edc);
+                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_c2288eeccbe75c6b1f79e582be2a60cc);
                         }
                     }
                 })
@@ -159,14 +159,14 @@
     
     
     
-            <div class="folium-map" id="map_e48c99c6029986c32abc3e84417f3edc" ></div>
+            <div class="folium-map" id="map_c2288eeccbe75c6b1f79e582be2a60cc" ></div>
         
 </body>
 <script>
     
     
-            var map_e48c99c6029986c32abc3e84417f3edc = L.map(
-                "map_e48c99c6029986c32abc3e84417f3edc",
+            var map_c2288eeccbe75c6b1f79e582be2a60cc = L.map(
+                "map_c2288eeccbe75c6b1f79e582be2a60cc",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -183,7 +183,7 @@
 
         
     
-            var tile_layer_4a758c600c98c9c3dfeef1bd2037dba1 = L.tileLayer(
+            var tile_layer_f08f2784ef8680808216a779b98ffe64 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -200,60 +200,60 @@
             );
         
     
-            tile_layer_4a758c600c98c9c3dfeef1bd2037dba1.addTo(map_e48c99c6029986c32abc3e84417f3edc);
+            tile_layer_f08f2784ef8680808216a779b98ffe64.addTo(map_c2288eeccbe75c6b1f79e582be2a60cc);
         
     
-            var marker_44775d1a35ce4127d01046ecdbf2a67f = L.marker(
+            var marker_dc8e107eeb8e512b94b6d20fba8f5e32 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_e48c99c6029986c32abc3e84417f3edc);
+            ).addTo(map_c2288eeccbe75c6b1f79e582be2a60cc);
         
     
-        var icon_530c03a16da11ba6352f102206f8802e = L.icon({
+        var icon_fa30df694e96be2bce164c68cdc51e82 = L.icon({
   "iconUrl": "data:image/png;base64,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",
   "iconSize": [25, 25],
 });
         
     
-                marker_44775d1a35ce4127d01046ecdbf2a67f.setIcon(icon_530c03a16da11ba6352f102206f8802e);
+                marker_dc8e107eeb8e512b94b6d20fba8f5e32.setIcon(icon_fa30df694e96be2bce164c68cdc51e82);
             
     
-            var feature_group_c6b63a97405ac05c5c23f2206f427442 = L.featureGroup(
+            var feature_group_8dbd4836210f50837df59a9fecfaf80f = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_c6b63a97405ac05c5c23f2206f427442.addTo(map_e48c99c6029986c32abc3e84417f3edc);
+            feature_group_8dbd4836210f50837df59a9fecfaf80f.addTo(map_c2288eeccbe75c6b1f79e582be2a60cc);
         
     
-            var feature_group_3419825b7f29716e54d1ae30850056ea = L.featureGroup(
+            var feature_group_384705ae915edc50da2867aab20d4d2b = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_3419825b7f29716e54d1ae30850056ea.addTo(map_e48c99c6029986c32abc3e84417f3edc);
+            feature_group_384705ae915edc50da2867aab20d4d2b.addTo(map_c2288eeccbe75c6b1f79e582be2a60cc);
         
     
-            var layer_control_8cc42fa6bd614e2769a49f9d8424e8ec_layers = {
+            var layer_control_9d5d8f23e70c9239a607ee8fe7e3f874_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_c6b63a97405ac05c5c23f2206f427442,
-                    "Seba" : feature_group_3419825b7f29716e54d1ae30850056ea,
+                    "Juan" : feature_group_8dbd4836210f50837df59a9fecfaf80f,
+                    "Seba" : feature_group_384705ae915edc50da2867aab20d4d2b,
                 },
             };
-            let layer_control_8cc42fa6bd614e2769a49f9d8424e8ec = L.control.layers(
-                layer_control_8cc42fa6bd614e2769a49f9d8424e8ec_layers.base_layers,
-                layer_control_8cc42fa6bd614e2769a49f9d8424e8ec_layers.overlays,
+            let layer_control_9d5d8f23e70c9239a607ee8fe7e3f874 = L.control.layers(
+                layer_control_9d5d8f23e70c9239a607ee8fe7e3f874_layers.base_layers,
+                layer_control_9d5d8f23e70c9239a607ee8fe7e3f874_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_e48c99c6029986c32abc3e84417f3edc);
+            ).addTo(map_c2288eeccbe75c6b1f79e582be2a60cc);
 
         
 </script>
