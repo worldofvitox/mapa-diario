@@ -255,7 +255,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
     
     # --- Custom Logo Implementation (Base) ---
-    folium.Marker(location=BASE_LOCATION, icon=folium.CustomIcon('base_icon.png', icon_size=(40, 40))).add_to(m)
+    folium.Marker(location=BASE_LOCATION, icon=folium.CustomIcon('base_icon.png', icon_size=(25, 25))).add_to(m)
     
     # Grab the actual javascript variable name Folium generated for this map
     map_var_name = m.get_name()
