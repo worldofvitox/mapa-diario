@@ -218,7 +218,9 @@ def generate_map():
     appointments = get_appointments()
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles=None)
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
-    folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
+    
+    # --- Custom Logo Implementation (Base) ---
+    folium.Marker(location=BASE_LOCATION, icon=folium.CustomIcon('base_icon.png', icon_size=(40, 40))).add_to(m)
     
     all_points_for_zoom = [BASE_LOCATION]
     table_rows_html = ""
@@ -266,11 +268,11 @@ def generate_map():
                 display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
                 
-                pill_content = f'{app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1} / {app["abbrev"]}'
+                # --- Pill Format Update ---
+                pill_content = f'{label_id} / {app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1}'
                 
-                # --- NEW: Launching WhatsApp Modal via Map Pill ---
+                # --- WA Modal Trigger Update ---
                 if app.get('phone'):
-                    # Extract just the first name for the text and escape any quotes
                     cust_first_name = app['name'].split()[0].replace("'", "\\'")
                     mech_name = app['mechanic'].replace("'", "\\'")
                     orig_time = app['start_dt'].strftime('%H:%M')
@@ -357,44 +359,37 @@ def generate_map():
     </script>
     """
 
-    # --- NEW WHATSAPP ACTION MODAL (HTML + JS) ---
+    # --- UPDATED WA MODAL: ADDED step="5" TO INPUTS & INCREASED WIDTH FOR ARROWS ---
     wa_modal_html = """
     <div id="wa-backdrop" onclick="closeWaModal()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:100004;"></div>
     <div id="wa-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:12px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; width:85%; max-width:350px; font-family:'Helvetica', sans-serif;">
         <div style="margin-bottom: 15px; font-size: 14px; color: #333; font-weight:bold; text-align:center;">Contactar a <span id="wa-cust-name"></span></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            
             <button onclick="sendWa('hablar')" style="background:#25D366; color:white; border:none; padding:15px 5px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Hablar</button>
-            
             <button onclick="sendWa('voy')" style="background:#007bff; color:white; border:none; padding:15px 5px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Voy</button>
-            
             <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
                 <span style="font-size:13px; font-weight:bold; color:#856404;">Tarde</span>
                 <div style="display:flex; align-items:center; gap:5px;">
-                    <input type="number" id="mins-tarde" placeholder="00" min="1" max="99" style="width:40px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px;">
+                    <input type="number" id="mins-tarde" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box;">
                     <span style="font-size:12px; color:#666;">min</span>
                 </div>
                 <button onclick="sendWa('tarde')" style="background:#ffc107; color:#333; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
             </div>
-            
             <div style="background:#d4edda; border:1px solid #c3e6cb; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
                 <span style="font-size:13px; font-weight:bold; color:#155724;">Temprano</span>
                 <div style="display:flex; align-items:center; gap:5px;">
-                    <input type="number" id="mins-temprano" placeholder="00" min="1" max="99" style="width:40px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px;">
+                    <input type="number" id="mins-temprano" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box;">
                     <span style="font-size:12px; color:#666;">min</span>
                 </div>
                 <button onclick="sendWa('temprano')" style="background:#28a745; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
             </div>
-            
         </div>
         <div style="margin-top: 15px; text-align: center;">
             <button onclick="closeWaModal()" style="background:#eee; color:#333; border:none; padding:8px 20px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:12px;">Cancelar</button>
         </div>
     </div>
-    
     <script>
         let currentWaData = {};
-
         function openWaModal(phone, custName, mechName, origTime) {
             currentWaData = { phone, custName, mechName, origTime };
             document.getElementById('wa-cust-name').innerText = custName;
@@ -403,12 +398,10 @@ def generate_map():
             document.getElementById('wa-backdrop').style.display = 'block';
             document.getElementById('wa-modal').style.display = 'block';
         }
-
         function closeWaModal() {
             document.getElementById('wa-backdrop').style.display = 'none';
             document.getElementById('wa-modal').style.display = 'none';
         }
-
         function calculateNewTime(origTime, minsOffset) {
             let parts = origTime.split(':');
             let d = new Date();
@@ -418,7 +411,6 @@ def generate_map():
             let m = d.getMinutes().toString().padStart(2, '0');
             return h + ':' + m;
         }
-
         function sendWa(type) {
             let phone = currentWaData.phone;
             let cName = currentWaData.custName;

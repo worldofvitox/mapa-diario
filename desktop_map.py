@@ -253,7 +253,9 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     # ------------------------------------------
 
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
-    folium.Marker(location=BASE_LOCATION, icon=folium.Icon(color='black', icon='home')).add_to(m)
+    
+    # --- Custom Logo Implementation (Base) ---
+    folium.Marker(location=BASE_LOCATION, icon=folium.CustomIcon('base_icon.png', icon_size=(40, 40))).add_to(m)
     
     # Grab the actual javascript variable name Folium generated for this map
     map_var_name = m.get_name()
@@ -321,7 +323,10 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 short_cust_name = app['name'][:20]
                 display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
-                folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:none;">{app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1} / {app["abbrev"]}</div>')).add_to(fg)
+                
+                # --- Pill Format Update ---
+                pill_content = f'{label_id} / {app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1}'
+                folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:none;">{pill_content}</div>')).add_to(fg)
 
                 current_loc = app['route_address']
             else:
@@ -469,7 +474,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </script>
     """
 
-    # --- THE LIVE TRACKING JAVASCRIPT INJECTION ---
+    # --- NEW IMPLEMENTATION: Image Overlays for Live Tracking ---
     live_tracking_js = f"""
     <script>
         var vanMarkers = {{}};
@@ -483,9 +488,16 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                             // Move the existing van marker across the map
                             vanMarkers[mechanic].setLatLng([coords.lat, coords.lng]);
                         }} else {{
-                            // Create the van marker for the first time
-                            var iconHtml = `<div style="background-color:#212529; color:white; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-weight:bold; border:2px solid #28a745; box-shadow: 0 3px 6px rgba(0,0,0,0.4); z-index:99999;">🚐${{mechanic.charAt(0)}}</div>`;
-                            var vanIcon = L.divIcon({{html: iconHtml, className: 'van-tracker', iconSize: [30, 30], iconAnchor: [15, 15]}});
+                            // Create the van marker for the first time using the generated image files
+                            var iconUrl = 'base_icon.png';
+                            if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
+                            if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
+                            
+                            var vanIcon = L.icon({{
+                                iconUrl: iconUrl,
+                                iconSize: [40, 40],
+                                iconAnchor: [20, 20]
+                            }});
                             vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {{icon: vanIcon, zIndexOffset: 10000}}).addTo({map_var_name});
                         }}
                     }}
