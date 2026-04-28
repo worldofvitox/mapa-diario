@@ -22,10 +22,10 @@ Date,Mechanic,ID,Client,Type,Distance_km
 2026-04-24,Seba,16793426,Eduardo Carvacho Formas,Ruta a Cliente,4.04
 2026-04-24,Seba,16796021,Julian Silva Espejo,Ruta a Cliente,6.41
 2026-04-24,Seba,RETURN,BASE,Retorno a Base,4.01
-2026-04-27,Juan,16791780,Isadora Rui-Wamba,Ruta a Cliente,11.26
+2026-04-27,Juan,16791780,Isadora Rui-Wamba,Ruta a Cliente,12.59
 2026-04-27,Juan,16798139,Augusto Oyarzun,Ruta a Cliente,14.02
 2026-04-27,Juan,16798349,Hector Castañeda,Ruta a Cliente,0.01
-2026-04-27,Juan,16798617,Manuel Hernandez Oyarzo,Ruta a Cliente,4.5
+2026-04-27,Juan,16798617,Manuel Hernandez Oyarzo,Ruta a Cliente,4.19
 2026-04-27,Juan,RETURN,BASE,Retorno a Base,3.03
 2026-04-28,Juan,16805982,Cyntia Escobar,Ruta a Cliente,25.33
 2026-04-28,Juan,RETURN,BASE,Retorno a Base,22.09
@@ -34,10 +34,12 @@ Date,Mechanic,ID,Client,Type,Distance_km
 2026-04-28,Seba,16809224,Isabel Troncoso,Ruta a Cliente,11.84
 2026-04-28,Seba,16809892,Felipe Vieira,Ruta a Cliente,5.81
 2026-04-28,Seba,16810179,Rodrigo Arriagada Veyl,Ruta a Cliente,1.76
-2026-04-28,Seba,RETURN,BASE,Retorno a Base,8.91
+2026-04-28,Seba,RETURN,BASE,Retorno a Base,11.52
 2026-04-29,Juan,16793779,Rayen Aranguiz Borgeaud,Ruta a Cliente,3.9
 2026-04-29,Juan,16810441,Maria Paz Quiñones,Ruta a Cliente,1.26
 2026-04-29,Juan,RETURN,BASE,Retorno a Base,1.86
+2026-04-29,Seba,16810179,Rodrigo Arriagada Veyl,Ruta a Cliente,8.68
+2026-04-29,Seba,RETURN,BASE,Retorno a Base,8.98
 2026-04-30,Juan,16793779,Rayen Aranguiz Borgeaud,Ruta a Cliente,3.94
 2026-04-30,Juan,16813749,Benjamin Eltit Silva,Ruta a Cliente,5.09
 2026-04-30,Juan,RETURN,BASE,Retorno a Base,9.76
