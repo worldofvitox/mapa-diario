@@ -3,6 +3,7 @@
 <head>
     
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMi_wbYarCHOgAHMdgxHecbCihjhUv-Cs"></script>
     
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
@@ -23,7 +24,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_b313dd83a5e230886fd597d194bdb56b {
+                #map_69b768250143014ac76104e3602f7dd9 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -59,11 +60,10 @@
 </head>
 <body>
     
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMi_wbYarCHOgAHMdgxHecbCihjhUv-Cs"></script>
     
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; font-family: sans-serif; }
-        .leaflet-container { width: 60vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }
+        .leaflet-container { width: 63vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }
         .leaflet-control-layers-list::before { content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: sans-serif;}
         .leaflet-control-layers-base { display: none; }
         ::-webkit-scrollbar { width: 6px; }
@@ -73,7 +73,7 @@
         
     </style>
     
-    <div id="desktop-side-panel" style="width: 40vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+    <div id="desktop-side-panel" style="width: 37vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
         <div style="padding: 12px 15px; background: #343a40; color: white; font-size: 16px; font-weight: bold; flex-shrink: 0; text-align: center;">
             Planificación Diaria: Sat, 02 may
         </div>
@@ -125,10 +125,10 @@
     </script>
     
     
-    <div style="position:absolute; top:20px; right:42vw; z-index:9999; background:white; padding:10px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.2); font-family:sans-serif; font-size:12px; display:flex; gap:10px; align-items:center;">
+    <div style="position:absolute; bottom:20px; left:20px; z-index:9999; background:white; padding:10px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.2); font-family:sans-serif; font-size:12px; display:flex; gap:10px; align-items:center;">
         <b>Draft:</b>
         <input type="text" id="global-draft-input" placeholder="Ingresa dirección draft..." style="width:200px; padding:5px; border:1px solid #ccc; border-radius:4px;">
-        <button onclick="plantGlobalPin()" style="padding:5px 10px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer;">Plantar Pin</button>
+        <button onclick="plantGlobalPin()" style="padding:5px 10px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer;">Marcar</button>
     </div>
 
     <div id="draft-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; font-family:sans-serif;">
@@ -140,7 +140,7 @@
         </div>
     </div>
 
-    <div id="draft-info-box" style="display:none; position:absolute; top:70px; right:42vw; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:sans-serif; font-size:13px; max-width:350px;">
+    <div id="draft-info-box" style="display:none; position:absolute; bottom:70px; left:20px; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:sans-serif; font-size:13px; max-width:350px;">
         <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px;">Resultados Draft</div>
         <div id="draft-info-1" style="margin-bottom:8px;"></div>
         <div id="draft-info-2" style="margin-bottom:15px;"></div>
@@ -155,12 +155,13 @@
         let draftLines = [];
         let currentDraftApp = null;
 
-        function getMapInstance() { return map_b313dd83a5e230886fd597d194bdb56b; }
+        function getMapInstance() { return map_69b768250143014ac76104e3602f7dd9; }
 
         function plantGlobalPin() {
             const inputVal = document.getElementById('global-draft-input').value;
             if (!inputVal) return;
             draftAddress = inputVal;
+            document.getElementById('modal-draft-input').value = draftAddress; // Sync
 
             const geocoder = new google.maps.Geocoder();
             geocoder.geocode({ address: draftAddress }, function(results, status) {
@@ -177,7 +178,7 @@
                         getMapInstance().removeLayer(globalPinMarker);
                         globalPinMarker = null;
                     });
-                } else { alert('Dirección no encontrada'); }
+                } else { alert('Dirección no encontrada: ' + status); }
             });
         }
 
@@ -198,6 +199,7 @@
             const inputVal = document.getElementById('modal-draft-input').value;
             if (!inputVal) return;
             draftAddress = inputVal;
+            document.getElementById('global-draft-input').value = draftAddress; // Sync
             document.getElementById('draft-modal').style.display = 'none';
             closeDraftInfo();
 
@@ -207,12 +209,12 @@
             dirService.route({
                 origin: new google.maps.LatLng(appData.lat, appData.lng), destination: draftAddress, travelMode: 'DRIVING'
             }, function(res1, status1) {
-                if (status1 !== 'OK') { alert('No se pudo rutear al draft'); return; }
+                if (status1 !== 'OK') { alert('No se pudo rutear al draft: ' + status1); return; }
 
                 dirService.route({
                     origin: draftAddress, destination: new google.maps.LatLng(appData.next_lat, appData.next_lng), travelMode: 'DRIVING'
                 }, function(res2, status2) {
-                    if (status2 !== 'OK') { alert('No se pudo rutear al siguiente destino'); return; }
+                    if (status2 !== 'OK') { alert('No se pudo rutear al siguiente destino: ' + status2); return; }
 
                     const pts1 = res1.routes[0].overview_path.map(p => [p.lat(), p.lng()]);
                     const pts2 = res2.routes[0].overview_path.map(p => [p.lat(), p.lng()]);
@@ -256,7 +258,7 @@
                         if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
                         if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
                         var vanIcon = L.icon({ iconUrl: iconUrl, iconSize: [28, 28], iconAnchor: [14, 14] });
-                        vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_b313dd83a5e230886fd597d194bdb56b);
+                        vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_69b768250143014ac76104e3602f7dd9);
                     }
                 }
             }).catch(err => console.error(err));
@@ -280,14 +282,14 @@
     
     
     
-            <div class="folium-map" id="map_b313dd83a5e230886fd597d194bdb56b" ></div>
+            <div class="folium-map" id="map_69b768250143014ac76104e3602f7dd9" ></div>
         
 </body>
 <script>
     
     
-            var map_b313dd83a5e230886fd597d194bdb56b = L.map(
-                "map_b313dd83a5e230886fd597d194bdb56b",
+            var map_69b768250143014ac76104e3602f7dd9 = L.map(
+                "map_69b768250143014ac76104e3602f7dd9",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -304,7 +306,7 @@
 
         
     
-            var tile_layer_a1afbf6285a2abf00daddc3ec6e92098 = L.tileLayer(
+            var tile_layer_908a5fb82d779b5d56519ac614d2c4b3 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -321,60 +323,60 @@
             );
         
     
-            tile_layer_a1afbf6285a2abf00daddc3ec6e92098.addTo(map_b313dd83a5e230886fd597d194bdb56b);
+            tile_layer_908a5fb82d779b5d56519ac614d2c4b3.addTo(map_69b768250143014ac76104e3602f7dd9);
         
     
-            var marker_c77a9ba867269a652f2482fea502f59c = L.marker(
+            var marker_d9b6391f6f0554f9113e859df0c680f8 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_b313dd83a5e230886fd597d194bdb56b);
+            ).addTo(map_69b768250143014ac76104e3602f7dd9);
         
     
-        var icon_1be0f4751fd0d6b517cec5a9900180e4 = L.icon({
+        var icon_a847fd5619280a73d2d10ee91bb5024f = L.icon({
   "iconUrl": "data:image/png;base64,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",
   "iconSize": [28, 28],
 });
         
     
-                marker_c77a9ba867269a652f2482fea502f59c.setIcon(icon_1be0f4751fd0d6b517cec5a9900180e4);
+                marker_d9b6391f6f0554f9113e859df0c680f8.setIcon(icon_a847fd5619280a73d2d10ee91bb5024f);
             
     
-            var feature_group_52c55b375f0281e70880d2d775b11752 = L.featureGroup(
+            var feature_group_0a6e2c568fcd96a857632f833a1f23bd = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_52c55b375f0281e70880d2d775b11752.addTo(map_b313dd83a5e230886fd597d194bdb56b);
+            feature_group_0a6e2c568fcd96a857632f833a1f23bd.addTo(map_69b768250143014ac76104e3602f7dd9);
         
     
-            var feature_group_35d4fb56e84b8a2297a24b769070d02b = L.featureGroup(
+            var feature_group_733db24973dd485c734f38e46e455be0 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_35d4fb56e84b8a2297a24b769070d02b.addTo(map_b313dd83a5e230886fd597d194bdb56b);
+            feature_group_733db24973dd485c734f38e46e455be0.addTo(map_69b768250143014ac76104e3602f7dd9);
         
     
-            var layer_control_247e578209575ffb6e870527e60d1dd2_layers = {
+            var layer_control_db45cb20a982ddda6fb66fecf44cea30_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_52c55b375f0281e70880d2d775b11752,
-                    "Seba" : feature_group_35d4fb56e84b8a2297a24b769070d02b,
+                    "Juan" : feature_group_0a6e2c568fcd96a857632f833a1f23bd,
+                    "Seba" : feature_group_733db24973dd485c734f38e46e455be0,
                 },
             };
-            let layer_control_247e578209575ffb6e870527e60d1dd2 = L.control.layers(
-                layer_control_247e578209575ffb6e870527e60d1dd2_layers.base_layers,
-                layer_control_247e578209575ffb6e870527e60d1dd2_layers.overlays,
+            let layer_control_db45cb20a982ddda6fb66fecf44cea30 = L.control.layers(
+                layer_control_db45cb20a982ddda6fb66fecf44cea30_layers.base_layers,
+                layer_control_db45cb20a982ddda6fb66fecf44cea30_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_b313dd83a5e230886fd597d194bdb56b);
+            ).addTo(map_69b768250143014ac76104e3602f7dd9);
 
         
 </script>
