@@ -17,7 +17,7 @@ try:
 except:
     pass
 
-# ⚠️ PASTE YOUR FIREBASE URL HERE
+# ⚠️ PASTE YOUR FIREBASE URL HERE (KEEP /vans.json AT THE END!)
 FIREBASE_URL = 'https://vantracker-7cdef-default-rtdb.firebaseio.com/vans.json'
 
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
@@ -61,6 +61,7 @@ def get_service_config():
             headers = next(reader)
             
             abbr_idx, prod_idx, var_idx, comb_idx, short_idx, dur_idx = 0, 1, 2, 3, 4, 5
+            
             for i, h in enumerate(headers):
                 h_norm = normalize_text(h)
                 if any(kw in h_norm for kw in ['abbreviation', 'abbrev', 'sigla']): abbr_idx = i
@@ -76,6 +77,7 @@ def get_service_config():
                 var = row[var_idx].strip() if len(row) > var_idx else ""
                 comb = row[comb_idx].strip() if len(row) > comb_idx else ""
                 shorthand = row[short_idx].strip() if len(row) > short_idx else ""
+                
                 try: 
                     duration_str = row[dur_idx].strip() if len(row) > dur_idx else ""
                     duration = int(re.sub(r'\D', '', duration_str)) if duration_str else 60
@@ -85,7 +87,8 @@ def get_service_config():
                     'abbrev': abbrev, 'prod': prod, 'var': var, 
                     'comb': comb, 'shorthand': shorthand, 'duration': duration
                 })
-    except: pass
+    except Exception as e:
+        print(f"Error fetching Google Sheet config: {e}")
     return config
 
 GLOBAL_CONFIG = get_service_config()
@@ -98,10 +101,12 @@ def group_overlapping(items):
             overlaps = False
             for c_item in cluster:
                 if max(item['top'], c_item['top']) < min(item['top'] + item['height'], c_item['top'] + c_item['height']):
-                    overlaps = True; break
+                    overlaps = True
+                    break
             if overlaps:
                 cluster.append(item)
-                placed = True; break
+                placed = True
+                break
         if not placed:
             clusters.append([item])
     return clusters
@@ -146,7 +151,8 @@ def get_all_appointments():
                     
                     raw_notas = ""
                     notas_match = re.search(r'(?i)Notas?:(.*?)(?=Booking:|Telefono:|Teléfono:|Cliente:|Address1:|Address2:|Comuna:|Servicio:|$)', clean_desc, re.DOTALL | re.IGNORECASE)
-                    if notas_match: raw_notas = notas_match.group(1).strip()
+                    if notas_match:
+                        raw_notas = notas_match.group(1).strip()
                     
                     if not cliente:
                         name_match = re.search(r'Cliente:\s*(.*?)\s*\(', summary)
@@ -191,21 +197,27 @@ def get_all_appointments():
     cache = {}
     if os.path.exists(CACHE_FILE):
         try:
-            with open(CACHE_FILE, 'r', encoding='utf-8') as f: cache = json.load(f)
+            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
+                cache = json.load(f)
         except: pass
 
     now_ts = datetime.now(timezone).timestamp()
     merged = {}
+
     for app in live_apps: merged[app['uid']] = app
     for uid, cached_app in cache.items():
-        if uid not in merged and cached_app['start_timestamp'] < now_ts: merged[uid] = cached_app
+        if uid not in merged:
+            if cached_app['start_timestamp'] < now_ts:
+                merged[uid] = cached_app
 
-    with open(CACHE_FILE, 'w', encoding='utf-8') as f: json.dump(merged, f, ensure_ascii=False, indent=2)
+    with open(CACHE_FILE, 'w', encoding='utf-8') as f:
+        json.dump(merged, f, ensure_ascii=False, indent=2)
 
     final_apps = []
     for uid, app in merged.items():
         app['start_dt'] = datetime.fromisoformat(app['start_dt'])
         final_apps.append(app)
+
     return final_apps
 
 def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, now_dt):
@@ -216,7 +228,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     
     m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
     
-    # Force Map API to load in the header before body executes
     m.get_root().header.add_child(folium.Element(f'<script src="https://maps.googleapis.com/maps/api/js?key={GMAPS_KEY}"></script>'))
     
     favicon_html = """
@@ -234,7 +245,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     all_points = [BASE_LOCATION]
     global_max_n = 1
     
-    # Grid Logic (Starting at 9:30)
     grid_lines_html = ""
     offset_mins = 9 * 60 + 30 
     for h in range(9, 19):
@@ -254,7 +264,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         ui_apps = []
         ui_transits = []
         
-        # Pass 1: Plotting and Directions
         for i, app in enumerate(mech_apps):
             label_id = f"{info['initial']}{i+1}"
             leg_color = info['palette'][i % len(info['palette'])]
@@ -274,7 +283,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 leg = directions[0]['legs'][0]
                 dist_m = leg.get('distance', {}).get('value', 0)
                 
-                # Append data for Draft functionality
                 app['lat'] = leg['end_location']['lat']
                 app['lng'] = leg['end_location']['lng']
                 app['address'] = app['route_address']
@@ -317,7 +325,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             t_top = app['panel_top'] - t_height
             ui_transits.append({'top': t_top, 'height': t_height, 'mins': app.get('transit_mins', 0)})
 
-        # Pass 2: Attaching "Next" Data for Drafting 
         for i, app in enumerate(mech_apps):
             if i + 1 < len(mech_apps):
                 app['next_lat'] = mech_apps[i+1].get('lat', BASE_LOCATION[0])
@@ -396,7 +403,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 full_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
                 full_address = re.sub(r'\s+', ' ', full_address)
                 
-                # BUGFIX: Hard Replace the Single Quotes to guarantee HTML onClick safety!
                 encoded_notas = urllib.parse.quote(app.get('notas', '')).replace("'", "%27")
                 
                 raw_json = json.dumps({
@@ -475,20 +481,23 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     <script>
         var vanMarkers = {{}};
         function updateVans() {{
-            fetch("{FIREBASE_URL}").then(response => response.json()).then(data => {{
-                if(!data) return;
-                for (const [mechanic, coords] of Object.entries(data)) {{
-                    if (vanMarkers[mechanic]) {{
-                        vanMarkers[mechanic].setLatLng([coords.lat, coords.lng]);
-                    }} else {{
-                        var iconUrl = 'base_icon.png';
-                        if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
-                        if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
-                        var vanIcon = L.icon({{ iconUrl: iconUrl, iconSize: [28, 28], iconAnchor: [14, 14] }});
-                        vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {{icon: vanIcon, zIndexOffset: 10000}}).addTo({map_var_name});
+            fetch("{FIREBASE_URL}")
+                .then(response => response.json())
+                .then(data => {{
+                    if(!data) return;
+                    for (const [mechanic, coords] of Object.entries(data)) {{
+                        if (vanMarkers[mechanic]) {{
+                            vanMarkers[mechanic].setLatLng([coords.lat, coords.lng]);
+                        }} else {{
+                            var iconUrl = 'base_icon.png';
+                            if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
+                            if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
+                            var vanIcon = L.icon({{ iconUrl: iconUrl, iconSize: [28, 28], iconAnchor: [14, 14] }});
+                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {{icon: vanIcon, zIndexOffset: 10000}}).addTo({map_var_name});
+                        }}
                     }}
-                }}
-            }}).catch(err => console.error(err));
+                }})
+                .catch(err => console.error("Live Tracking Error: ", err));
         }}
         
         function updateTimeLine() {{
@@ -508,7 +517,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </script>
     """
 
-    # --- MOVED: Draft box is now bottom:20px; left:20px; ---
     drafting_html = f"""
     <div style="position:absolute; bottom:20px; left:20px; z-index:9999; background:white; padding:10px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.2); font-family:sans-serif; font-size:12px; display:flex; gap:10px; align-items:center;">
         <b>Draft:</b>
@@ -526,7 +534,10 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </div>
 
     <div id="draft-info-box" style="display:none; position:absolute; bottom:70px; left:20px; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:sans-serif; font-size:13px; max-width:350px;">
-        <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px;">Resultados Draft</div>
+        <div id="draft-info-header" style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
+            <span>Resultados Intercalar</span>
+            <span style="font-size:10px; color:#aaa; font-weight:normal;">(Arrastrar)</span>
+        </div>
         <div id="draft-info-1" style="margin-bottom:8px;"></div>
         <div id="draft-info-2" style="margin-bottom:15px;"></div>
         <div style="font-weight:bold; color:#007bff; font-size:15px;">Tiempo Disponible: <span id="draft-info-time"></span> min</div>
@@ -556,7 +567,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                     const lng = results[0].geometry.location.lng();
                     
                     globalPinMarker = L.marker([lat, lng], {{
-                        icon: L.divIcon({{html: '<div style="font-size:24px; text-align:center;">📍</div>', className: 'global-pin', iconSize: [24,24], iconAnchor: [12,24]}})
+                        icon: L.divIcon({{html: '<div style="font-size:48px; text-align:center; line-height:48px;">📍</div>', className: 'global-pin', iconSize: [48,48], iconAnchor: [24,48]}})
                     }}).addTo(getMapInstance());
 
                     globalPinMarker.on('click', function() {{
@@ -620,17 +631,50 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                     let availMins = Math.round((appData.next_start_ts - appData.end_time_ts) / 60) - (min1 + min2);
                     if (availMins < 0) availMins = 0;
 
-                    document.getElementById('draft-info-1').innerHTML = `<b>${{appData.address}}</b> hasta <b>Draft</b>: ${{min1}} min`;
-                    document.getElementById('draft-info-2').innerHTML = `<b>Draft</b> hasta <b>${{appData.next_address}}</b>: ${{min2}} min`;
+                    document.getElementById('draft-info-1').innerHTML = `<b>${{min1}} min</b> ${{appData.address}} hasta ${{draftAddress}}`;
+                    document.getElementById('draft-info-2').innerHTML = `<b>${{min2}} min</b> ${{draftAddress}} hasta ${{appData.next_address}}`;
                     document.getElementById('draft-info-time').innerText = availMins;
                     document.getElementById('draft-info-box').style.display = 'block';
                 }});
             }});
         }}
+
+        // Make the draft info box draggable
+        dragElement(document.getElementById("draft-info-box"));
+        function dragElement(elmnt) {{
+            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (document.getElementById("draft-info-header")) {{
+                document.getElementById("draft-info-header").onmousedown = dragMouseDown;
+            }} else {{
+                elmnt.onmousedown = dragMouseDown;
+            }}
+            function dragMouseDown(e) {{
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }}
+            function elementDrag(e) {{
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.bottom = "auto";
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }}
+            function closeDragElement() {{
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }}
+        }}
     </script>
     """
     
-    # --- UPDATED: panel width is now 37vw ---
     desktop_layout = f"""
     <style>
         body, html {{ margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; font-family: sans-serif; }}
@@ -665,6 +709,7 @@ def update_distance_csv():
     file_name = 'distances.csv'
     historical_data = {}
     expected_fields = ['Date', 'Mechanic', 'ID', 'Client', 'Type', 'Distance_km']
+    
     if os.path.exists(file_name):
         try:
             with open(file_name, 'r', encoding='utf-8') as f:
@@ -673,7 +718,7 @@ def update_distance_csv():
                     for row in reader:
                         key = f"{row['Date']}_{row['Mechanic']}_{row['ID']}_{row['Type']}"
                         historical_data[key] = row
-        except: pass
+        except Exception as e: pass
                 
     for leg in all_legs_data:
         key = f"{leg['Date']}_{leg['Mechanic']}_{leg['ID']}_{leg['Type']}"
@@ -682,7 +727,8 @@ def update_distance_csv():
     with open(file_name, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=expected_fields)
         writer.writeheader()
-        for key in sorted(historical_data.keys()): writer.writerow(historical_data[key])
+        for key in sorted(historical_data.keys()):
+            writer.writerow(historical_data[key])
 
 if __name__ == "__main__":
     print("Fetching global appointments (with memory cache)...")
