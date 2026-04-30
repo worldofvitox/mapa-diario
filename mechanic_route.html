@@ -4,6 +4,14 @@
     
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     
+    
+@font-face { font-family: 'Saturn-Bold'; src: url('Saturn-Bold.woff') format('woff'), url('Saturn-Bold.ttf') format('truetype'); }
+@font-face { font-family: 'Gotham'; src: url('Gotham Book.otf') format('opentype'); font-weight: normal; }
+@font-face { font-family: 'Gotham'; src: url('Gotham Bold.otf') format('opentype'); font-weight: bold; }
+@font-face { font-family: 'Gotham'; src: url('Gotham Medium.otf') format('opentype'); font-weight: 500; }
+body, html { font-family: 'Gotham', sans-serif; }
+::placeholder { font-family: 'Gotham', sans-serif !important; opacity: 0.6; }
+
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
@@ -23,7 +31,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_869dbb3b712d6a2624631a3fd35ec9be {
+                #map_da90e8f1fcaae43a39ffc1de20a5b694 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -64,68 +72,21 @@
         #mbs-table-container table tbody tr:nth-child(even) { background-color: #f8f9fa; }
         #mbs-table-container table tbody tr:nth-child(odd) { background-color: #ffffff; }
         .leaflet-bottom { bottom: 28% !important; } 
-        .leaflet-control-layers-list::before { content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; } 
+        .leaflet-control-layers-list::before { content: 'Ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; font-family:'Saturn-Bold'; font-size:14px; color:#011E41; } 
         .leaflet-control-layers-base { display: none; }
+        .leaflet-control-layers { border: 2px solid #011E41 !important; border-radius: 8px !important; color: #011E41 !important; font-family: 'Gotham', sans-serif; }
     </style>
-    <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid #ddd;">
-        <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
-            <tbody>
-                <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent('Proforma'))">
-                    <td style="padding: 4px 2px; color: #dc3545; width: 6%; white-space: nowrap; vertical-align: middle;">J1</td>
-                    <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">10:00</td>
-                    <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">Rayen Aranguiz Borge</td>
-                    <td style="padding: 4px 2px; width: 51%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">Carlos Alvarado 5953 D 702 Las Condes</td>
-                    <td style="padding: 4px 2px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right; vertical-align: middle;">CL3</td>
-                </tr>
-                
-                <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent('Quer%C3%ADa%20coordinar%20una%20mantencion%20para%20mi%20bicicletaMe%20pasa%20que%20cuando%20ando%20con%20un%20poco%20m%C3%A1s%20de%20fuerza%20como%20que%20la%20cadena%20pasa%20un%20poco%20en%20banda'))">
-                    <td style="padding: 4px 2px; color: #c82333; width: 6%; white-space: nowrap; vertical-align: middle;">J2</td>
-                    <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">15:30</td>
-                    <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">Benjamin Eltit Silva</td>
-                    <td style="padding: 4px 2px; width: 51%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">Reina Astrid 950 D 602 Las Condes</td>
-                    <td style="padding: 4px 2px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right; vertical-align: middle;">CL1</td>
-                </tr>
-                
-                <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent('Mi%20bicicleta%20tiene%202%20a%C3%B1os%20aprox%20y%20no%20le%20he%20hecho%20ninguna.%20Adem%C3%A1s%20est%C3%A1%20perdiendo%20aire%20de%20un%20neum%C3%A1tico%2C%20pero%20eso%20debiese%20ser%20algo%20f%C3%A1cil%20de%20reparar'))">
-                    <td style="padding: 4px 2px; color: #007bff; width: 6%; white-space: nowrap; vertical-align: middle;">S1</td>
-                    <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">10:00</td>
-                    <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">Jose Antonio Valenzu</td>
-                    <td style="padding: 4px 2px; width: 51%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">Las Pataguas 4499 Depto A2 Las Condes</td>
-                    <td style="padding: 4px 2px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right; vertical-align: middle;">CL2</td>
-                </tr>
-                
-                <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent('Los%20pi%C3%B1ones%20se%20encuentran%20sueltosLa%20dejo%20patio%20delantero%20como%20siempre'))">
-                    <td style="padding: 4px 2px; color: #0056b3; width: 6%; white-space: nowrap; vertical-align: middle;">S2</td>
-                    <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">13:30</td>
-                    <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">Mauricio Cabrera</td>
-                    <td style="padding: 4px 2px; width: 51%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">Altos Del Parque Poniente 8101 Casa 86 Peñalolén</td>
-                    <td style="padding: 4px 2px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right; vertical-align: middle;">CL1</td>
-                </tr>
-                
-                <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent('%235318'))">
-                    <td style="padding: 4px 2px; color: #004085; width: 6%; white-space: nowrap; vertical-align: middle;">S3</td>
-                    <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">15:30</td>
-                    <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">Elias Cassis</td>
-                    <td style="padding: 4px 2px; width: 51%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">Av Jose Pedro Alessandri 1880  Ñuñoa</td>
-                    <td style="padding: 4px 2px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right; vertical-align: middle;">VM</td>
-                </tr>
-                
-                <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent('prioridad%20en%20tubelessentrar%20por%20porton%20contiguo%20antes%20de%20pdi%2C%20al%20fondo'))">
-                    <td style="padding: 4px 2px; color: #3399ff; width: 6%; white-space: nowrap; vertical-align: middle;">S4</td>
-                    <td style="padding: 4px 2px; width: 10%; white-space: nowrap; vertical-align: middle;">15:30</td>
-                    <td style="padding: 4px 2px; width: 23%; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 0; vertical-align: middle;">Elias Cassis</td>
-                    <td style="padding: 4px 2px; width: 51%; font-size: 10px; color: #666; white-space: normal; line-height: 1.1; vertical-align: middle;">Av Jose Pedro Alessandri 1880  Ñuñoa</td>
-                    <td style="padding: 4px 2px; font-size: 10px; color: #444; width: 10%; white-space: nowrap; text-align: right; vertical-align: middle;">VM</td>
-                </tr>
-                </tbody>
+    <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid #011E41;">
+        <table style="width: 100%; border-collapse: collapse; font-family: 'Gotham', sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
+            <tbody><tr><td colspan="5" style="text-align:left; padding: 10px; font-weight:normal; font-size:10px;"><b>No hay rutas para este dia.</b></td></tr></tbody>
         </table>
     </div>
     
-    <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:100000;"></div>
-    <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Helvetica', sans-serif; font-size:14px; font-weight:normal; color:#333; border: 2px solid #ccc;">
-        <div style="margin-bottom: 10px; font-size: 11px; color: #888; text-transform: uppercase; font-weight:bold;">Notas de la Cita</div>
+    <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.4); z-index:100000;"></div>
+    <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Gotham', sans-serif; font-size:14px; font-weight:normal; color:#011E41; border: 2px solid #011E41;">
+        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: uppercase; font-family:'Saturn-Bold';">Notas de la Cita</div>
         <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
-        <div style="margin-top: 15px; text-align: right;"><button onclick="closeNotes()" style="background:#007bff; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">Cerrar</button></div>
+        <div style="margin-top: 15px; text-align: right;"><button onclick="closeNotes()" style="background:#011E41; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-family:'Gotham'; font-weight:bold;">Cerrar</button></div>
     </div>
     <script>
         function showNotes(text) {
@@ -140,55 +101,55 @@
     </script>
     
     
-    <div id="wa-backdrop" onclick="closeWaModal()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:100004;"></div>
-    <div id="wa-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:12px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; width:85%; max-width:380px; font-family:'Helvetica', sans-serif; max-height:90vh; overflow-y:auto;">
-        <div style="margin-bottom: 15px; font-size: 14px; color: #333; font-weight:bold; text-align:center;">Contactar a <span id="wa-cust-name"></span></div>
+    <div id="wa-backdrop" onclick="closeWaModal()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.5); z-index:100004;"></div>
+    <div id="wa-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:12px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; width:85%; max-width:380px; font-family:'Gotham', sans-serif; max-height:90vh; overflow-y:auto; border: 2px solid #011E41;">
+        <div style="margin-bottom: 15px; font-size: 14px; color: #011E41; font-family:'Saturn-Bold'; text-align:center;">Contactar a <span id="wa-cust-name"></span></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <button onclick="sendWa('hablar')" style="background:#25D366; color:white; border:none; padding:15px 5px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Hablar</button>
-            <button onclick="sendWa('voy')" style="background:#007bff; color:white; border:none; padding:15px 5px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Voy</button>
+            <button onclick="sendWa('hablar')" style="background:#25D366; color:white; border:none; padding:15px 5px; border-radius:8px; font-family:'Gotham'; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Hablar</button>
+            <button onclick="sendWa('voy')" style="background:#007bff; color:white; border:none; padding:15px 5px; border-radius:8px; font-family:'Gotham'; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Voy</button>
             
             <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <span style="font-size:13px; font-weight:bold; color:#856404;">Tarde</span>
+                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#856404;">Tarde</span>
                 <div style="display:flex; align-items:center; gap:5px;">
-                    <input type="number" id="mins-tarde" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box;">
+                    <input type="number" id="mins-tarde" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:'Gotham';">
                     <span style="font-size:12px; color:#666;">min</span>
                 </div>
-                <button onclick="sendWa('tarde')" style="background:#ffc107; color:#333; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+                <button onclick="sendWa('tarde')" style="background:#ffc107; color:#333; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
             </div>
             
             <div style="background:#d4edda; border:1px solid #c3e6cb; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <span style="font-size:13px; font-weight:bold; color:#155724;">Temprano</span>
+                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#155724;">Temprano</span>
                 <div style="display:flex; align-items:center; gap:5px;">
-                    <input type="number" id="mins-temprano" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box;">
+                    <input type="number" id="mins-temprano" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:'Gotham';">
                     <span style="font-size:12px; color:#666;">min</span>
                 </div>
-                <button onclick="sendWa('temprano')" style="background:#28a745; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+                <button onclick="sendWa('temprano')" style="background:#28a745; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
             </div>
 
             <div style="background:#d1ecf1; border:1px solid #bee5eb; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-weight:bold; color:#0c5460; text-align:center;">Llegué</span>
+               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#0c5460; text-align:center;">Llegué</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="llegue_opt" value="normal" checked> Normal</label>
                    <label><input type="radio" name="llegue_opt" value="avisar"> Avisar</label>
                    <label><input type="radio" name="llegue_opt" value="porton"> Portón</label>
                    <label><input type="radio" name="llegue_opt" value="donde"> Donde</label>
                </div>
-               <button onclick="sendWa('llegue')" style="background:#17a2b8; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+               <button onclick="sendWa('llegue')" style="background:#17a2b8; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
            </div>
 
            <div style="background:#e2d9f3; border:1px solid #d3c2ee; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-weight:bold; color:#3b1c6e; text-align:center;">Listo</span>
+               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#3b1c6e; text-align:center;">Listo</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="listo_opt" value="buscar" checked> Buscar</label>
                    <label><input type="radio" name="listo_opt" value="proxima"> Proxima</label>
                    <label><input type="radio" name="listo_opt" value="recibir"> Recibir</label>
                    <label><input type="radio" name="listo_opt" value="conserje"> Conserje</label>
                </div>
-               <button onclick="sendWa('listo')" style="background:#6f42c1; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+               <button onclick="sendWa('listo')" style="background:#6f42c1; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
            </div>
         </div>
         <div style="margin-top: 15px; text-align: center;">
-            <button onclick="closeWaModal()" style="background:#eee; color:#333; border:none; padding:8px 20px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:12px;">Cancelar</button>
+            <button onclick="closeWaModal()" style="background:#eee; color:#011E41; border:none; padding:8px 20px; border-radius:4px; cursor:pointer; font-family:'Gotham'; font-weight:bold; font-size:12px;">Cancelar</button>
         </div>
     </div>
     <script>
@@ -249,14 +210,14 @@
     
     <script>function autoFilter(){const p=new URLSearchParams(window.location.search);const m=p.get('mechanic');if(!m)return;const t=m.toLowerCase();const s=document.querySelectorAll('.leaflet-control-layers-selector');if(s.length===0){setTimeout(autoFilter,300);return}s.forEach(i=>{const l=i.nextElementSibling.innerText.trim().toLowerCase();if((l==='juan'||l==='seba')&&l!==t){if(i.checked)i.click()}})}window.addEventListener('load',autoFilter)</script>
     
-            <div class="folium-map" id="map_869dbb3b712d6a2624631a3fd35ec9be" ></div>
+            <div class="folium-map" id="map_da90e8f1fcaae43a39ffc1de20a5b694" ></div>
         
 </body>
 <script>
     
     
-            var map_869dbb3b712d6a2624631a3fd35ec9be = L.map(
-                "map_869dbb3b712d6a2624631a3fd35ec9be",
+            var map_da90e8f1fcaae43a39ffc1de20a5b694 = L.map(
+                "map_da90e8f1fcaae43a39ffc1de20a5b694",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -273,7 +234,7 @@
 
         
     
-            var tile_layer_7500c863567bf6fe91864d6a1170882a = L.tileLayer(
+            var tile_layer_68535dc862b5a0ece6f4e93a992f24f0 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -290,339 +251,61 @@
             );
         
     
-            tile_layer_7500c863567bf6fe91864d6a1170882a.addTo(map_869dbb3b712d6a2624631a3fd35ec9be);
+            tile_layer_68535dc862b5a0ece6f4e93a992f24f0.addTo(map_da90e8f1fcaae43a39ffc1de20a5b694);
         
     
-            var marker_10c2a072a8c466d9298ba711b3c42225 = L.marker(
+            var marker_523683ca1fa610fcea698e337dd4b81e = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_869dbb3b712d6a2624631a3fd35ec9be);
+            ).addTo(map_da90e8f1fcaae43a39ffc1de20a5b694);
         
     
-        var icon_6023ffd0a9755c94b8b9a9083ae6a96c = L.icon({
+        var icon_2842f0b9740c61c4e294cffee8d60c13 = L.icon({
   "iconUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAGiklEQVR4nOWXeWyT5x3HP359x8bOYZwE53BiJ81BgFEoa+gEdKVCiE7rxtoh6MraLWIqPQbaHxQ6jR3R1rUTbOwQPcYhBNI6kbZDVUSbhbZpgjRIayBNSEjDcgfngDi28/p4p/dxyrQmKanUdZb2lV691qNXz/N9fsf3+7NGl3e3QhJDIskhkeSQSHJIJDkkkhwSSQ6JJIdEkkMiyaH7bx+gUR+N5uajLsTjcRQlsa7+/sIIaqZISFNEFEUhGo0RkyMwKYMcVRfBbAStFlDQp5hQ4srnSzBB5N+EFCURlUhEJRIBlVAsDjotOruVQreLUk8eFWWFLC71UOzJRavV8vie/TQ0NKO3mInNEknNrYaFjyMi0gPElTiRaAxFEJEhGlM/AouZzEwHxQUuFpYUsqTcS6k3D1f2fMxmI4FAkO6+Ido+6qHx3WaWLl/I+rtXUHLnJnQpZhHtz0xQkiTk8ORUeiKJRaOBeRmpFBXkUObNF1GpKCnAnZOF3W5FlqMMDA3T3tXL+xc7uNjaSeuVbv7ZOwjXAxAcF72pc2Uz4DvJxqqfUP/3sxht1hmjOCtBNWKRiSB5+S4qSj0sKitkSZkHr9uFc346gYkgN8aDDPhH8bVcofnCZdo6u+m82k9o7AbcCCTqTKcVl1IJ2G1W7ltbSViWOXaohpcO7iXNbuUb39qBKStD1OucCIrI3Qiw84ktPP3EFoaujdI3OMyHHVf54NIVmj9oxVOYS/OlDi43NKphBZsVYjHx1uu0LCz1MBmeJNVm5dk920i1W5kIhYlGYlTeUUHm4q8zPz2VxtcO4KncjH9kDJ1ePy3V0wiqkYvKETKd6XQ0HOP+7/2Y06ffg/EJkCcAPcyzMthZy7N/OMG5Jh8Ol5M33myiencVZ5p8nDx8Ep+vhldOnWHNyqWc87VhNOpFgzy4bS9t7xylZPXD9LZ10dx4nBOvvsWvfvkiJmf6tChOE2rRlXKEgrxsro1c5813/iHWl65ezmO7tvPdp7biKspHjkap2ryBX1c/yV9e+Clr1yxn44ZV2KxmIRsGg55rw9fJSLPxWu17otN7B/yUFrmxWi2iPLQKHDz2Og/ct0aUQnwGuZkmM6JZ43EyUm3IcgRlIszvnv8R61avoLXjKhvuXcnWJ6uxmEz88JkDvPLX0/R9+DrpqfOE9rV39uAozsfjdom0uXOzkGUZm8UsmmVkeJS9z/+Z8KRMTJa5fdFtgrgqSx8rxacSFKdEY2Q50xnyj5Ke7WD7I99k2boqztXWsWLdV7FYzJiMBhrPt5CW7SA700H/4DCh0CSH9u8iGJ7kT4dfpf7dZh7f81sud/Xy2O79BIJh0TzNdY2QksLGrffz6Kb1lNy1BUkVbCU+9whmOTMY8o+R5XQkakEDm7Y9RPXT3+fnvzmKHIkwEQxhMZt5+fgpzl9oZ+2DO8l1ZdLS3oW/tQv0Og7tOwJpdox2K0XuBXjzXaxcvpB7vrKMIk8Om9SavNSBIc1OXG2yT/L5ZJPodFrCA34O/P4ZLGYTO3bvx/f2EQLBEH7/GAeP/Y3aurO4XE6aL7YnxHp4DEymhPEaDWS7XSwp81J+m5uC3CyKC3PxFuSIrJhMRt4+66Pm1BmO17zFQN8QhnmWWT15ZqvTaHCk2YTGjfYNUnHPI6Jmwr1DoNqZJYWhnn4cudkUuV0sLvdSUVJIebGbXJcTS4qJ8UBCI++6Y9F/bN147iKr7n1UtSQhSUabhZhqi7NgGkGhQ5LEgkwH9Y3vQygsmsXlzKC0cinlJW5KPHmiuDPSbUIWBq+N0P5RD6fqmrjQcoXWzm56BvxEB/w8t28XO3/wbbF3fcN5vrP9F+isFgxmo7DMTyM3c4q1WsLDYxx58WdULiunf8CPpzCH9FQbRqPh5nfP/fEELx+uoWfkOuP+0YQVqgWs14k06wx64eHq5b58exkaNDSdb0GJx9GbjOI9F8wo1PFolLRUG1UPfY3+7n4e3ryBVXd+6eY3b9Q1sf6BHaJzJJNRXEpSu0hJZCCuKDcdIWGZocTlLWbRbDPp3ZwJTu1KTJ1YxgNifMot93Kg+ikWZM2ntv4s1fuOCqHW6vWi8251nFZK+MFsI9VnJzh1c7GxRkM4FIZIFAx6CIaQrBa0WmnWEenzxKwDq5iGp3RJtS21rtQ1bZpdROKLIDfniVqtKWGmqCYzXUz/r//VSSQ5JJIcEkkOiSSHRJJDIskhkeSQ/tcEboV/Ae7otVsu40dtAAAAAElFTkSuQmCC",
   "iconSize": [28, 28],
 });
         
     
-                marker_10c2a072a8c466d9298ba711b3c42225.setIcon(icon_6023ffd0a9755c94b8b9a9083ae6a96c);
+                marker_523683ca1fa610fcea698e337dd4b81e.setIcon(icon_2842f0b9740c61c4e294cffee8d60c13);
             
     
-            var feature_group_8ee3ffdcf3034d341a303c68f43893c3 = L.featureGroup(
+            var feature_group_c4e16e7d1ebb8dc61fadfe6ab1d6a54a = L.featureGroup(
                 {
 }
             );
         
     
-            var poly_line_8f26777d446e2fc995dde973487e4659 = L.polyline(
-                [[-33.45205, -70.57865000000001], [-33.45202, -70.57860000000001], [-33.452, -70.57827], [-33.45134, -70.57835000000001], [-33.45105, -70.57835000000001], [-33.4507, -70.57834000000001], [-33.44903, -70.57845], [-33.44632, -70.57864000000001], [-33.44642, -70.58087], [-33.44453, -70.5811], [-33.44294, -70.58129000000001], [-33.44211, -70.58139000000001], [-33.44156, -70.58148000000001], [-33.44084, -70.58132], [-33.44063, -70.58126000000001], [-33.44028, -70.58107000000001], [-33.44001, -70.58095000000002], [-33.43985, -70.58089000000001], [-33.43889, -70.58057000000001], [-33.43758, -70.58015], [-33.43576, -70.57957], [-33.4355, -70.57948], [-33.43597, -70.57855], [-33.43618, -70.57806000000001], [-33.43629, -70.57765], [-33.43635, -70.57741000000001], [-33.43592, -70.57726000000001], [-33.43528, -70.57705000000001], [-33.43507, -70.57700000000001], [-33.434870000000004, -70.57700000000001], [-33.43425, -70.57710000000002], [-33.43372, -70.5772], [-33.4336, -70.57618000000001], [-33.4335, -70.57535000000001], [-33.43348, -70.57518000000002], [-33.43316, -70.57523], [-33.43264, -70.57532], [-33.43217, -70.57540000000002], [-33.43119, -70.57554], [-33.43118, -70.57445000000001], [-33.43117, -70.57374000000002], [-33.43109, -70.57151], [-33.43104, -70.57006000000001], [-33.43103, -70.56996000000001], [-33.430930000000004, -70.56994000000002], [-33.42925, -70.57001000000001], [-33.42914, -70.56789], [-33.42906, -70.56644000000001], [-33.42902, -70.5656]],
-                {"bubblingMouseEvents": true, "color": "#dc3545", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#dc3545", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
-            ).addTo(feature_group_8ee3ffdcf3034d341a303c68f43893c3);
+            feature_group_c4e16e7d1ebb8dc61fadfe6ab1d6a54a.addTo(map_da90e8f1fcaae43a39ffc1de20a5b694);
         
     
-            var marker_e86d562a8cbee2d2765a7b49c71be9ba = L.marker(
-                [-33.43629, -70.57765],
-                {
-}
-            ).addTo(feature_group_8ee3ffdcf3034d341a303c68f43893c3);
-        
-    
-            var div_icon_dc5c4a5c790a10e5e5042c0d46b9b697 = L.divIcon({
-  "html": "\u003ca href=\"https://waze.com/ul?q=Carlos%20Alvarado%205953%2C%20Las%20Condes%2C%20Santiago%2C%20Chile\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#dc3545; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ1 / 09:41 / 18 min\u003c/div\u003e\u003c/a\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_e86d562a8cbee2d2765a7b49c71be9ba.setIcon(div_icon_dc5c4a5c790a10e5e5042c0d46b9b697);
-            
-    
-            var marker_1f74143bc74d764ded1c754a66250c7c = L.marker(
-                [-33.4290166, -70.565598],
-                {
-}
-            ).addTo(feature_group_8ee3ffdcf3034d341a303c68f43893c3);
-        
-    
-            var div_icon_54b7caf1e267ded86056643380d6a3d9 = L.divIcon({
-  "html": "\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:none;\"\u003eJ1 / 10:00 / Rayen Aranguiz Borge / Carlos Alvarado 5953\u003c/div\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_1f74143bc74d764ded1c754a66250c7c.setIcon(div_icon_54b7caf1e267ded86056643380d6a3d9);
-            
-    
-            var poly_line_103eb7f3b9874d59d01bed83bb3d07dc = L.polyline(
-                [[-33.42902, -70.5656], [-33.428960000000004, -70.56457], [-33.42895, -70.56442000000001], [-33.42882, -70.56439000000002], [-33.42792, -70.56418000000001], [-33.42711, -70.56398000000002], [-33.425580000000004, -70.56357000000001], [-33.42518, -70.56347000000001], [-33.4251, -70.56347000000001], [-33.42488, -70.56349000000002], [-33.42466, -70.56356000000001], [-33.42458, -70.56359], [-33.42442, -70.56368], [-33.42397, -70.56394000000002], [-33.42368, -70.56402000000001], [-33.4229, -70.56407000000002], [-33.42113, -70.56414000000001], [-33.41979, -70.56414000000001], [-33.41892, -70.56412000000002], [-33.41807, -70.56410000000001], [-33.41766, -70.56412000000002], [-33.41748, -70.56417], [-33.41718, -70.56430000000002], [-33.41646, -70.56461000000002], [-33.41563, -70.56486000000001], [-33.41526, -70.56498], [-33.41398, -70.56536000000001], [-33.41368, -70.56545000000001], [-33.41307, -70.56563000000001], [-33.41221, -70.56588], [-33.41137, -70.56613000000002], [-33.40973, -70.56665000000001], [-33.40884, -70.56695], [-33.4082, -70.56721000000002], [-33.40785, -70.56736000000001], [-33.4074, -70.56756000000001], [-33.4065, -70.56793], [-33.40505, -70.56844000000001], [-33.40475, -70.56775], [-33.4044, -70.56698000000002], [-33.40384, -70.56575000000001], [-33.4037, -70.56545000000001], [-33.40346, -70.56559000000001], [-33.40151, -70.56672], [-33.40093, -70.56707000000002], [-33.40044, -70.56649000000002], [-33.40021, -70.56627000000002], [-33.39973, -70.56587], [-33.3994, -70.56566000000001], [-33.39902, -70.56545000000001], [-33.3987, -70.56526000000001], [-33.39836, -70.56506000000002], [-33.39822, -70.56489], [-33.39818, -70.56479000000002], [-33.39805, -70.56439000000002], [-33.39792, -70.56401000000001], [-33.39769, -70.56336000000002], [-33.39737, -70.56207], [-33.3967, -70.55937000000002], [-33.39579, -70.55622000000001], [-33.3956, -70.5554], [-33.39432, -70.55594], [-33.39336, -70.55636000000001]],
-                {"bubblingMouseEvents": true, "color": "#c82333", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#c82333", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
-            ).addTo(feature_group_8ee3ffdcf3034d341a303c68f43893c3);
-        
-    
-            var marker_bde04babbeede5d1b5c2f081628c1c99 = L.marker(
-                [-33.40973, -70.56665000000001],
-                {
-}
-            ).addTo(feature_group_8ee3ffdcf3034d341a303c68f43893c3);
-        
-    
-            var div_icon_9ebb04632d21f2df4695029369780706 = L.divIcon({
-  "html": "\u003ca href=\"https://waze.com/ul?q=Reina%20Astrid%20950%2C%20Las%20Condes%2C%20Santiago%2C%20Chile\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#c82333; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ2 / 15:11 / 18 min\u003c/div\u003e\u003c/a\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_bde04babbeede5d1b5c2f081628c1c99.setIcon(div_icon_9ebb04632d21f2df4695029369780706);
-            
-    
-            var marker_b22f4bed0b06ad4da87815bca9915e34 = L.marker(
-                [-33.3933598, -70.5563593],
-                {
-}
-            ).addTo(feature_group_8ee3ffdcf3034d341a303c68f43893c3);
-        
-    
-            var div_icon_f8fced598784219a50c15352d2b7303c = L.divIcon({
-  "html": "\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:none;\"\u003eJ2 / 15:30 / Benjamin Eltit Silva / Reina Astrid 950\u003c/div\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_b22f4bed0b06ad4da87815bca9915e34.setIcon(div_icon_f8fced598784219a50c15352d2b7303c);
-            
-    
-            var poly_line_969bc051a29896a31d672277c4ec78bd = L.polyline(
-                [[-33.39336, -70.55636000000001], [-33.39306, -70.55650000000001], [-33.39281, -70.5558], [-33.39248, -70.5549], [-33.39194, -70.55335000000001], [-33.39181, -70.55300000000001], [-33.39117, -70.55130000000001], [-33.39066, -70.55000000000001], [-33.39015, -70.54868], [-33.38996, -70.54818000000002], [-33.38987, -70.54793000000001], [-33.38971, -70.54800000000002], [-33.38953, -70.54808000000001], [-33.38938, -70.54815], [-33.38957, -70.54863000000002], [-33.38985, -70.54936000000001], [-33.38989, -70.54941000000001], [-33.38999, -70.54959000000001], [-33.39013, -70.54995000000001], [-33.39025, -70.55019000000001], [-33.39036, -70.55038], [-33.39123, -70.55260000000001], [-33.39154, -70.55341000000001], [-33.39181, -70.55424000000001], [-33.39218, -70.55525000000002], [-33.39259, -70.55645000000001], [-33.39325, -70.55843000000002], [-33.39428, -70.56136000000001], [-33.39452, -70.56210000000002], [-33.39516, -70.56386], [-33.39643, -70.56750000000001], [-33.39681, -70.56863000000001], [-33.39739, -70.57014000000001], [-33.39758, -70.57064000000001], [-33.39798, -70.57165], [-33.39904, -70.57441000000001], [-33.39961, -70.57591000000001], [-33.40008, -70.57707], [-33.40077, -70.57875000000001], [-33.40077, -70.57893000000001], [-33.40107, -70.57972000000001], [-33.40132, -70.58030000000001], [-33.4024, -70.58285000000001], [-33.40305, -70.58427], [-33.4037, -70.58537000000001], [-33.4038, -70.58548], [-33.40404, -70.58563000000001], [-33.40435, -70.58583000000002], [-33.40471, -70.58606], [-33.40482, -70.58615], [-33.40498, -70.58615], [-33.40532, -70.58619000000002], [-33.4055, -70.58621000000001], [-33.40582, -70.58626000000001], [-33.40599, -70.58631000000001], [-33.40614, -70.58640000000001], [-33.40661, -70.58679000000001], [-33.40689, -70.58693000000001], [-33.40738, -70.58709], [-33.40781, -70.58717000000001], [-33.40831, -70.58719], [-33.40866, -70.58715000000001], [-33.40894, -70.58707000000001], [-33.40934, -70.58691000000002], [-33.40971, -70.58673000000002], [-33.40977, -70.58669], [-33.41015, -70.58642], [-33.41063, -70.58621000000001], [-33.41081, -70.58615], [-33.41095, -70.58605000000001], [-33.4112, -70.58595000000001], [-33.41139, -70.58589], [-33.41168, -70.58572000000001], [-33.411970000000004, -70.58559000000001], [-33.41234, -70.58542000000001], [-33.41305, -70.58504], [-33.41391, -70.58462000000002], [-33.41498, -70.58412000000001], [-33.4153, -70.58400000000002], [-33.41563, -70.58383], [-33.4162, -70.58353000000001], [-33.41654, -70.58335000000001], [-33.41693, -70.58318000000001], [-33.41724, -70.58303000000001], [-33.41746, -70.58292000000002], [-33.41818, -70.58260000000001], [-33.41885, -70.58228000000001], [-33.4193, -70.58210000000001], [-33.41958, -70.58192000000001], [-33.42019, -70.58146], [-33.42159, -70.58045000000001], [-33.42199, -70.58017000000001], [-33.42224, -70.57998], [-33.42273, -70.57956000000001], [-33.4232, -70.57917], [-33.42351, -70.57891000000001], [-33.42455, -70.57793000000001], [-33.42533, -70.57717000000001], [-33.4258, -70.57677000000001], [-33.42613, -70.57645000000001], [-33.42633, -70.57623000000001], [-33.42642, -70.57615000000001], [-33.42656, -70.57601000000001], [-33.42697, -70.57562000000001], [-33.42735, -70.57528], [-33.42766, -70.57509000000002], [-33.42779, -70.57504000000002], [-33.42787, -70.57501], [-33.428020000000004, -70.57501], [-33.42821, -70.57497000000001], [-33.42834, -70.57494000000001], [-33.42878, -70.57486000000002], [-33.4291, -70.57480000000001], [-33.42998, -70.57473000000002], [-33.43079, -70.57453000000001], [-33.43096, -70.57449000000001], [-33.43127, -70.57446000000002], [-33.43168, -70.57443], [-33.43208, -70.57440000000001], [-33.43244, -70.57439000000001], [-33.43282, -70.57428000000002], [-33.43317, -70.57423000000001], [-33.43347, -70.57419000000002], [-33.43361, -70.57424000000002], [-33.43432, -70.57415000000002], [-33.43598, -70.57386000000001], [-33.43677, -70.57376000000001], [-33.43713, -70.57369000000001], [-33.43719, -70.57368000000001], [-33.43724, -70.57371], [-33.43727, -70.57372000000001], [-33.43749, -70.57368000000001], [-33.4376, -70.57370000000002], [-33.43763, -70.57374000000002], [-33.43766, -70.57381000000001], [-33.43765, -70.57392000000002], [-33.4376, -70.57407], [-33.43697, -70.57540000000002], [-33.43706, -70.57545], [-33.43747, -70.57565000000001], [-33.43817, -70.57551000000001], [-33.4393, -70.57530000000001], [-33.44076, -70.57505], [-33.44267, -70.57472000000001], [-33.44383, -70.57452], [-33.44498, -70.57429], [-33.44507, -70.57430000000001], [-33.445100000000004, -70.57434], [-33.4452, -70.57495000000002], [-33.44527, -70.57604], [-33.44531, -70.57703000000001], [-33.44574, -70.57697000000002], [-33.44625, -70.57692000000002], [-33.44628, -70.57781000000001], [-33.44806, -70.57761], [-33.4505, -70.57736000000001], [-33.45049, -70.57835000000001], [-33.45089, -70.57835000000001], [-33.45119, -70.57836], [-33.45142, -70.57834000000001], [-33.452, -70.57827], [-33.45198, -70.57789000000001], [-33.45198, -70.57785000000001], [-33.45199, -70.57781000000001], [-33.45204, -70.57777000000002], [-33.45293, -70.57766000000001], [-33.452890000000004, -70.57822000000002], [-33.45286, -70.57861000000001], [-33.45279, -70.57862000000002], [-33.45209, -70.57867000000002], [-33.45208, -70.57867000000002]],
-                {"bubblingMouseEvents": true, "color": "#dc3545", "dashArray": "7, 7", "dashOffset": null, "fill": false, "fillColor": "#dc3545", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.6, "smoothFactor": 1.0, "stroke": true, "weight": 5}
-            ).addTo(feature_group_8ee3ffdcf3034d341a303c68f43893c3);
-        
-    
-            var marker_7f91acf4efd8b0dc7930748d27fb0794 = L.marker(
-                [-33.41818, -70.58260000000001],
-                {
-}
-            ).addTo(feature_group_8ee3ffdcf3034d341a303c68f43893c3);
-        
-    
-            var div_icon_aff628e3921ac9cd9252631270e59b5f = L.divIcon({
-  "html": "\u003ca href=\"https://waze.com/ul?ll=-33.45219480797122,-70.5787333882418\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#666; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eJ3 / Base / 39 min\u003c/div\u003e\u003c/a\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_7f91acf4efd8b0dc7930748d27fb0794.setIcon(div_icon_aff628e3921ac9cd9252631270e59b5f);
-            
-    
-            feature_group_8ee3ffdcf3034d341a303c68f43893c3.addTo(map_869dbb3b712d6a2624631a3fd35ec9be);
-        
-    
-            var feature_group_e906c066f8bfaddf3807e6b380df6f6c = L.featureGroup(
+            var feature_group_2965ba2d9eac43539792339586cbbbc1 = L.featureGroup(
                 {
 }
             );
         
     
-            var poly_line_3cca6e6fdd7ca1bed9ba913601946b9c = L.polyline(
-                [[-33.452290000000005, -70.57889], [-33.45226, -70.57884], [-33.45224, -70.57851], [-33.45158000000001, -70.57859], [-33.45129000000001, -70.57859], [-33.45094, -70.57858], [-33.449270000000006, -70.57869], [-33.446560000000005, -70.57888], [-33.44666000000001, -70.58111], [-33.444770000000005, -70.58134], [-33.443180000000005, -70.58153], [-33.442350000000005, -70.58163], [-33.44180000000001, -70.58172], [-33.44108000000001, -70.58156], [-33.440870000000004, -70.5815], [-33.44052000000001, -70.58131], [-33.440250000000006, -70.58119], [-33.440090000000005, -70.58113], [-33.439130000000006, -70.58081], [-33.43782, -70.58039], [-33.437580000000004, -70.58097000000001], [-33.43712000000001, -70.58182000000001], [-33.435520000000004, -70.58439], [-33.43524000000001, -70.58493], [-33.43516, -70.58519], [-33.43507, -70.58564], [-33.43502000000001, -70.58611], [-33.435010000000005, -70.5864], [-33.435080000000006, -70.58692], [-33.43517000000001, -70.58731], [-33.435280000000006, -70.58766], [-33.435410000000005, -70.58798], [-33.43556, -70.58828], [-33.43558000000001, -70.58831], [-33.435390000000005, -70.58844], [-33.435100000000006, -70.58861], [-33.43479000000001, -70.5888], [-33.434290000000004, -70.58907], [-33.433710000000005, -70.58934], [-33.431830000000005, -70.59022], [-33.431360000000005, -70.58834], [-33.43133, -70.58813], [-33.43130000000001, -70.58785], [-33.43135, -70.58744], [-33.43137000000001, -70.58711], [-33.431340000000006, -70.58686], [-33.43128000000001, -70.58668], [-33.43106, -70.5863], [-33.43081000000001, -70.58594000000001], [-33.43054000000001, -70.58546], [-33.42958000000001, -70.58173000000001], [-33.429410000000004, -70.58102], [-33.429300000000005, -70.58082], [-33.428340000000006, -70.57975], [-33.42714000000001, -70.57839], [-33.42645, -70.57766], [-33.42606000000001, -70.57722], [-33.42596, -70.57714], [-33.425830000000005, -70.57706], [-33.42577000000001, -70.57704], [-33.42569, -70.57702], [-33.42555000000001, -70.57716], [-33.425340000000006, -70.57736], [-33.42506, -70.57764], [-33.424290000000006, -70.57839], [-33.42369000000001, -70.57898], [-33.42347, -70.57919], [-33.423320000000004, -70.5793], [-33.423140000000004, -70.57943], [-33.422520000000006, -70.57989], [-33.42202, -70.58026], [-33.421850000000006, -70.5804], [-33.42183000000001, -70.58031], [-33.42174000000001, -70.58008], [-33.42152000000001, -70.57962], [-33.42145000000001, -70.57952], [-33.42071000000001, -70.58013], [-33.42060000000001, -70.57992]],
-                {"bubblingMouseEvents": true, "color": "#007bff", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#007bff", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
+            feature_group_2965ba2d9eac43539792339586cbbbc1.addTo(map_da90e8f1fcaae43a39ffc1de20a5b694);
         
     
-            var marker_c8c4155b430f13f4d8ab7cfc28534cb5 = L.marker(
-                [-33.431830000000005, -70.59022],
-                {
-}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var div_icon_989d82d0bf51afab7f4f279047925c66 = L.divIcon({
-  "html": "\u003ca href=\"https://waze.com/ul?q=Las%20Pataguas%204499%2C%20Las%20Condes%2C%20Santiago%2C%20Chile\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#007bff; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eS1 / 09:35 / 24 min\u003c/div\u003e\u003c/a\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_c8c4155b430f13f4d8ab7cfc28534cb5.setIcon(div_icon_989d82d0bf51afab7f4f279047925c66);
-            
-    
-            var marker_c4acda17147c47cb8d2e85f680f7389a = L.marker(
-                [-33.420598500000004, -70.57992069999999],
-                {
-}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var div_icon_bc577f3857fb1fe7e49dddf78a9368e0 = L.divIcon({
-  "html": "\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:none;\"\u003eS1 / 10:00 / Jose Antonio Valenzu / Las Pataguas 4499\u003c/div\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_c4acda17147c47cb8d2e85f680f7389a.setIcon(div_icon_bc577f3857fb1fe7e49dddf78a9368e0);
-            
-    
-            var poly_line_7f43eb7a88cf5e8d9444462ca8414a0c = L.polyline(
-                [[-33.42060000000001, -70.57992], [-33.42071000000001, -70.58013], [-33.42020000000001, -70.58054], [-33.42051000000001, -70.581], [-33.42060000000001, -70.58116], [-33.42065, -70.58128], [-33.42038000000001, -70.58149], [-33.41987, -70.58184], [-33.419520000000006, -70.58206], [-33.41821, -70.58269], [-33.418310000000005, -70.58297], [-33.418350000000004, -70.5831], [-33.41872000000001, -70.58292], [-33.41913, -70.58414], [-33.419290000000004, -70.58466], [-33.41948000000001, -70.5854], [-33.41953000000001, -70.58564], [-33.41969, -70.58647], [-33.41998, -70.58787], [-33.42006000000001, -70.58829], [-33.420100000000005, -70.5885], [-33.42024000000001, -70.58846], [-33.42067000000001, -70.58833], [-33.42112, -70.58818], [-33.42146, -70.58799], [-33.42183000000001, -70.58767], [-33.42239000000001, -70.5872], [-33.42293000000001, -70.58684], [-33.42389000000001, -70.58642], [-33.42481000000001, -70.58597], [-33.42654, -70.58518000000001], [-33.42694, -70.58498], [-33.42745000000001, -70.58488], [-33.427820000000004, -70.58482000000001], [-33.42792000000001, -70.58479], [-33.427980000000005, -70.5849], [-33.42815, -70.58513], [-33.42837000000001, -70.58539], [-33.428490000000004, -70.58553], [-33.42893000000001, -70.58736], [-33.42994, -70.58627], [-33.43043000000001, -70.58571], [-33.430490000000006, -70.58558000000001], [-33.430550000000004, -70.58542], [-33.430600000000005, -70.58537], [-33.43164000000001, -70.58443], [-33.43177000000001, -70.5843], [-33.43179000000001, -70.58451], [-33.431830000000005, -70.58475], [-33.43189, -70.58496], [-33.432100000000005, -70.58482000000001], [-33.43244000000001, -70.58458], [-33.43274, -70.58432], [-33.43329000000001, -70.58366], [-33.433640000000004, -70.5832], [-33.43410000000001, -70.58253], [-33.43517000000001, -70.58078], [-33.43574, -70.57972], [-33.43621, -70.57879], [-33.436420000000005, -70.5783], [-33.436550000000004, -70.5778], [-33.436710000000005, -70.5772], [-33.436980000000005, -70.5764], [-33.437070000000006, -70.57625], [-33.43730000000001, -70.57569], [-33.43764, -70.57496], [-33.43789, -70.57447], [-33.43835000000001, -70.57359], [-33.43851000000001, -70.57334], [-33.439690000000006, -70.57202], [-33.439890000000005, -70.57182], [-33.44214, -70.56993], [-33.442440000000005, -70.56969], [-33.442910000000005, -70.5692], [-33.44357000000001, -70.56843], [-33.44379000000001, -70.56814], [-33.44444000000001, -70.56745000000001], [-33.44540000000001, -70.56651000000001], [-33.44614000000001, -70.56577], [-33.44644, -70.56543], [-33.446670000000005, -70.56514], [-33.44742000000001, -70.56417], [-33.448420000000006, -70.5628], [-33.448780000000006, -70.56231], [-33.4489, -70.56218], [-33.44915, -70.56192], [-33.44932000000001, -70.56179], [-33.451040000000006, -70.56016], [-33.451240000000006, -70.56002], [-33.451980000000006, -70.55935], [-33.453050000000005, -70.55855], [-33.45374, -70.55807], [-33.45385, -70.55794], [-33.45432, -70.55760000000001], [-33.455420000000004, -70.5568], [-33.456520000000005, -70.55605], [-33.45736000000001, -70.55545000000001], [-33.457890000000006, -70.55513], [-33.458420000000004, -70.5548], [-33.459390000000006, -70.55412], [-33.45975000000001, -70.55386], [-33.46007, -70.55364], [-33.461760000000005, -70.5525], [-33.46193, -70.55235], [-33.462300000000006, -70.55211], [-33.46249, -70.55199], [-33.462770000000006, -70.55182], [-33.463240000000006, -70.55158], [-33.46396000000001, -70.55119], [-33.464830000000006, -70.55076], [-33.465070000000004, -70.55064], [-33.46546000000001, -70.55052], [-33.466280000000005, -70.55032], [-33.46641, -70.55030000000001], [-33.46661, -70.55029], [-33.46679, -70.55030000000001], [-33.46689000000001, -70.55033], [-33.46699, -70.55038], [-33.46732000000001, -70.55059], [-33.46878, -70.55178000000001], [-33.46998000000001, -70.55274], [-33.470870000000005, -70.55346], [-33.472060000000006, -70.55441], [-33.472300000000004, -70.55457], [-33.473090000000006, -70.55503], [-33.473580000000005, -70.55526], [-33.47395, -70.55542], [-33.47518000000001, -70.55586], [-33.47554, -70.55602], [-33.475950000000005, -70.55627], [-33.47764000000001, -70.55736], [-33.478080000000006, -70.55766], [-33.47860000000001, -70.55798], [-33.47881, -70.55808], [-33.47928, -70.55813], [-33.47992000000001, -70.55814], [-33.4806, -70.5582], [-33.48181, -70.55828], [-33.483200000000004, -70.5584], [-33.483790000000006, -70.55847], [-33.48583000000001, -70.55856], [-33.486380000000004, -70.55857], [-33.48659000000001, -70.55791], [-33.48968000000001, -70.55832], [-33.491820000000004, -70.55859], [-33.492140000000006, -70.55864], [-33.49246000000001, -70.55733000000001], [-33.49269, -70.55734], [-33.49282, -70.55731], [-33.49298, -70.55723], [-33.49311000000001, -70.55713], [-33.49340000000001, -70.55706], [-33.49363, -70.55707], [-33.49385, -70.5571], [-33.494020000000006, -70.55705], [-33.494170000000004, -70.55698], [-33.494330000000005, -70.55694], [-33.49439, -70.55695], [-33.4945, -70.55691], [-33.49457, -70.55681], [-33.494580000000006, -70.55674], [-33.494580000000006, -70.55671], [-33.49468, -70.55662], [-33.494870000000006, -70.55652], [-33.494960000000006, -70.55653], [-33.49501000000001, -70.55652], [-33.49521000000001, -70.55639000000001], [-33.49586000000001, -70.55587], [-33.496, -70.55602], [-33.496210000000005, -70.55613]],
-                {"bubblingMouseEvents": true, "color": "#0056b3", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#0056b3", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var marker_7e4bc2a18e0dc4a84782cae668afb8f9 = L.marker(
-                [-33.44915, -70.56192],
-                {
-}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var div_icon_3ce6964a60ed51ed350d621f9e447726 = L.divIcon({
-  "html": "\u003ca href=\"https://waze.com/ul?q=Altos%20Del%20Parque%20Poniente%208101%2C%20Pe%C3%B1alol%C3%A9n%2C%20Santiago%2C%20Chile\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#0056b3; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eS2 / 12:39 / 50 min\u003c/div\u003e\u003c/a\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_7e4bc2a18e0dc4a84782cae668afb8f9.setIcon(div_icon_3ce6964a60ed51ed350d621f9e447726);
-            
-    
-            var marker_62de9b229d670cbee1aabb9fc9d1eece = L.marker(
-                [-33.496209400000005, -70.55612599999999],
-                {
-}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var div_icon_a49dd081361fe8e540f7df9cb4541a7f = L.divIcon({
-  "html": "\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:none;\"\u003eS2 / 13:30 / Mauricio Cabrera / Altos Del Parque Pon...\u003c/div\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_62de9b229d670cbee1aabb9fc9d1eece.setIcon(div_icon_a49dd081361fe8e540f7df9cb4541a7f);
-            
-    
-            var poly_line_0132eaf4099b1f0a01b665f07620ed6d = L.polyline(
-                [[-33.496210000000005, -70.55613], [-33.496, -70.55602], [-33.49586000000001, -70.55587], [-33.49604000000001, -70.55575], [-33.496080000000006, -70.55568], [-33.49609, -70.55559], [-33.49607, -70.55547], [-33.495990000000006, -70.55539], [-33.495870000000004, -70.55535], [-33.49575000000001, -70.55537], [-33.495610000000006, -70.55544], [-33.494820000000004, -70.55612], [-33.49475, -70.55629], [-33.49470000000001, -70.55639000000001], [-33.49463000000001, -70.55645], [-33.494440000000004, -70.55652], [-33.49437, -70.55652], [-33.494310000000006, -70.55654], [-33.494240000000005, -70.55663], [-33.494220000000006, -70.55673], [-33.49418000000001, -70.5568], [-33.494110000000006, -70.55687], [-33.49401, -70.55692], [-33.493880000000004, -70.55695], [-33.49367000000001, -70.55694], [-33.493520000000004, -70.55688], [-33.493370000000006, -70.55675000000001], [-33.493230000000004, -70.55657000000001], [-33.493190000000006, -70.55642], [-33.493120000000005, -70.55628], [-33.493010000000005, -70.55617], [-33.49279000000001, -70.55603], [-33.492610000000006, -70.55597], [-33.49237000000001, -70.55598], [-33.49232000000001, -70.556], [-33.492160000000005, -70.55614], [-33.492070000000005, -70.55627], [-33.49201000000001, -70.5564], [-33.492000000000004, -70.55667], [-33.492070000000005, -70.55692], [-33.492160000000005, -70.55706], [-33.492270000000005, -70.55717], [-33.49235, -70.55724000000001], [-33.492160000000005, -70.55777], [-33.491820000000004, -70.55859], [-33.491600000000005, -70.55926], [-33.49132, -70.56016], [-33.49101, -70.56113], [-33.49043, -70.56284], [-33.489900000000006, -70.56434], [-33.489140000000006, -70.56652], [-33.48913, -70.56652], [-33.48912000000001, -70.56653], [-33.489050000000006, -70.56645], [-33.48879000000001, -70.56632], [-33.488550000000004, -70.56626], [-33.488260000000004, -70.56625], [-33.488130000000005, -70.56626], [-33.48798000000001, -70.56633000000001], [-33.487930000000006, -70.56637], [-33.48785000000001, -70.56651000000001], [-33.48780000000001, -70.56666], [-33.48695000000001, -70.56912], [-33.48606, -70.57158], [-33.48599000000001, -70.57174], [-33.48594000000001, -70.57193], [-33.485870000000006, -70.57219], [-33.48539, -70.57354], [-33.48472, -70.57545], [-33.48462000000001, -70.57567], [-33.484370000000006, -70.57597], [-33.48427, -70.57609000000001], [-33.484480000000005, -70.57631], [-33.48478000000001, -70.57657], [-33.485200000000006, -70.57683], [-33.485310000000005, -70.57694000000001], [-33.485350000000004, -70.57704], [-33.48536000000001, -70.5772], [-33.484770000000005, -70.57885], [-33.48462000000001, -70.57899], [-33.48453000000001, -70.57907], [-33.48442000000001, -70.57912], [-33.48431000000001, -70.57914], [-33.48420000000001, -70.57914], [-33.483990000000006, -70.57909000000001], [-33.48386000000001, -70.57907], [-33.483760000000004, -70.57909000000001], [-33.48355000000001, -70.57919], [-33.48346000000001, -70.57926], [-33.48241000000001, -70.57903], [-33.480760000000004, -70.57869], [-33.479020000000006, -70.57832], [-33.47791000000001, -70.57811], [-33.477380000000004, -70.57797000000001], [-33.47616000000001, -70.57771], [-33.475480000000005, -70.57758], [-33.475060000000006, -70.57753], [-33.47453000000001, -70.57742], [-33.473670000000006, -70.57725], [-33.47196, -70.57685000000001], [-33.47138, -70.57673], [-33.470870000000005, -70.57661], [-33.47037, -70.57649], [-33.47028, -70.57626], [-33.470150000000004, -70.57606], [-33.46998000000001, -70.5759], [-33.469770000000004, -70.5758], [-33.46972, -70.57579], [-33.469590000000004, -70.5758], [-33.469530000000006, -70.57581], [-33.46941, -70.57585], [-33.469190000000005, -70.57599], [-33.46905, -70.57615], [-33.468920000000004, -70.5764], [-33.46887, -70.57669], [-33.468880000000006, -70.57689], [-33.46896, -70.57714], [-33.468990000000005, -70.57721000000001], [-33.46905, -70.57729], [-33.46916, -70.57742], [-33.46929000000001, -70.57752], [-33.46933000000001, -70.57754], [-33.46947000000001, -70.57758], [-33.46963, -70.57759], [-33.46992, -70.57753], [-33.470470000000006, -70.57861], [-33.47075, -70.57911], [-33.472010000000004, -70.58161], [-33.472970000000004, -70.58343], [-33.47314000000001, -70.5838], [-33.47328, -70.58417], [-33.47339, -70.58454], [-33.47346, -70.58503], [-33.47363000000001, -70.5865], [-33.47363000000001, -70.58672], [-33.473510000000005, -70.58712], [-33.473420000000004, -70.58725], [-33.47334000000001, -70.5874], [-33.47332000000001, -70.5875], [-33.4733, -70.5876], [-33.47326, -70.58782000000001], [-33.47326, -70.58804], [-33.4733, -70.58827], [-33.473380000000006, -70.58847], [-33.47348, -70.58864], [-33.473600000000005, -70.58877], [-33.47379000000001, -70.58888], [-33.47388000000001, -70.5889], [-33.473910000000004, -70.58893], [-33.473960000000005, -70.58904], [-33.474070000000005, -70.58956], [-33.474070000000005, -70.58967], [-33.474030000000006, -70.58997000000001], [-33.47375, -70.59228], [-33.47370000000001, -70.5934], [-33.47359000000001, -70.59557], [-33.47359000000001, -70.59661], [-33.473620000000004, -70.59676], [-33.473710000000004, -70.59692], [-33.473710000000004, -70.59704], [-33.47373, -70.59777], [-33.473780000000005, -70.59841], [-33.47379000000001, -70.59884], [-33.47303000000001, -70.5988], [-33.47267000000001, -70.59879000000001], [-33.47227000000001, -70.59879000000001], [-33.471790000000006, -70.59874]],
-                {"bubblingMouseEvents": true, "color": "#004085", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#004085", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var marker_6f6eabbd1ec542460aef68d291a0ece7 = L.marker(
-                [-33.48420000000001, -70.57914],
-                {
-}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var div_icon_a14581d4844b8f4a5e04769b5cf202c8 = L.divIcon({
-  "html": "\u003ca href=\"https://waze.com/ul?q=Av%20Jose%20Pedro%20Alessandri%201880%2C%20%C3%91u%C3%B1oa%2C%20Santiago%2C%20Chile\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#004085; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eS3 / 15:10 / 20 min\u003c/div\u003e\u003c/a\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_6f6eabbd1ec542460aef68d291a0ece7.setIcon(div_icon_a14581d4844b8f4a5e04769b5cf202c8);
-            
-    
-            var marker_1a7dc68196e016e8de73f21e091bd28d = L.marker(
-                [-33.471788800000006, -70.59874439999999],
-                {
-}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var div_icon_955f91ea2ae5eac5c0749f96e6c42649 = L.divIcon({
-  "html": "\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:none;\"\u003eS3 / 15:30 / Elias Cassis / Av Jose Pedro Alessa...\u003c/div\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_1a7dc68196e016e8de73f21e091bd28d.setIcon(div_icon_955f91ea2ae5eac5c0749f96e6c42649);
-            
-    
-            var poly_line_643f51b4f58eb53273a6620b5d4ae051 = L.polyline(
-                [[-33.471790000000006, -70.59874]],
-                {"bubblingMouseEvents": true, "color": "#3399ff", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#3399ff", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var marker_bd36136376f760beb6c794ed058b66d4 = L.marker(
-                [-33.471790000000006, -70.59874],
-                {
-}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var div_icon_55fe4114e835e19ef04f4dd67eae6d6e = L.divIcon({
-  "html": "\u003ca href=\"https://waze.com/ul?q=Av%20Jose%20Pedro%20Alessandri%201880%2C%20%C3%91u%C3%B1oa%2C%20Santiago%2C%20Chile\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#3399ff; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eS4 / 15:29 / 0 min\u003c/div\u003e\u003c/a\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_bd36136376f760beb6c794ed058b66d4.setIcon(div_icon_55fe4114e835e19ef04f4dd67eae6d6e);
-            
-    
-            var marker_169b008fa370cb3fe28eb0f6ae837cbd = L.marker(
-                [-33.471788800000006, -70.59874439999999],
-                {
-}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var div_icon_58e244091353fcdca3c20aa89c232fe5 = L.divIcon({
-  "html": "\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:black; transform:translate(-10%, -50%); pointer-events:none;\"\u003eS4 / 15:30 / Elias Cassis / Av Jose Pedro Alessa...\u003c/div\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_169b008fa370cb3fe28eb0f6ae837cbd.setIcon(div_icon_58e244091353fcdca3c20aa89c232fe5);
-            
-    
-            var poly_line_f31d8b78803dd98a4c6bf1b30526e25b = L.polyline(
-                [[-33.471790000000006, -70.59874], [-33.47142, -70.59872], [-33.471090000000004, -70.59869], [-33.47111, -70.59712], [-33.47115000000001, -70.59609], [-33.47092000000001, -70.59570000000001], [-33.47135000000001, -70.59535], [-33.471830000000004, -70.59493], [-33.47186000000001, -70.59497], [-33.471920000000004, -70.59499], [-33.47243, -70.59505], [-33.473510000000005, -70.5951], [-33.47382, -70.59512], [-33.47383000000001, -70.59454], [-33.473890000000004, -70.59342], [-33.473940000000006, -70.59286], [-33.473980000000005, -70.5923], [-33.47404, -70.59172], [-33.474180000000004, -70.59074], [-33.47433, -70.58977], [-33.47446000000001, -70.58853], [-33.474500000000006, -70.58837], [-33.47455000000001, -70.58804], [-33.474540000000005, -70.58782000000001], [-33.474500000000006, -70.58761], [-33.4744, -70.58738], [-33.474340000000005, -70.58729], [-33.47419000000001, -70.58713], [-33.474050000000005, -70.58705], [-33.473910000000004, -70.587], [-33.473760000000006, -70.58699], [-33.47363000000001, -70.58703], [-33.473510000000005, -70.58712], [-33.473420000000004, -70.58725], [-33.47334000000001, -70.5874], [-33.47308, -70.58743], [-33.472500000000004, -70.5873], [-33.471210000000006, -70.587], [-33.47039, -70.58678], [-33.468210000000006, -70.58624], [-33.46757, -70.5861], [-33.467400000000005, -70.58606], [-33.46726, -70.58596], [-33.467110000000005, -70.58592], [-33.466930000000005, -70.58587], [-33.46681, -70.58584], [-33.46600000000001, -70.5857], [-33.46513, -70.58548], [-33.464920000000006, -70.58544], [-33.46452000000001, -70.58539], [-33.46441000000001, -70.5854], [-33.46412000000001, -70.58535], [-33.46354, -70.58524], [-33.46229, -70.58500000000001], [-33.46007, -70.5846], [-33.457620000000006, -70.58402], [-33.45731000000001, -70.58392], [-33.45579000000001, -70.58357], [-33.455630000000006, -70.5835], [-33.45546, -70.58338], [-33.45525000000001, -70.58315], [-33.45506, -70.583], [-33.455020000000005, -70.58297], [-33.454980000000006, -70.58295], [-33.45492000000001, -70.58247], [-33.45483000000001, -70.58167], [-33.454750000000004, -70.58099], [-33.45467000000001, -70.58001], [-33.454620000000006, -70.57926], [-33.454570000000004, -70.57859], [-33.45456000000001, -70.57838], [-33.45447000000001, -70.57834], [-33.45313000000001, -70.57846], [-33.453100000000006, -70.57885], [-33.453030000000005, -70.57886], [-33.45233, -70.57891000000001], [-33.45232000000001, -70.57891000000001]],
-                {"bubblingMouseEvents": true, "color": "#007bff", "dashArray": "7, 7", "dashOffset": null, "fill": false, "fillColor": "#007bff", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.6, "smoothFactor": 1.0, "stroke": true, "weight": 5}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var marker_a1038c2cd95e85a89d99d18d7619cf79 = L.marker(
-                [-33.47039, -70.58678],
-                {
-}
-            ).addTo(feature_group_e906c066f8bfaddf3807e6b380df6f6c);
-        
-    
-            var div_icon_7aa1980e2e8fb02d9aff5244bd90ef1b = L.divIcon({
-  "html": "\u003ca href=\"https://waze.com/ul?ll=-33.45219480797122,-70.5787333882418\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: \u0027Helvetica\u0027, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#666; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eS5 / Base / 15 min\u003c/div\u003e\u003c/a\u003e",
-  "className": "empty",
-});
-        
-    
-                marker_a1038c2cd95e85a89d99d18d7619cf79.setIcon(div_icon_7aa1980e2e8fb02d9aff5244bd90ef1b);
-            
-    
-            feature_group_e906c066f8bfaddf3807e6b380df6f6c.addTo(map_869dbb3b712d6a2624631a3fd35ec9be);
-        
-    
-            var layer_control_051b30df5c02c507067673d0830489d1_layers = {
+            var layer_control_1d74eafa895efdd1d37e5844cc95f5f4_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_8ee3ffdcf3034d341a303c68f43893c3,
-                    "Seba" : feature_group_e906c066f8bfaddf3807e6b380df6f6c,
+                    "Juan" : feature_group_c4e16e7d1ebb8dc61fadfe6ab1d6a54a,
+                    "Seba" : feature_group_2965ba2d9eac43539792339586cbbbc1,
                 },
             };
-            let layer_control_051b30df5c02c507067673d0830489d1 = L.control.layers(
-                layer_control_051b30df5c02c507067673d0830489d1_layers.base_layers,
-                layer_control_051b30df5c02c507067673d0830489d1_layers.overlays,
+            let layer_control_1d74eafa895efdd1d37e5844cc95f5f4 = L.control.layers(
+                layer_control_1d74eafa895efdd1d37e5844cc95f5f4_layers.base_layers,
+                layer_control_1d74eafa895efdd1d37e5844cc95f5f4_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_869dbb3b712d6a2624631a3fd35ec9be);
+            ).addTo(map_da90e8f1fcaae43a39ffc1de20a5b694);
 
-        
-    
-            map_869dbb3b712d6a2624631a3fd35ec9be.fitBounds(
-                [[-33.5440555, -70.59872], [-33.389500000000005, -70.54805]],
-                {}
-            );
         
 </script>
 </html>

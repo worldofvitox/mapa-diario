@@ -12,48 +12,49 @@
 @font-face { font-family: 'Gotham'; src: url('Gotham Bold.otf') format('opentype'); font-weight: bold; }
 @font-face { font-family: 'Gotham'; src: url('Gotham Medium.otf') format('opentype'); font-weight: 500; }
 body, html { font-family: 'Gotham', sans-serif; }
+::placeholder { font-family: 'Gotham', sans-serif !important; opacity: 0.6; }
 
             body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; }
             .panel { width: 37vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
-            .header { padding: 12px 15px; background: #011E41; color: white; font-family: 'Saturn-Bold', sans-serif; font-size: 16px; text-align: center; text-transform: uppercase; }
+            .header { padding: 12px 15px; background: #011E41; color: white; font-family: 'Saturn-Bold', sans-serif; font-size: 22px; font-weight: normal; text-align: center; text-transform: lowercase; }
             .inputs-container { padding: 20px; background: #f8f9fa; border-bottom: 1px solid #ddd; }
             .input-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; justify-content: space-between; }
-            input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Gotham'; outline: none; }
+            input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Gotham', sans-serif; outline: none; }
             .address-input { flex-grow: 1; width: 100%; }
             .num-input { width: 60px; text-align: center; }
-            .btn-optimizar { width: 100%; padding: 12px; background: #011E41; color: white; border: none; border-radius: 4px; font-family: 'Saturn-Bold'; font-size: 14px; cursor: pointer; text-transform: uppercase; }
+            .btn-optimizar { width: 100%; padding: 12px; background: #011E41; color: white; border: none; border-radius: 4px; font-family: 'Gotham', sans-serif; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; }
             .btn-optimizar:hover { background: #022b5e; }
             .results-container { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #fff; }
             
             .pill { display: flex; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; }
             .pill:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.15); border-color: #011E41; }
-            .pill-endcap { width: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; flex-shrink: 0; padding: 5px; text-align: center; }
-            .pill-body { flex-grow: 1; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; }
-            .transit-box { background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; }
+            .pill-endcap { width: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; flex-shrink: 0; padding: 5px; text-align: center; font-family: 'Gotham', sans-serif; }
+            .pill-body { flex-grow: 1; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: 'Gotham', sans-serif; }
+            .transit-box { background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: 'Gotham', sans-serif; }
             .address-text { flex: 1; text-align: center; padding: 0 5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
             
             .loading { text-align: center; padding: 30px; font-family: 'Saturn-Bold'; color: #011E41; font-size: 18px; }
         </style>
     </head>
     <body>
-        <iframe id="map-frame" src="desktop_map_2026-04-30.html" style="width: 63vw; height: 100vh; border: none; position: absolute; left: 0; top: 0;"></iframe>
+        <iframe id="map-frame" src="desktop_map_2026-05-01.html?optimizer=true" style="width: 63vw; height: 100vh; border: none; position: absolute; left: 0; top: 0;"></iframe>
         
         <div class="panel">
-            <div class="header">Optimización de Agendamiento</div>
+            <div class="header">optimización de agendamiento</div>
             
             <div class="inputs-container">
                 <div class="input-row">
                     <input type="text" id="opt-address" class="address-input" placeholder="Nueva Dirección">
                 </div>
                 <div class="input-row" style="justify-content: flex-start; gap: 20px;">
-                    <label style="font-weight:bold; color:#011E41; font-size:12px;">Duración <input type="number" id="opt-dur" class="num-input" value="60"></label>
-                    <label style="font-weight:bold; color:#011E41; font-size:12px;">Holgura <input type="number" id="opt-cush" class="num-input" value="30"></label>
+                    <label style="font-family:'Gotham', sans-serif; font-weight:bold; color:#011E41; font-size:12px;">Duración <input type="number" id="opt-dur" class="num-input" value="60"></label>
+                    <label style="font-family:'Gotham', sans-serif; font-weight:bold; color:#011E41; font-size:12px;">Holgura <input type="number" id="opt-cush" class="num-input" value="30"></label>
                 </div>
                 <button class="btn-optimizar" onclick="runOptimization()">Optimizar</button>
             </div>
             
             <div id="results" class="results-container">
-                <div style="text-align:center; color:#8A9892; margin-top:20px; font-size:12px;">Ingresa una dirección y presiona Optimizar para buscar los mejores horarios en los próximos 3 días.</div>
+                <div style="text-align:center; color:#8A9892; margin-top:20px; font-size:12px; font-family:'Gotham', sans-serif;">Ingresa una dirección y presiona Optimizar para buscar los mejores horarios en los próximos 3 días.</div>
             </div>
         </div>
 
@@ -63,7 +64,7 @@ body, html { font-family: 'Gotham', sans-serif; }
             const baseLocation = "-33.45219480797122, -70.5787333882418";
             
             // Generate the 3 target dates
-            const today = new Date('2026-04-30');
+            const today = new Date('2026-05-01');
             const targetDates = [
                 today.toISOString().split('T')[0],
                 new Date(today.getTime() + 86400000).toISOString().split('T')[0],
@@ -135,7 +136,7 @@ body, html { font-family: 'Gotham', sans-serif; }
                 });
 
                 if(validGaps.length === 0) {
-                    resultsDiv.innerHTML = '<div style="text-align:center; color:red; padding:20px;">No hay bloques de tiempo suficientemente grandes.</div>';
+                    resultsDiv.innerHTML = '<div style="text-align:center; color:red; padding:20px; font-family:\'Gotham\';">No hay bloques de tiempo suficientemente grandes.</div>';
                     return;
                 }
 
@@ -193,7 +194,7 @@ body, html { font-family: 'Gotham', sans-serif; }
             function renderResults(options, newAddress) {
                 const resultsDiv = document.getElementById('results');
                 if(options.length === 0) {
-                    resultsDiv.innerHTML = '<div style="text-align:center; padding:20px;">Ningun bloque cumple con el tiempo de viaje necesario.</div>';
+                    resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; font-family:\'Gotham\';">Ningun bloque cumple con el tiempo de viaje necesario.</div>';
                     return;
                 }
                 
@@ -205,7 +206,7 @@ body, html { font-family: 'Gotham', sans-serif; }
                     let pTime = new Date(opt.prev.isBase ? opt.prev.ts*1000 : (opt.prev.ts + opt.prev.dur*60)*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
                     let nTime = new Date(opt.next.ts*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
                     
-                    // The magic click: Load map for that day, and set parameters to auto-draft
+                    // The magic click: Load map for that day, and set parameters to auto-draft & optimize
                     let onClick = `loadMapForDraft('${opt.date}', '${opt.mechanic}')`;
                     
                     html += `
@@ -236,7 +237,7 @@ body, html { font-family: 'Gotham', sans-serif; }
 
             function loadMapForDraft(dateStr, mechanic) {
                 const iframe = document.getElementById('map-frame');
-                iframe.src = `desktop_map_${dateStr}.html?draft_address=${encodeURIComponent(document.getElementById('opt-address').value)}&mechanic=${mechanic}`;
+                iframe.src = `desktop_map_${dateStr}.html?optimizer=true&draft_address=${encodeURIComponent(document.getElementById('opt-address').value)}&mechanic=${mechanic}`;
             }
         </script>
     </body>
