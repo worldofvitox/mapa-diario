@@ -16,23 +16,6 @@
     "shorthand": "Clasica 1 Bici",
     "notas": "Specialized Sirrus, necesita pastillas ambas ruedas y camara trasera pinchada"
   },
-  "16825933": {
-    "uid": "16825933",
-    "booking_id": "16825933",
-    "name": "Elias Cassis",
-    "address1": "Av Jose Pedro Alessandri 1880",
-    "address2": "",
-    "comuna": "Ñuñoa",
-    "route_address": "Av Jose Pedro Alessandri 1880, Ñuñoa, Santiago, Chile",
-    "service": "Visita Mecanica",
-    "mechanic": "Seba",
-    "start_dt": "2026-04-30T15:30:00-04:00",
-    "start_timestamp": 1777577400.0,
-    "abbrev": "VM",
-    "duration": 60,
-    "shorthand": "Visita Mecanica",
-    "notas": "#5318"
-  },
   "16824569": {
     "uid": "16824569",
     "booking_id": "16824569",
@@ -49,6 +32,23 @@
     "duration": 80,
     "shorthand": "Clasica 1 Bici",
     "notas": ""
+  },
+  "16825933": {
+    "uid": "16825933",
+    "booking_id": "16825933",
+    "name": "Elias Cassis",
+    "address1": "Av Jose Pedro Alessandri 1880",
+    "address2": "",
+    "comuna": "Ñuñoa",
+    "route_address": "Av Jose Pedro Alessandri 1880, Ñuñoa, Santiago, Chile",
+    "service": "Visita Mecanica",
+    "mechanic": "Seba",
+    "start_dt": "2026-04-30T15:30:00-04:00",
+    "start_timestamp": 1777577400.0,
+    "abbrev": "VM",
+    "duration": 60,
+    "shorthand": "Visita Mecanica",
+    "notas": "#5318"
   },
   "16813749": {
     "uid": "16813749",
