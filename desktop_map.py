@@ -114,7 +114,6 @@ def extract_var(text, key):
     match = re.search(pattern, text)
     if match: 
         val = re.sub(r'<[^>]+>', '', match.group(1)).strip()
-        # Fixes Address2 capturing Comuna when empty
         val = re.split(r'(?i)(Comuna:|Servicio:|Telefono:|Teléfono:|Booking:|Cliente:|Address1:|Address2:)', val)[0].strip()
         return val
     return ""
@@ -216,7 +215,9 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     day_apps = [a for a in all_apps if a['start_dt'].date() == target_date]
     
     m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
-    m.get_root().html.add_child(folium.Element(f'<script src="https://maps.googleapis.com/maps/api/js?key={GMAPS_KEY}"></script>'))
+    
+    # Force Map API to load in the header before body executes
+    m.get_root().header.add_child(folium.Element(f'<script src="https://maps.googleapis.com/maps/api/js?key={GMAPS_KEY}"></script>'))
     
     favicon_html = """
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
@@ -394,16 +395,18 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 app = item['app']
                 full_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
                 full_address = re.sub(r'\s+', ' ', full_address)
-                encoded_notas = urllib.parse.quote(app.get('notas', ''))
                 
-                app_data_json = urllib.parse.quote(json.dumps({
+                # BUGFIX: Hard Replace the Single Quotes to guarantee HTML onClick safety!
+                encoded_notas = urllib.parse.quote(app.get('notas', '')).replace("'", "%27")
+                
+                raw_json = json.dumps({
                     'lat': app.get('lat', BASE_LOCATION[0]), 'lng': app.get('lng', BASE_LOCATION[1]),
                     'address': app.get('address', ''), 'end_time_ts': app.get('end_time_ts', 0),
                     'next_lat': app.get('next_lat', BASE_LOCATION[0]), 'next_lng': app.get('next_lng', BASE_LOCATION[1]),
                     'next_start_ts': app.get('next_start_ts', 0), 'next_address': app.get('next_address', 'Base')
-                }))
+                })
+                app_data_json = urllib.parse.quote(raw_json).replace("'", "%27")
                 
-                # Body handles word wrap now (white-space: normal). Notes trigger is strictly on the left color box. Draft triggers on main body.
                 planner_html += f"""
                 <div class="{item['anim_class']}" style="position: absolute; top: {item['top']}px; left: 10%; width: 88%; height: {item['height']}px; padding: 2px; box-sizing: border-box; z-index: 3; cursor: pointer;">
                     <div style="background: white; border: 1px solid #ddd; border-radius: 20px 10px 10px 20px; height: 100%; display: flex; align-items: stretch; box-shadow: 0 2px 4px rgba(0,0,0,0.08); overflow: hidden;">
@@ -505,11 +508,12 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </script>
     """
 
+    # --- MOVED: Draft box is now bottom:20px; left:20px; ---
     drafting_html = f"""
-    <div style="position:absolute; top:20px; right:42vw; z-index:9999; background:white; padding:10px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.2); font-family:sans-serif; font-size:12px; display:flex; gap:10px; align-items:center;">
+    <div style="position:absolute; bottom:20px; left:20px; z-index:9999; background:white; padding:10px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.2); font-family:sans-serif; font-size:12px; display:flex; gap:10px; align-items:center;">
         <b>Draft:</b>
         <input type="text" id="global-draft-input" placeholder="Ingresa dirección draft..." style="width:200px; padding:5px; border:1px solid #ccc; border-radius:4px;">
-        <button onclick="plantGlobalPin()" style="padding:5px 10px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer;">Plantar Pin</button>
+        <button onclick="plantGlobalPin()" style="padding:5px 10px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer;">Marcar</button>
     </div>
 
     <div id="draft-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; font-family:sans-serif;">
@@ -521,7 +525,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         </div>
     </div>
 
-    <div id="draft-info-box" style="display:none; position:absolute; top:70px; right:42vw; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:sans-serif; font-size:13px; max-width:350px;">
+    <div id="draft-info-box" style="display:none; position:absolute; bottom:70px; left:20px; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:sans-serif; font-size:13px; max-width:350px;">
         <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px;">Resultados Draft</div>
         <div id="draft-info-1" style="margin-bottom:8px;"></div>
         <div id="draft-info-2" style="margin-bottom:15px;"></div>
@@ -542,6 +546,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             const inputVal = document.getElementById('global-draft-input').value;
             if (!inputVal) return;
             draftAddress = inputVal;
+            document.getElementById('modal-draft-input').value = draftAddress; // Sync
 
             const geocoder = new google.maps.Geocoder();
             geocoder.geocode({{ address: draftAddress }}, function(results, status) {{
@@ -558,7 +563,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                         getMapInstance().removeLayer(globalPinMarker);
                         globalPinMarker = null;
                     }});
-                }} else {{ alert('Dirección no encontrada'); }}
+                }} else {{ alert('Dirección no encontrada: ' + status); }}
             }});
         }}
 
@@ -579,6 +584,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             const inputVal = document.getElementById('modal-draft-input').value;
             if (!inputVal) return;
             draftAddress = inputVal;
+            document.getElementById('global-draft-input').value = draftAddress; // Sync
             document.getElementById('draft-modal').style.display = 'none';
             closeDraftInfo();
 
@@ -588,12 +594,12 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             dirService.route({{
                 origin: new google.maps.LatLng(appData.lat, appData.lng), destination: draftAddress, travelMode: 'DRIVING'
             }}, function(res1, status1) {{
-                if (status1 !== 'OK') {{ alert('No se pudo rutear al draft'); return; }}
+                if (status1 !== 'OK') {{ alert('No se pudo rutear al draft: ' + status1); return; }}
 
                 dirService.route({{
                     origin: draftAddress, destination: new google.maps.LatLng(appData.next_lat, appData.next_lng), travelMode: 'DRIVING'
                 }}, function(res2, status2) {{
-                    if (status2 !== 'OK') {{ alert('No se pudo rutear al siguiente destino'); return; }}
+                    if (status2 !== 'OK') {{ alert('No se pudo rutear al siguiente destino: ' + status2); return; }}
 
                     const pts1 = res1.routes[0].overview_path.map(p => [p.lat(), p.lng()]);
                     const pts2 = res2.routes[0].overview_path.map(p => [p.lat(), p.lng()]);
@@ -624,10 +630,11 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </script>
     """
     
+    # --- UPDATED: panel width is now 37vw ---
     desktop_layout = f"""
     <style>
         body, html {{ margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; font-family: sans-serif; }}
-        .leaflet-container {{ width: 60vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }}
+        .leaflet-container {{ width: 63vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }}
         .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: sans-serif;}}
         .leaflet-control-layers-base {{ display: none; }}
         ::-webkit-scrollbar {{ width: 6px; }}
@@ -637,7 +644,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         {anim_css}
     </style>
     
-    <div id="desktop-side-panel" style="width: 40vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+    <div id="desktop-side-panel" style="width: 37vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
         <div style="padding: 12px 15px; background: #343a40; color: white; font-size: 16px; font-weight: bold; flex-shrink: 0; text-align: center;">
             Planificación Diaria: {display_date}
         </div>

@@ -189,6 +189,16 @@ def get_appointments():
 def generate_map():
     appointments = get_appointments()
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles=None)
+    
+    # --- Inject Favicons ---
+    favicon_html = """
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    """
+    m.get_root().header.add_child(folium.Element(favicon_html))
+    
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
     folium.Marker(location=BASE_LOCATION, icon=folium.CustomIcon('base_icon.png', icon_size=(28, 28))).add_to(m)
     
@@ -227,7 +237,7 @@ def generate_map():
                 folium.PolyLine(points, color=leg_color, weight=6, opacity=0.85).add_to(fg)
 
                 mid = points[len(points)//2]
-                encoded_address = urllib.parse.quote(app['route_address'])
+                encoded_address = urllib.parse.quote(app['route_address']).replace("'", "%27")
                 waze_link = f"https://waze.com/ul?q={encoded_address}&navigate=yes"
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:{leg_color}; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{label_id} / {departure_dt.strftime('%H:%M')} / {buffered_mins} min</div></a>''')).add_to(fg)
 
@@ -248,7 +258,9 @@ def generate_map():
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=pill_html)).add_to(fg)
                 
                 table_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
-                encoded_notas = urllib.parse.quote(app.get('notas', ''))
+                # Encoded properly to fix apostrophe click bugs
+                encoded_notas = urllib.parse.quote(app.get('notas', '')).replace("'", "%27")
+                
                 table_rows_html += f"""
                 <tr style="border-bottom: 1px solid #eee; cursor: pointer;" onclick="showNotes(decodeURIComponent('{encoded_notas}'))">
                     <td style="padding: 4px 2px; color: {leg_color}; width: 6%; white-space: nowrap; vertical-align: middle;">{label_id}</td>
@@ -337,26 +349,26 @@ def generate_map():
                 <button onclick="sendWa('temprano')" style="background:#28a745; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
             </div>
 
-            <div style="background:#e2e3e5; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-weight:bold; color:#383d41; text-align:center;">Llegué</span>
+            <div style="background:#d1ecf1; border:1px solid #bee5eb; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
+               <span style="font-size:13px; font-weight:bold; color:#0c5460; text-align:center;">Llegué</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="llegue_opt" value="normal" checked> Normal</label>
                    <label><input type="radio" name="llegue_opt" value="avisar"> Avisar</label>
                    <label><input type="radio" name="llegue_opt" value="porton"> Portón</label>
                    <label><input type="radio" name="llegue_opt" value="donde"> Donde</label>
                </div>
-               <button onclick="sendWa('llegue')" style="background:#6c757d; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+               <button onclick="sendWa('llegue')" style="background:#17a2b8; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
            </div>
 
-           <div style="background:#e2e3e5; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-weight:bold; color:#383d41; text-align:center;">Listo</span>
+           <div style="background:#e2d9f3; border:1px solid #d3c2ee; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
+               <span style="font-size:13px; font-weight:bold; color:#3b1c6e; text-align:center;">Listo</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="listo_opt" value="buscar" checked> Buscar</label>
                    <label><input type="radio" name="listo_opt" value="proxima"> Proxima</label>
                    <label><input type="radio" name="listo_opt" value="recibir"> Recibir</label>
                    <label><input type="radio" name="listo_opt" value="conserje"> Conserje</label>
                </div>
-               <button onclick="sendWa('listo')" style="background:#6c757d; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+               <button onclick="sendWa('listo')" style="background:#6f42c1; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
            </div>
         </div>
         <div style="margin-top: 15px; text-align: center;">
@@ -421,6 +433,13 @@ def generate_map():
     """
 
     table_html = f"""
+    <style>
+        #mbs-table-container table tbody tr:nth-child(even) {{ background-color: #f8f9fa; }}
+        #mbs-table-container table tbody tr:nth-child(odd) {{ background-color: #ffffff; }}
+        .leaflet-bottom {{ bottom: 28% !important; }} 
+        .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; }} 
+        .leaflet-control-layers-base {{ display: none; }}
+    </style>
     <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid #ddd;">
         <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
             <tbody>{table_rows_html}</tbody>
@@ -428,7 +447,6 @@ def generate_map():
     </div>
     {modal_html}
     {wa_modal_html}
-    <style>.leaflet-bottom {{ bottom: 28% !important; }} .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; }} .leaflet-control-layers-base {{ display: none; }}</style>
     """
     js_filter = "<script>function autoFilter(){const p=new URLSearchParams(window.location.search);const m=p.get('mechanic');if(!m)return;const t=m.toLowerCase();const s=document.querySelectorAll('.leaflet-control-layers-selector');if(s.length===0){setTimeout(autoFilter,300);return}s.forEach(i=>{const l=i.nextElementSibling.innerText.trim().toLowerCase();if((l==='juan'||l==='seba')&&l!==t){if(i.checked)i.click()}})}window.addEventListener('load',autoFilter)</script>"
 
