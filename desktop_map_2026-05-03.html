@@ -24,7 +24,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_328fabcad14974ceea11324a354b91e6 {
+                #map_4d2554bfe6cbe8d638f3564da6d2eb56 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -141,7 +141,10 @@
     </div>
 
     <div id="draft-info-box" style="display:none; position:absolute; bottom:70px; left:20px; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:sans-serif; font-size:13px; max-width:350px;">
-        <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px;">Resultados Draft</div>
+        <div id="draft-info-header" style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
+            <span>Resultados Intercalar</span>
+            <span style="font-size:10px; color:#aaa; font-weight:normal;">(Arrastrar)</span>
+        </div>
         <div id="draft-info-1" style="margin-bottom:8px;"></div>
         <div id="draft-info-2" style="margin-bottom:15px;"></div>
         <div style="font-weight:bold; color:#007bff; font-size:15px;">Tiempo Disponible: <span id="draft-info-time"></span> min</div>
@@ -155,7 +158,7 @@
         let draftLines = [];
         let currentDraftApp = null;
 
-        function getMapInstance() { return map_328fabcad14974ceea11324a354b91e6; }
+        function getMapInstance() { return map_4d2554bfe6cbe8d638f3564da6d2eb56; }
 
         function plantGlobalPin() {
             const inputVal = document.getElementById('global-draft-input').value;
@@ -171,7 +174,7 @@
                     const lng = results[0].geometry.location.lng();
                     
                     globalPinMarker = L.marker([lat, lng], {
-                        icon: L.divIcon({html: '<div style="font-size:24px; text-align:center;">📍</div>', className: 'global-pin', iconSize: [24,24], iconAnchor: [12,24]})
+                        icon: L.divIcon({html: '<div style="font-size:48px; text-align:center; line-height:48px;">📍</div>', className: 'global-pin', iconSize: [48,48], iconAnchor: [24,48]})
                     }).addTo(getMapInstance());
 
                     globalPinMarker.on('click', function() {
@@ -235,12 +238,46 @@
                     let availMins = Math.round((appData.next_start_ts - appData.end_time_ts) / 60) - (min1 + min2);
                     if (availMins < 0) availMins = 0;
 
-                    document.getElementById('draft-info-1').innerHTML = `<b>${appData.address}</b> hasta <b>Draft</b>: ${min1} min`;
-                    document.getElementById('draft-info-2').innerHTML = `<b>Draft</b> hasta <b>${appData.next_address}</b>: ${min2} min`;
+                    document.getElementById('draft-info-1').innerHTML = `<b>${min1} min</b> ${appData.address} hasta ${draftAddress}`;
+                    document.getElementById('draft-info-2').innerHTML = `<b>${min2} min</b> ${draftAddress} hasta ${appData.next_address}`;
                     document.getElementById('draft-info-time').innerText = availMins;
                     document.getElementById('draft-info-box').style.display = 'block';
                 });
             });
+        }
+
+        // Make the draft info box draggable
+        dragElement(document.getElementById("draft-info-box"));
+        function dragElement(elmnt) {
+            var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            if (document.getElementById("draft-info-header")) {
+                document.getElementById("draft-info-header").onmousedown = dragMouseDown;
+            } else {
+                elmnt.onmousedown = dragMouseDown;
+            }
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.bottom = "auto";
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
         }
     </script>
     
@@ -248,20 +285,23 @@
     <script>
         var vanMarkers = {};
         function updateVans() {
-            fetch("https://vantracker-7cdef-default-rtdb.firebaseio.com/vans.json").then(response => response.json()).then(data => {
-                if(!data) return;
-                for (const [mechanic, coords] of Object.entries(data)) {
-                    if (vanMarkers[mechanic]) {
-                        vanMarkers[mechanic].setLatLng([coords.lat, coords.lng]);
-                    } else {
-                        var iconUrl = 'base_icon.png';
-                        if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
-                        if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
-                        var vanIcon = L.icon({ iconUrl: iconUrl, iconSize: [28, 28], iconAnchor: [14, 14] });
-                        vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_328fabcad14974ceea11324a354b91e6);
+            fetch("https://vantracker-7cdef-default-rtdb.firebaseio.com/vans.json")
+                .then(response => response.json())
+                .then(data => {
+                    if(!data) return;
+                    for (const [mechanic, coords] of Object.entries(data)) {
+                        if (vanMarkers[mechanic]) {
+                            vanMarkers[mechanic].setLatLng([coords.lat, coords.lng]);
+                        } else {
+                            var iconUrl = 'base_icon.png';
+                            if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
+                            if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
+                            var vanIcon = L.icon({ iconUrl: iconUrl, iconSize: [28, 28], iconAnchor: [14, 14] });
+                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_4d2554bfe6cbe8d638f3564da6d2eb56);
+                        }
                     }
-                }
-            }).catch(err => console.error(err));
+                })
+                .catch(err => console.error("Live Tracking Error: ", err));
         }
         
         function updateTimeLine() {
@@ -282,14 +322,14 @@
     
     
     
-            <div class="folium-map" id="map_328fabcad14974ceea11324a354b91e6" ></div>
+            <div class="folium-map" id="map_4d2554bfe6cbe8d638f3564da6d2eb56" ></div>
         
 </body>
 <script>
     
     
-            var map_328fabcad14974ceea11324a354b91e6 = L.map(
-                "map_328fabcad14974ceea11324a354b91e6",
+            var map_4d2554bfe6cbe8d638f3564da6d2eb56 = L.map(
+                "map_4d2554bfe6cbe8d638f3564da6d2eb56",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -306,7 +346,7 @@
 
         
     
-            var tile_layer_fa41e2c1e7a40f1c1e7149af6950b644 = L.tileLayer(
+            var tile_layer_55f9476494990a54b2e0b4ad2cf636a0 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -323,60 +363,60 @@
             );
         
     
-            tile_layer_fa41e2c1e7a40f1c1e7149af6950b644.addTo(map_328fabcad14974ceea11324a354b91e6);
+            tile_layer_55f9476494990a54b2e0b4ad2cf636a0.addTo(map_4d2554bfe6cbe8d638f3564da6d2eb56);
         
     
-            var marker_a89b33de66ae36d2ccb02d5cb767a935 = L.marker(
+            var marker_25214c59d656495672f95ebe3285be9b = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_328fabcad14974ceea11324a354b91e6);
+            ).addTo(map_4d2554bfe6cbe8d638f3564da6d2eb56);
         
     
-        var icon_69f2cea5b4c197aa2d6f66ee257a42f2 = L.icon({
+        var icon_272b1049c84fd6579af9e5bbc3d35b6c = L.icon({
   "iconUrl": "data:image/png;base64,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",
   "iconSize": [28, 28],
 });
         
     
-                marker_a89b33de66ae36d2ccb02d5cb767a935.setIcon(icon_69f2cea5b4c197aa2d6f66ee257a42f2);
+                marker_25214c59d656495672f95ebe3285be9b.setIcon(icon_272b1049c84fd6579af9e5bbc3d35b6c);
             
     
-            var feature_group_dcaea3c29fb66511358fc2d7f5ccbe95 = L.featureGroup(
+            var feature_group_d3f1b5776a299b576dbb83b0fe545640 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_dcaea3c29fb66511358fc2d7f5ccbe95.addTo(map_328fabcad14974ceea11324a354b91e6);
+            feature_group_d3f1b5776a299b576dbb83b0fe545640.addTo(map_4d2554bfe6cbe8d638f3564da6d2eb56);
         
     
-            var feature_group_262353d7e5dc476bdcf7af004cb1c65f = L.featureGroup(
+            var feature_group_3f7971215a93e8019c7a6c4d1c189cb9 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_262353d7e5dc476bdcf7af004cb1c65f.addTo(map_328fabcad14974ceea11324a354b91e6);
+            feature_group_3f7971215a93e8019c7a6c4d1c189cb9.addTo(map_4d2554bfe6cbe8d638f3564da6d2eb56);
         
     
-            var layer_control_2624aaeb168278f39f5183fec509cd94_layers = {
+            var layer_control_be31a7c888e35657a1fe8c23808b81fb_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_dcaea3c29fb66511358fc2d7f5ccbe95,
-                    "Seba" : feature_group_262353d7e5dc476bdcf7af004cb1c65f,
+                    "Juan" : feature_group_d3f1b5776a299b576dbb83b0fe545640,
+                    "Seba" : feature_group_3f7971215a93e8019c7a6c4d1c189cb9,
                 },
             };
-            let layer_control_2624aaeb168278f39f5183fec509cd94 = L.control.layers(
-                layer_control_2624aaeb168278f39f5183fec509cd94_layers.base_layers,
-                layer_control_2624aaeb168278f39f5183fec509cd94_layers.overlays,
+            let layer_control_be31a7c888e35657a1fe8c23808b81fb = L.control.layers(
+                layer_control_be31a7c888e35657a1fe8c23808b81fb_layers.base_layers,
+                layer_control_be31a7c888e35657a1fe8c23808b81fb_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_328fabcad14974ceea11324a354b91e6);
+            ).addTo(map_4d2554bfe6cbe8d638f3564da6d2eb56);
 
         
 </script>
