@@ -17,7 +17,7 @@ try:
 except:
     pass
 
-# ⚠️ PASTE YOUR FIREBASE URL HERE (KEEP /vans.json AT THE END!)
+# ⚠️ PASTE YOUR FIREBASE URL HERE
 FIREBASE_URL = 'https://vantracker-7cdef-default-rtdb.firebaseio.com/vans.json'
 
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
@@ -61,7 +61,6 @@ def get_service_config():
             headers = next(reader)
             
             abbr_idx, prod_idx, var_idx, comb_idx, short_idx, dur_idx = 0, 1, 2, 3, 4, 5
-            
             for i, h in enumerate(headers):
                 h_norm = normalize_text(h)
                 if any(kw in h_norm for kw in ['abbreviation', 'abbrev', 'sigla']): abbr_idx = i
@@ -77,7 +76,6 @@ def get_service_config():
                 var = row[var_idx].strip() if len(row) > var_idx else ""
                 comb = row[comb_idx].strip() if len(row) > comb_idx else ""
                 shorthand = row[short_idx].strip() if len(row) > short_idx else ""
-                
                 try: 
                     duration_str = row[dur_idx].strip() if len(row) > dur_idx else ""
                     duration = int(re.sub(r'\D', '', duration_str)) if duration_str else 60
@@ -87,8 +85,7 @@ def get_service_config():
                     'abbrev': abbrev, 'prod': prod, 'var': var, 
                     'comb': comb, 'shorthand': shorthand, 'duration': duration
                 })
-    except Exception as e:
-        print(f"Error fetching Google Sheet config: {e}")
+    except: pass
     return config
 
 GLOBAL_CONFIG = get_service_config()
@@ -101,12 +98,10 @@ def group_overlapping(items):
             overlaps = False
             for c_item in cluster:
                 if max(item['top'], c_item['top']) < min(item['top'] + item['height'], c_item['top'] + c_item['height']):
-                    overlaps = True
-                    break
+                    overlaps = True; break
             if overlaps:
                 cluster.append(item)
-                placed = True
-                break
+                placed = True; break
         if not placed:
             clusters.append([item])
     return clusters
@@ -117,7 +112,11 @@ def apply_offset(points, offset_tuple, multiplier=1):
 def extract_var(text, key):
     pattern = rf'(?i){key}[:\s]*([^\n\r]+)'
     match = re.search(pattern, text)
-    if match: return re.sub(r'<[^>]+>', '', match.group(1)).strip()
+    if match: 
+        val = re.sub(r'<[^>]+>', '', match.group(1)).strip()
+        # Fixes Address2 capturing Comuna when empty
+        val = re.split(r'(?i)(Comuna:|Servicio:|Telefono:|Teléfono:|Booking:|Cliente:|Address1:|Address2:)', val)[0].strip()
+        return val
     return ""
 
 def get_all_appointments():
@@ -148,8 +147,7 @@ def get_all_appointments():
                     
                     raw_notas = ""
                     notas_match = re.search(r'(?i)Notas?:(.*?)(?=Booking:|Telefono:|Teléfono:|Cliente:|Address1:|Address2:|Comuna:|Servicio:|$)', clean_desc, re.DOTALL | re.IGNORECASE)
-                    if notas_match:
-                        raw_notas = notas_match.group(1).strip()
+                    if notas_match: raw_notas = notas_match.group(1).strip()
                     
                     if not cliente:
                         name_match = re.search(r'Cliente:\s*(.*?)\s*\(', summary)
@@ -165,39 +163,22 @@ def get_all_appointments():
                     else: continue
                     
                     norm_servicio = normalize_text(servicio)
-                    abbrev = "SRV"
-                    duration = 60
-                    shorthand = servicio 
+                    abbrev, duration, shorthand = "SRV", 60, servicio
                     match_found = False
                     
+                    for row in sorted(GLOBAL_CONFIG, key=lambda x: len(x['comb']), reverse=True):
+                        if row['comb'] and normalize_text(row['comb']) in norm_servicio:
+                            abbrev, duration, shorthand = row['abbrev'], row['duration'], row['shorthand']; match_found = True; break
                     if not match_found:
-                        sorted_by_comb = sorted(GLOBAL_CONFIG, key=lambda x: len(x['comb']), reverse=True)
-                        for row in sorted_by_comb:
-                            if row['comb'] and normalize_text(row['comb']) in norm_servicio:
-                                abbrev, duration, shorthand = row['abbrev'], row['duration'], row['shorthand']
-                                match_found = True
-                                break
-                    
-                    if not match_found:
-                        sorted_by_prod = sorted(GLOBAL_CONFIG, key=lambda x: len(x['prod']), reverse=True)
-                        for row in sorted_by_prod:
+                        for row in sorted(GLOBAL_CONFIG, key=lambda x: len(x['prod']), reverse=True):
                             if row['prod'] and normalize_text(row['prod']) in norm_servicio:
-                                abbrev, duration, shorthand = row['abbrev'], row['duration'], row['shorthand']
-                                match_found = True
-                                break
-                                
+                                abbrev, duration, shorthand = row['abbrev'], row['duration'], row['shorthand']; match_found = True; break
                     if not match_found:
-                        sorted_by_var = sorted(GLOBAL_CONFIG, key=lambda x: len(x['var']), reverse=True)
-                        for row in sorted_by_var:
+                        for row in sorted(GLOBAL_CONFIG, key=lambda x: len(x['var']), reverse=True):
                             if row['var'] and normalize_text(row['var']) in norm_servicio:
-                                abbrev, duration, shorthand = row['abbrev'], row['duration'], row['shorthand']
-                                match_found = True
-                                break
-                    
-                    if not shorthand: shorthand = servicio
-                    
-                    uid = booking_id if booking_id else f"{start_dt.timestamp()}_{mechanic_name}_{cliente}"
+                                abbrev, duration, shorthand = row['abbrev'], row['duration'], row['shorthand']; break
                             
+                    uid = booking_id if booking_id else f"{start_dt.timestamp()}_{mechanic_name}_{cliente}"
                     live_apps.append({
                         'uid': uid, 'booking_id': booking_id, 'name': cliente, 
                         'address1': address1, 'address2': address2, 'comuna': comuna,
@@ -211,27 +192,21 @@ def get_all_appointments():
     cache = {}
     if os.path.exists(CACHE_FILE):
         try:
-            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
-                cache = json.load(f)
+            with open(CACHE_FILE, 'r', encoding='utf-8') as f: cache = json.load(f)
         except: pass
 
     now_ts = datetime.now(timezone).timestamp()
     merged = {}
-
     for app in live_apps: merged[app['uid']] = app
     for uid, cached_app in cache.items():
-        if uid not in merged:
-            if cached_app['start_timestamp'] < now_ts:
-                merged[uid] = cached_app
+        if uid not in merged and cached_app['start_timestamp'] < now_ts: merged[uid] = cached_app
 
-    with open(CACHE_FILE, 'w', encoding='utf-8') as f:
-        json.dump(merged, f, ensure_ascii=False, indent=2)
+    with open(CACHE_FILE, 'w', encoding='utf-8') as f: json.dump(merged, f, ensure_ascii=False, indent=2)
 
     final_apps = []
     for uid, app in merged.items():
         app['start_dt'] = datetime.fromisoformat(app['start_dt'])
         final_apps.append(app)
-
     return final_apps
 
 def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, now_dt):
@@ -241,8 +216,8 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     day_apps = [a for a in all_apps if a['start_dt'].date() == target_date]
     
     m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
-
-    # --- Inject Favicons into the HTML Head ---
+    m.get_root().html.add_child(folium.Element(f'<script src="https://maps.googleapis.com/maps/api/js?key={GMAPS_KEY}"></script>'))
+    
     favicon_html = """
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
@@ -250,24 +225,22 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     """
     m.get_root().header.add_child(folium.Element(favicon_html))
-    # ------------------------------------------
 
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
-    
-    # --- Custom Logo Implementation (Base) ---
-    folium.Marker(location=BASE_LOCATION, icon=folium.CustomIcon('base_icon.png', icon_size=(25, 25))).add_to(m)
-    
-    # Grab the actual javascript variable name Folium generated for this map
+    folium.Marker(location=BASE_LOCATION, icon=folium.CustomIcon('base_icon.png', icon_size=(28, 28))).add_to(m)
     map_var_name = m.get_name()
     
     all_points = [BASE_LOCATION]
     global_max_n = 1
     
+    # Grid Logic (Starting at 9:30)
     grid_lines_html = ""
+    offset_mins = 9 * 60 + 30 
     for h in range(9, 19):
-        top_px = (h - 9) * 90
-        grid_lines_html += f'<div style="position:absolute; top:{top_px}px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div>'
-        grid_lines_html += f'<div style="position:absolute; top:{top_px+2}px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">{h:02d}:00</div>'
+        top_px = ((h * 60) - offset_mins) * 1.5
+        if top_px >= 0:
+            grid_lines_html += f'<div style="position:absolute; top:{top_px}px; left:0; right:0; height:1px; background:#eaeaea; z-index:0;"></div>'
+            grid_lines_html += f'<div style="position:absolute; top:{top_px+2}px; left:2px; font-size:9px; color:#aaa; z-index:0; user-select:none;">{h:02d}:00</div>'
     
     mechanics_container_html = ""
     
@@ -280,6 +253,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         ui_apps = []
         ui_transits = []
         
+        # Pass 1: Plotting and Directions
         for i, app in enumerate(mech_apps):
             label_id = f"{info['initial']}{i+1}"
             leg_color = info['palette'][i % len(info['palette'])]
@@ -287,7 +261,8 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             app['leg_color'] = leg_color
             arrival_target = app['start_dt']
             
-            app['panel_top'] = max(0, ((arrival_target.hour - 9) * 60 + arrival_target.minute) * 1.5)
+            minutes_from_start = ((arrival_target.hour * 60 + arrival_target.minute) - offset_mins)
+            app['panel_top'] = max(0, minutes_from_start * 1.5)
             app['panel_height'] = app.get('duration', 60) * 1.5
             
             if arrival_target.date() > now_dt.date(): directions = gmaps.directions(current_loc, app['route_address'], mode="driving")
@@ -297,6 +272,12 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             if directions:
                 leg = directions[0]['legs'][0]
                 dist_m = leg.get('distance', {}).get('value', 0)
+                
+                # Append data for Draft functionality
+                app['lat'] = leg['end_location']['lat']
+                app['lng'] = leg['end_location']['lng']
+                app['address'] = app['route_address']
+                app['end_time_ts'] = (arrival_target + timedelta(minutes=app.get('duration', 60))).timestamp()
                 
                 all_legs_data.append({
                     'Date': date_str, 'Mechanic': name, 'ID': app.get('booking_id') or 'MANUAL',
@@ -323,8 +304,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 short_cust_name = app['name'][:20]
                 display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
-                
-                # --- Pill Format Update ---
                 pill_content = f'{label_id} / {app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1}'
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:none;">{pill_content}</div>')).add_to(fg)
 
@@ -333,10 +312,21 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 app['transit_mins'] = 0
 
             ui_apps.append({'top': app['panel_top'], 'height': app['panel_height'], 'app': app})
-            
             t_height = max(15, app.get('transit_mins', 0)) * 1.5
             t_top = app['panel_top'] - t_height
             ui_transits.append({'top': t_top, 'height': t_height, 'mins': app.get('transit_mins', 0)})
+
+        # Pass 2: Attaching "Next" Data for Drafting 
+        for i, app in enumerate(mech_apps):
+            if i + 1 < len(mech_apps):
+                app['next_lat'] = mech_apps[i+1].get('lat', BASE_LOCATION[0])
+                app['next_lng'] = mech_apps[i+1].get('lng', BASE_LOCATION[1])
+                app['next_start_ts'] = mech_apps[i+1]['start_dt'].timestamp()
+                app['next_address'] = mech_apps[i+1]['route_address']
+            else:
+                app['next_lat'], app['next_lng'] = BASE_LOCATION[0], BASE_LOCATION[1]
+                app['next_start_ts'] = (now_dt.replace(hour=19, minute=0, second=0)).timestamp()
+                app['next_address'] = "Base"
 
         if mech_apps:
             base_str = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
@@ -349,7 +339,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             if directions:
                 leg = directions[0]['legs'][0]
                 dist_m = leg.get('distance', {}).get('value', 0)
-                
                 all_legs_data.append({
                     'Date': date_str, 'Mechanic': name, 'ID': 'RETURN',
                     'Client': 'BASE', 'Type': 'Retorno a Base', 'Distance_km': round(dist_m / 1000, 2)
@@ -357,13 +346,10 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 
                 raw_seconds = leg.get('duration_in_traffic', leg['duration'])['value']
                 buffered_mins = round((raw_seconds * 1.07) / 60)
-                
                 raw_pts = [(p['lat'], p['lng']) for p in googlemaps.convert.decode_polyline(directions[0]['overview_polyline']['points'])]
                 all_points.extend(raw_pts)
                 points = apply_offset(raw_pts, info['offset'])
-                
                 folium.PolyLine(points, color=info['palette'][0], weight=5, opacity=0.6, dash_array='7, 7').add_to(fg)
-                
                 mid = points[len(points)//2]
                 waze_link = f"https://waze.com/ul?ll={BASE_LOCATION[0]},{BASE_LOCATION[1]}&navigate=yes"
                 base_label = f"{info['initial']}{len(mech_apps) + 1}"
@@ -392,6 +378,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             <div style="flex-grow: 1; overflow-y: auto; overflow-x: hidden; background: white; position: relative;">
                 <div style="height: 810px; position: relative; width: 100%;">
                     {grid_lines_html}
+                    <div class="current-time-line" style="position:absolute; left:0; right:0; height:2px; background:red; z-index:4; display:none; pointer-events:none;"></div>
         """
 
         for cluster in trans_clusters:
@@ -409,15 +396,23 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 full_address = re.sub(r'\s+', ' ', full_address)
                 encoded_notas = urllib.parse.quote(app.get('notas', ''))
                 
+                app_data_json = urllib.parse.quote(json.dumps({
+                    'lat': app.get('lat', BASE_LOCATION[0]), 'lng': app.get('lng', BASE_LOCATION[1]),
+                    'address': app.get('address', ''), 'end_time_ts': app.get('end_time_ts', 0),
+                    'next_lat': app.get('next_lat', BASE_LOCATION[0]), 'next_lng': app.get('next_lng', BASE_LOCATION[1]),
+                    'next_start_ts': app.get('next_start_ts', 0), 'next_address': app.get('next_address', 'Base')
+                }))
+                
+                # Body handles word wrap now (white-space: normal). Notes trigger is strictly on the left color box. Draft triggers on main body.
                 planner_html += f"""
-                <div class="{item['anim_class']}" onclick="showNotes(decodeURIComponent('{encoded_notas}'))" style="position: absolute; top: {item['top']}px; left: 10%; width: 88%; height: {item['height']}px; padding: 2px; box-sizing: border-box; z-index: 3; cursor: pointer;">
+                <div class="{item['anim_class']}" style="position: absolute; top: {item['top']}px; left: 10%; width: 88%; height: {item['height']}px; padding: 2px; box-sizing: border-box; z-index: 3; cursor: pointer;">
                     <div style="background: white; border: 1px solid #ddd; border-radius: 20px 10px 10px 20px; height: 100%; display: flex; align-items: stretch; box-shadow: 0 2px 4px rgba(0,0,0,0.08); overflow: hidden;">
-                        <div style="background: {app['leg_color']}; width: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; flex-shrink: 0; font-size: 11px;">
+                        <div onclick="showNotes(decodeURIComponent('{encoded_notas}'))" style="background: {app['leg_color']}; width: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; flex-shrink: 0; font-size: 11px;">
                             {app['label_id']}
                         </div>
-                        <div style="flex-grow: 1; padding: 5px 8px; display: flex; flex-direction: column; justify-content: center; overflow: hidden;">
-                            <div style="font-weight: bold; font-size: 11px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{app['start_dt'].strftime('%H:%M')} - {app['name']}</div>
-                            <div style="font-size: 10px; color: #666; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; line-height: 1.1;">{full_address}</div>
+                        <div onclick="openDraftModal('{app_data_json}')" style="flex-grow: 1; padding: 5px 8px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; white-space: normal; word-wrap: break-word;">
+                            <div style="font-weight: bold; font-size: 11px; color: #333;">{app['start_dt'].strftime('%H:%M')} - {app['name']}</div>
+                            <div style="font-size: 10px; color: #666; margin-top: 2px; line-height: 1.1;">{full_address}</div>
                         </div>
                         <div style="width: 25%; padding: 5px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 9px; font-weight: bold; color: #555; border-left: 1px dashed #eee; flex-shrink: 0;">
                             {app['shorthand']}
@@ -438,8 +433,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         visible_pct = (1.0 / n) * 100
         anim_css += f"  0%, {max(0, visible_pct - 5)}% {{ opacity: 1; z-index: 10; }}\n"
         anim_css += f"  {visible_pct}%, {100 - (5.0/n)}% {{ opacity: 0; z-index: 1; }}\n"
-        anim_css += f"  100% {{ opacity: 1; z-index: 10; }}\n"
-        anim_css += "}\n"
+        anim_css += f"  100% {{ opacity: 1; z-index: 10; }}\n  }}\n"
         for j in range(n):
             anim_css += f".fade-{n}-{j} {{ animation: fade{n} {n*3}s infinite; animation-delay: {j*3}s; opacity: 0; }}\n"
 
@@ -474,48 +468,166 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </script>
     """
 
-    # --- NEW IMPLEMENTATION: Image Overlays for Live Tracking ---
     live_tracking_js = f"""
     <script>
         var vanMarkers = {{}};
         function updateVans() {{
-            fetch("{FIREBASE_URL}")
-                .then(response => response.json())
-                .then(data => {{
-                    if(!data) return;
-                    for (const [mechanic, coords] of Object.entries(data)) {{
-                        if (vanMarkers[mechanic]) {{
-                            // Move the existing van marker across the map
-                            vanMarkers[mechanic].setLatLng([coords.lat, coords.lng]);
-                        }} else {{
-                            // Create the van marker for the first time using the generated image files
-                            var iconUrl = 'base_icon.png';
-                            if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
-                            if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
-                            
-                            var vanIcon = L.icon({{
-                                iconUrl: iconUrl,
-                                iconSize: [40, 40],
-                                iconAnchor: [20, 20]
-                            }});
-                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {{icon: vanIcon, zIndexOffset: 10000}}).addTo({map_var_name});
-                        }}
+            fetch("{FIREBASE_URL}").then(response => response.json()).then(data => {{
+                if(!data) return;
+                for (const [mechanic, coords] of Object.entries(data)) {{
+                    if (vanMarkers[mechanic]) {{
+                        vanMarkers[mechanic].setLatLng([coords.lat, coords.lng]);
+                    }} else {{
+                        var iconUrl = 'base_icon.png';
+                        if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
+                        if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
+                        var vanIcon = L.icon({{ iconUrl: iconUrl, iconSize: [28, 28], iconAnchor: [14, 14] }});
+                        vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {{icon: vanIcon, zIndexOffset: 10000}}).addTo({map_var_name});
                     }}
-                }})
-                .catch(err => console.error("Live Tracking Error: ", err));
+                }}
+            }}).catch(err => console.error(err));
         }}
-        // Start the heartbeat when the map loads
+        
+        function updateTimeLine() {{
+            const now = new Date();
+            const minsFrom930 = (now.getHours() * 60 + now.getMinutes()) - (9 * 60 + 30);
+            const px = minsFrom930 * 1.5;
+            document.querySelectorAll('.current-time-line').forEach(line => {{
+                if (px >= 0 && px <= 810) {{ line.style.display = 'block'; line.style.top = px + 'px'; }} 
+                else {{ line.style.display = 'none'; }}
+            }});
+        }}
+
         window.addEventListener('load', function() {{
-            setInterval(updateVans, 5000);
-            updateVans();
+            setInterval(updateVans, 5000); updateVans();
+            setInterval(updateTimeLine, 300000); updateTimeLine();
         }});
+    </script>
+    """
+
+    drafting_html = f"""
+    <div style="position:absolute; top:20px; right:42vw; z-index:9999; background:white; padding:10px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.2); font-family:sans-serif; font-size:12px; display:flex; gap:10px; align-items:center;">
+        <b>Draft:</b>
+        <input type="text" id="global-draft-input" placeholder="Ingresa dirección draft..." style="width:200px; padding:5px; border:1px solid #ccc; border-radius:4px;">
+        <button onclick="plantGlobalPin()" style="padding:5px 10px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer;">Plantar Pin</button>
+    </div>
+
+    <div id="draft-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; font-family:sans-serif;">
+        <h3 style="margin-top:0;">Draft Appointment</h3>
+        <input type="text" id="modal-draft-input" style="width:250px; padding:8px; border:1px solid #ccc; border-radius:4px; margin-bottom:15px;">
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button onclick="document.getElementById('draft-modal').style.display='none'" style="padding:8px 15px; border:none; border-radius:4px; cursor:pointer;">Cancelar</button>
+            <button onclick="calcDraft()" style="padding:8px 15px; background:#28a745; color:white; border:none; border-radius:4px; cursor:pointer;">Calcular</button>
+        </div>
+    </div>
+
+    <div id="draft-info-box" style="display:none; position:absolute; top:70px; right:42vw; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:sans-serif; font-size:13px; max-width:350px;">
+        <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px;">Resultados Draft</div>
+        <div id="draft-info-1" style="margin-bottom:8px;"></div>
+        <div id="draft-info-2" style="margin-bottom:15px;"></div>
+        <div style="font-weight:bold; color:#007bff; font-size:15px;">Tiempo Disponible: <span id="draft-info-time"></span> min</div>
+        <button onclick="closeDraftInfo()" style="margin-top:15px; width:100%; padding:8px; background:#eee; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">OK</button>
+    </div>
+
+    <script>
+        let draftAddress = "";
+        let globalPinMarker = null;
+        let draftMarkers = [];
+        let draftLines = [];
+        let currentDraftApp = null;
+
+        function getMapInstance() {{ return {map_var_name}; }}
+
+        function plantGlobalPin() {{
+            const inputVal = document.getElementById('global-draft-input').value;
+            if (!inputVal) return;
+            draftAddress = inputVal;
+
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({{ address: draftAddress }}, function(results, status) {{
+                if (status === 'OK') {{
+                    if (globalPinMarker) getMapInstance().removeLayer(globalPinMarker);
+                    const lat = results[0].geometry.location.lat();
+                    const lng = results[0].geometry.location.lng();
+                    
+                    globalPinMarker = L.marker([lat, lng], {{
+                        icon: L.divIcon({{html: '<div style="font-size:24px; text-align:center;">📍</div>', className: 'global-pin', iconSize: [24,24], iconAnchor: [12,24]}})
+                    }}).addTo(getMapInstance());
+
+                    globalPinMarker.on('click', function() {{
+                        getMapInstance().removeLayer(globalPinMarker);
+                        globalPinMarker = null;
+                    }});
+                }} else {{ alert('Dirección no encontrada'); }}
+            }});
+        }}
+
+        function openDraftModal(encodedData) {{
+            currentDraftApp = JSON.parse(decodeURIComponent(encodedData));
+            document.getElementById('modal-draft-input').value = draftAddress;
+            document.getElementById('draft-modal').style.display = 'block';
+        }}
+
+        function closeDraftInfo() {{
+            document.getElementById('draft-info-box').style.display = 'none';
+            draftLines.forEach(l => getMapInstance().removeLayer(l));
+            draftMarkers.forEach(m => getMapInstance().removeLayer(m));
+            draftLines = []; draftMarkers = [];
+        }}
+
+        function calcDraft() {{
+            const inputVal = document.getElementById('modal-draft-input').value;
+            if (!inputVal) return;
+            draftAddress = inputVal;
+            document.getElementById('draft-modal').style.display = 'none';
+            closeDraftInfo();
+
+            const appData = currentDraftApp;
+            const dirService = new google.maps.DirectionsService();
+
+            dirService.route({{
+                origin: new google.maps.LatLng(appData.lat, appData.lng), destination: draftAddress, travelMode: 'DRIVING'
+            }}, function(res1, status1) {{
+                if (status1 !== 'OK') {{ alert('No se pudo rutear al draft'); return; }}
+
+                dirService.route({{
+                    origin: draftAddress, destination: new google.maps.LatLng(appData.next_lat, appData.next_lng), travelMode: 'DRIVING'
+                }}, function(res2, status2) {{
+                    if (status2 !== 'OK') {{ alert('No se pudo rutear al siguiente destino'); return; }}
+
+                    const pts1 = res1.routes[0].overview_path.map(p => [p.lat(), p.lng()]);
+                    const pts2 = res2.routes[0].overview_path.map(p => [p.lat(), p.lng()]);
+                    draftLines.push(L.polyline(pts1, {{color: 'black', dashArray: '5, 10', weight: 4}}).addTo(getMapInstance()));
+                    draftLines.push(L.polyline(pts2, {{color: 'black', dashArray: '5, 10', weight: 4}}).addTo(getMapInstance()));
+
+                    const draftLoc = res1.routes[0].legs[0].end_location;
+                    draftMarkers.push(L.marker([draftLoc.lat(), draftLoc.lng()], {{
+                        icon: L.divIcon({{html: '<div style="font-size:24px;">🚧</div>', className: 'draft-icon', iconSize:[24,24], iconAnchor:[12,12]}})
+                    }}).addTo(getMapInstance()));
+
+                    const sec1 = res1.routes[0].legs[0].duration_in_traffic ? res1.routes[0].legs[0].duration_in_traffic.value : res1.routes[0].legs[0].duration.value;
+                    const sec2 = res2.routes[0].legs[0].duration_in_traffic ? res2.routes[0].legs[0].duration_in_traffic.value : res2.routes[0].legs[0].duration.value;
+
+                    const min1 = Math.round((sec1 * 1.07) / 60);
+                    const min2 = Math.round((sec2 * 1.07) / 60);
+
+                    let availMins = Math.round((appData.next_start_ts - appData.end_time_ts) / 60) - (min1 + min2);
+                    if (availMins < 0) availMins = 0;
+
+                    document.getElementById('draft-info-1').innerHTML = `<b>${{appData.address}}</b> hasta <b>Draft</b>: ${{min1}} min`;
+                    document.getElementById('draft-info-2').innerHTML = `<b>Draft</b> hasta <b>${{appData.next_address}}</b>: ${{min2}} min`;
+                    document.getElementById('draft-info-time').innerText = availMins;
+                    document.getElementById('draft-info-box').style.display = 'block';
+                }});
+            }});
+        }}
     </script>
     """
     
     desktop_layout = f"""
     <style>
         body, html {{ margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; font-family: sans-serif; }}
-        .leaflet-container {{ width: 65vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }}
+        .leaflet-container {{ width: 60vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }}
         .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: sans-serif;}}
         .leaflet-control-layers-base {{ display: none; }}
         ::-webkit-scrollbar {{ width: 6px; }}
@@ -525,7 +637,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         {anim_css}
     </style>
     
-    <div id="desktop-side-panel" style="width: 35vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+    <div id="desktop-side-panel" style="width: 40vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
         <div style="padding: 12px 15px; background: #343a40; color: white; font-size: 16px; font-weight: bold; flex-shrink: 0; text-align: center;">
             Planificación Diaria: {display_date}
         </div>
@@ -535,6 +647,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </div>
     {carousel_html}
     {modal_html}
+    {drafting_html}
     {live_tracking_js}
     """
     
@@ -545,7 +658,6 @@ def update_distance_csv():
     file_name = 'distances.csv'
     historical_data = {}
     expected_fields = ['Date', 'Mechanic', 'ID', 'Client', 'Type', 'Distance_km']
-    
     if os.path.exists(file_name):
         try:
             with open(file_name, 'r', encoding='utf-8') as f:
@@ -554,7 +666,7 @@ def update_distance_csv():
                     for row in reader:
                         key = f"{row['Date']}_{row['Mechanic']}_{row['ID']}_{row['Type']}"
                         historical_data[key] = row
-        except Exception as e: pass
+        except: pass
                 
     for leg in all_legs_data:
         key = f"{leg['Date']}_{leg['Mechanic']}_{leg['ID']}_{leg['Type']}"
@@ -563,8 +675,7 @@ def update_distance_csv():
     with open(file_name, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=expected_fields)
         writer.writeheader()
-        for key in sorted(historical_data.keys()):
-            writer.writerow(historical_data[key])
+        for key in sorted(historical_data.keys()): writer.writerow(historical_data[key])
 
 if __name__ == "__main__":
     print("Fetching global appointments (with memory cache)...")
@@ -587,13 +698,7 @@ if __name__ == "__main__":
         f.write(f'''
         <!DOCTYPE html>
         <html>
-        <head>
-        <meta http-equiv="refresh" content="0; url=desktop_map_{base_date.strftime('%Y-%m-%d')}.html" />
-        <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
-        <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
-        <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
-        <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
-        </head>
+        <head><meta http-equiv="refresh" content="0; url=desktop_map_{base_date.strftime('%Y-%m-%d')}.html" /></head>
         <body style="font-family: sans-serif; text-align: center; padding-top: 20%; color: #666;">
             <h2>Cargando Centro de Control...</h2>
         </body>
