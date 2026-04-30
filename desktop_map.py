@@ -44,6 +44,7 @@ BRAND_CSS = """
 @font-face { font-family: 'Gotham'; src: url('Gotham Bold.otf') format('opentype'); font-weight: bold; }
 @font-face { font-family: 'Gotham'; src: url('Gotham Medium.otf') format('opentype'); font-weight: 500; }
 body, html { font-family: 'Gotham', sans-serif; }
+::placeholder { font-family: 'Gotham', sans-serif !important; opacity: 0.6; }
 """
 
 CARD_STYLE = (
@@ -242,6 +243,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     all_points = [BASE_LOCATION]
     global_max_n = 1
     
+    # Grid Logic (Starting at 9:30)
     grid_lines_html = ""
     offset_mins = 9 * 60 + 30 
     for h in range(9, 19):
@@ -377,7 +379,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
 
         planner_html = f"""
         <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ddd; min-width: 0;">
-            <div style="background: {info['palette'][0]}; color: white; font-family:'Saturn-Bold', sans-serif; font-size: 13px; text-align: center; height: 35px; box-sizing: border-box; flex-shrink: 0; display:flex; align-items:center; justify-content:center;">Ruta {name}</div>
+            <div style="background: {info['palette'][0]}; color: white; font-family:'Gotham', sans-serif; font-size: 13px; font-weight: bold; text-align: center; height: 35px; box-sizing: border-box; flex-shrink: 0; display:flex; align-items:center; justify-content:center;">Ruta {name}</div>
             <div style="flex-grow: 1; overflow-y: auto; overflow-x: hidden; background: white; position: relative;">
                 <div style="height: 810px; position: relative; width: 100%;">
                     {grid_lines_html}
@@ -408,14 +410,14 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 app_data_json = urllib.parse.quote(raw_json).replace("'", "%27")
                 
                 planner_html += f"""
-                <div class="{item['anim_class']}" style="position: absolute; top: {item['top']}px; left: 10%; width: 88%; height: {item['height']}px; padding: 2px; box-sizing: border-box; z-index: 3; cursor: pointer; font-family:'Gotham';">
+                <div class="{item['anim_class']}" style="position: absolute; top: {item['top']}px; left: 10%; width: 88%; height: {item['height']}px; padding: 2px; box-sizing: border-box; z-index: 3; cursor: pointer; font-family:'Gotham', sans-serif;">
                     <div style="background: white; border: 1px solid #ddd; border-radius: 20px 10px 10px 20px; height: 100%; display: flex; align-items: stretch; box-shadow: 0 2px 4px rgba(0,0,0,0.08); overflow: hidden;">
                         <div onclick="showNotes(decodeURIComponent('{encoded_notas}'))" style="background: {app['leg_color']}; width: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; flex-shrink: 0; font-size: 11px;">
                             {app['label_id']}
                         </div>
-                        <div onclick="openDraftModal('{app_data_json}')" style="flex-grow: 1; padding: 5px 8px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; white-space: normal; word-wrap: break-word;">
-                            <div style="font-weight: bold; font-size: 11px; color: {CHUM_BLUE};">{app['start_dt'].strftime('%H:%M')} - {app['name']}</div>
-                            <div style="font-size: 10px; color: #8A9892; margin-top: 2px; line-height: 1.1;">{full_address}</div>
+                        <div onclick="openDraftModal('{app_data_json}')" style="flex-grow: 1; padding: 5px 8px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; white-space: normal; word-wrap: break-word; font-weight: normal;">
+                            <div style="font-size: 11px; color: {CHUM_BLUE}; font-weight: normal;">{app['start_dt'].strftime('%H:%M')} - {app['name']}</div>
+                            <div style="font-size: 10px; color: #8A9892; margin-top: 2px; line-height: 1.1; font-weight: normal;">{full_address}</div>
                         </div>
                         <div style="width: 25%; padding: 5px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 9px; font-weight: bold; color: {CHUM_BLUE}; border-left: 1px dashed #eee; flex-shrink: 0;">
                             {app['shorthand']}
@@ -441,9 +443,9 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             anim_css += f".fade-{n}-{j} {{ animation: fade{n} {n*3}s infinite; animation-delay: {j*3}s; opacity: 0; }}\n"
 
     carousel_html = f"""
-    <div style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 8px 20px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 20px; border: 2px solid {CHUM_BLUE};">
+    <div id="date-carousel" style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 0 15px; height: 36px; border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 20px; border: 2px solid {CHUM_BLUE}; box-sizing: border-box;">
         <a href="desktop_map_{prev_date.strftime('%Y-%m-%d')}.html" style="text-decoration:none; color: {CHUM_BLUE}; font-size: 18px; padding: 0 5px; font-weight:bold;">&lt;</a>
-        <span style="color: {CHUM_BLUE}; font-family:'Saturn-Bold'; min-width: 120px; text-align: center;">{display_date}</span>
+        <span style="color: {CHUM_BLUE}; font-family:'Gotham', sans-serif; font-weight: normal; font-size: 14px; min-width: 120px; text-align: center; text-transform: capitalize;">{display_date}</span>
         <a href="desktop_map_{next_date.strftime('%Y-%m-%d')}.html" style="text-decoration:none; color: {CHUM_BLUE}; font-size: 18px; padding: 0 5px; font-weight:bold;">&gt;</a>
     </div>
     """
@@ -514,14 +516,24 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 document.getElementById('global-draft-input').value = urlParams.get('draft_address');
                 plantGlobalPin();
             }}
+            
+            // If inside optimizer iframe, clean up UI
+            if(urlParams.has('optimizer') && urlParams.get('optimizer') === 'true') {{
+                document.getElementById('desktop-side-panel').style.display = 'none';
+                document.querySelector('.leaflet-container').style.width = '100vw';
+                document.getElementById('date-carousel').style.display = 'none';
+                document.getElementById('draft-container').style.display = 'none';
+                var dBox = document.getElementById('draft-info-box');
+                if(dBox) dBox.style.display = 'none';
+            }}
         }});
     </script>
     """
 
     drafting_html = f"""
-    <div style="position:absolute; bottom:10px; left:10px; z-index:9999; background:white; padding:5px; border-radius:20px; box-shadow:0 2px 10px rgba(0,0,0,0.2); font-family:'Gotham', sans-serif; font-size:12px; display:flex; gap:5px; align-items:center; border: 2px solid {CHUM_BLUE};">
-        <input type="text" id="global-draft-input" placeholder="Intercalar dirección" style="width:160px; padding:5px 10px; border:none; outline:none; font-family:'Gotham';">
-        <button onclick="plantGlobalPin()" style="padding:6px 12px; background:{CHUM_BLUE}; color:white; border:none; border-radius:15px; cursor:pointer; font-weight:bold;">Marcar</button>
+    <div id="draft-container" style="position:absolute; bottom:20px; left:20px; z-index:9999; background:white; padding:0 5px; height: 36px; border-radius:18px; box-sizing: border-box; box-shadow:0 2px 10px rgba(0,0,0,0.2); font-family:'Gotham', sans-serif; font-size:12px; display:flex; gap:5px; align-items:center; border: 2px solid {CHUM_BLUE};">
+        <input type="text" id="global-draft-input" placeholder="Intercalar dirección" style="width:160px; padding:5px 10px; border:none; outline:none; font-family:'Gotham', sans-serif;">
+        <button onclick="plantGlobalPin()" style="padding:4px 12px; background:{CHUM_BLUE}; color:white; border:none; border-radius:15px; cursor:pointer; font-weight:bold;">Marcar</button>
     </div>
 
     <div id="draft-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; font-family:'Gotham', sans-serif; border: 2px solid {CHUM_BLUE};">
@@ -533,7 +545,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         </div>
     </div>
 
-    <div id="draft-info-box" style="display:none; position:absolute; bottom:60px; left:10px; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:'Gotham', sans-serif; font-size:13px; max-width:350px; border: 2px solid {CHUM_BLUE};">
+    <div id="draft-info-box" style="display:none; position:absolute; bottom:70px; left:20px; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:'Gotham', sans-serif; font-size:13px; max-width:350px; border: 2px solid {CHUM_BLUE};">
         <div id="draft-info-header" style="font-family:'Saturn-Bold'; color:{CHUM_BLUE}; font-size:14px; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
             <span>Resultados Intercalar</span>
         </div>
@@ -634,8 +646,8 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                     let availMins = Math.round((appData.next_start_ts - appData.end_time_ts) / 60) - (min1 + min2);
                     if (availMins < 0) availMins = 0;
 
-                    document.getElementById('draft-info-1').innerHTML = `<b style="color:{CHUM_BLUE};">${{min1}} min</b> ${{appData.address}} hasta <b>${{draftAddress}}</b>`;
-                    document.getElementById('draft-info-2').innerHTML = `<b style="color:{CHUM_BLUE};">${{min2}} min</b> <b>${{draftAddress}}</b> hasta ${{appData.next_address}}`;
+                    document.getElementById('draft-info-1').innerHTML = `<b style="color:{CHUM_BLUE};">${{min1}} min</b> ${{appData.address.split(',')[0]}} hasta <b>${{draftAddress.split(',')[0]}}</b>`;
+                    document.getElementById('draft-info-2').innerHTML = `<b style="color:{CHUM_BLUE};">${{min2}} min</b> <b>${{draftAddress.split(',')[0]}}</b> hasta ${{appData.next_address.split(',')[0]}}`;
                     document.getElementById('draft-info-time').innerText = availMins;
                     document.getElementById('draft-info-box').style.display = 'block';
                 }});
@@ -694,8 +706,8 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </style>
     
     <div id="desktop-side-panel" style="width: 37vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
-        <div style="padding: 12px 15px; background: {CHUM_BLUE}; color: white; font-family: 'Saturn-Bold', sans-serif; font-size: 16px; font-weight: normal; flex-shrink: 0; text-align: center; text-transform: uppercase;">
-            Planificación Diaria: {display_date}
+        <div style="padding: 12px 15px; background: {CHUM_BLUE}; color: white; font-family: 'Saturn-Bold', sans-serif; font-size: 20px; font-weight: normal; flex-shrink: 0; text-align: center; text-transform: lowercase;">
+            planificación diaria: {display_date}
         </div>
         <div style="display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; width: 100%;">
             {mechanics_container_html}
@@ -724,45 +736,45 @@ def generate_optimizer_page(base_date):
             {BRAND_CSS}
             body, html {{ margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; }}
             .panel {{ width: 37vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; }}
-            .header {{ padding: 12px 15px; background: {CHUM_BLUE}; color: white; font-family: 'Saturn-Bold', sans-serif; font-size: 16px; text-align: center; text-transform: uppercase; }}
+            .header {{ padding: 12px 15px; background: {CHUM_BLUE}; color: white; font-family: 'Saturn-Bold', sans-serif; font-size: 22px; font-weight: normal; text-align: center; text-transform: lowercase; }}
             .inputs-container {{ padding: 20px; background: #f8f9fa; border-bottom: 1px solid #ddd; }}
             .input-row {{ display: flex; gap: 10px; margin-bottom: 15px; align-items: center; justify-content: space-between; }}
-            input {{ padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Gotham'; outline: none; }}
+            input {{ padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Gotham', sans-serif; outline: none; }}
             .address-input {{ flex-grow: 1; width: 100%; }}
             .num-input {{ width: 60px; text-align: center; }}
-            .btn-optimizar {{ width: 100%; padding: 12px; background: {CHUM_BLUE}; color: white; border: none; border-radius: 4px; font-family: 'Saturn-Bold'; font-size: 14px; cursor: pointer; text-transform: uppercase; }}
+            .btn-optimizar {{ width: 100%; padding: 12px; background: {CHUM_BLUE}; color: white; border: none; border-radius: 4px; font-family: 'Gotham', sans-serif; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; }}
             .btn-optimizar:hover {{ background: #022b5e; }}
             .results-container {{ flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #fff; }}
             
             .pill {{ display: flex; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; }}
             .pill:hover {{ transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.15); border-color: {CHUM_BLUE}; }}
-            .pill-endcap {{ width: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; flex-shrink: 0; padding: 5px; text-align: center; }}
-            .pill-body {{ flex-grow: 1; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; }}
-            .transit-box {{ background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; }}
+            .pill-endcap {{ width: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; flex-shrink: 0; padding: 5px; text-align: center; font-family: 'Gotham', sans-serif; }}
+            .pill-body {{ flex-grow: 1; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: 'Gotham', sans-serif; }}
+            .transit-box {{ background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: 'Gotham', sans-serif; }}
             .address-text {{ flex: 1; text-align: center; padding: 0 5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }}
             
             .loading {{ text-align: center; padding: 30px; font-family: 'Saturn-Bold'; color: {CHUM_BLUE}; font-size: 18px; }}
         </style>
     </head>
     <body>
-        <iframe id="map-frame" src="desktop_map_{base_date.strftime('%Y-%m-%d')}.html" style="width: 63vw; height: 100vh; border: none; position: absolute; left: 0; top: 0;"></iframe>
+        <iframe id="map-frame" src="desktop_map_{base_date.strftime('%Y-%m-%d')}.html?optimizer=true" style="width: 63vw; height: 100vh; border: none; position: absolute; left: 0; top: 0;"></iframe>
         
         <div class="panel">
-            <div class="header">Optimización de Agendamiento</div>
+            <div class="header">optimización de agendamiento</div>
             
             <div class="inputs-container">
                 <div class="input-row">
                     <input type="text" id="opt-address" class="address-input" placeholder="Nueva Dirección">
                 </div>
                 <div class="input-row" style="justify-content: flex-start; gap: 20px;">
-                    <label style="font-weight:bold; color:{CHUM_BLUE}; font-size:12px;">Duración <input type="number" id="opt-dur" class="num-input" value="60"></label>
-                    <label style="font-weight:bold; color:{CHUM_BLUE}; font-size:12px;">Holgura <input type="number" id="opt-cush" class="num-input" value="30"></label>
+                    <label style="font-family:'Gotham', sans-serif; font-weight:bold; color:{CHUM_BLUE}; font-size:12px;">Duración <input type="number" id="opt-dur" class="num-input" value="60"></label>
+                    <label style="font-family:'Gotham', sans-serif; font-weight:bold; color:{CHUM_BLUE}; font-size:12px;">Holgura <input type="number" id="opt-cush" class="num-input" value="30"></label>
                 </div>
                 <button class="btn-optimizar" onclick="runOptimization()">Optimizar</button>
             </div>
             
             <div id="results" class="results-container">
-                <div style="text-align:center; color:#8A9892; margin-top:20px; font-size:12px;">Ingresa una dirección y presiona Optimizar para buscar los mejores horarios en los próximos 3 días.</div>
+                <div style="text-align:center; color:#8A9892; margin-top:20px; font-size:12px; font-family:'Gotham', sans-serif;">Ingresa una dirección y presiona Optimizar para buscar los mejores horarios en los próximos 3 días.</div>
             </div>
         </div>
 
@@ -844,7 +856,7 @@ def generate_optimizer_page(base_date):
                 }});
 
                 if(validGaps.length === 0) {{
-                    resultsDiv.innerHTML = '<div style="text-align:center; color:red; padding:20px;">No hay bloques de tiempo suficientemente grandes.</div>';
+                    resultsDiv.innerHTML = '<div style="text-align:center; color:red; padding:20px; font-family:\\'Gotham\\';">No hay bloques de tiempo suficientemente grandes.</div>';
                     return;
                 }}
 
@@ -902,7 +914,7 @@ def generate_optimizer_page(base_date):
             function renderResults(options, newAddress) {{
                 const resultsDiv = document.getElementById('results');
                 if(options.length === 0) {{
-                    resultsDiv.innerHTML = '<div style="text-align:center; padding:20px;">Ningun bloque cumple con el tiempo de viaje necesario.</div>';
+                    resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; font-family:\\'Gotham\\';">Ningun bloque cumple con el tiempo de viaje necesario.</div>';
                     return;
                 }}
                 
@@ -914,7 +926,7 @@ def generate_optimizer_page(base_date):
                     let pTime = new Date(opt.prev.isBase ? opt.prev.ts*1000 : (opt.prev.ts + opt.prev.dur*60)*1000).toLocaleTimeString([],{{hour:'2-digit',minute:'2-digit'}});
                     let nTime = new Date(opt.next.ts*1000).toLocaleTimeString([],{{hour:'2-digit',minute:'2-digit'}});
                     
-                    // The magic click: Load map for that day, and set parameters to auto-draft
+                    // The magic click: Load map for that day, and set parameters to auto-draft & optimize
                     let onClick = `loadMapForDraft('${{opt.date}}', '${{opt.mechanic}}')`;
                     
                     html += `
@@ -945,7 +957,7 @@ def generate_optimizer_page(base_date):
 
             function loadMapForDraft(dateStr, mechanic) {{
                 const iframe = document.getElementById('map-frame');
-                iframe.src = `desktop_map_${{dateStr}}.html?draft_address=${{encodeURIComponent(document.getElementById('opt-address').value)}}&mechanic=${{mechanic}}`;
+                iframe.src = `desktop_map_${{dateStr}}.html?optimizer=true&draft_address=${{encodeURIComponent(document.getElementById('opt-address').value)}}&mechanic=${{mechanic}}`;
             }}
         </script>
     </body>

@@ -20,13 +20,24 @@ CALENDAR_URL = 'https://calendar.google.com/calendar/ical/c_0e3e9c70ab1527edfef8
 CACHE_FILE = 'appointments_cache.json'
 CONFIG_URL = 'https://docs.google.com/spreadsheets/d/1Sgtl_4Fm88-vVMfCrGxULl1Tg0ekD6rXT-P59hUlVSw/export?format=csv'
 
+CHUM_BLUE = "#011E41"
+
 MECHANICS = {
     'Juan': {'palette': ['#dc3545', '#c82333', '#a71d2a', '#e4606d', '#eb8c95'], 'initial': 'J', 'offset': (0.00012, 0.00012)},
     'Seba': {'palette': ['#007bff', '#0056b3', '#004085', '#3399ff', '#66b2ff'], 'initial': 'S', 'offset': (-0.00012, -0.00012)}
 }
 
+BRAND_CSS = """
+@font-face { font-family: 'Saturn-Bold'; src: url('Saturn-Bold.woff') format('woff'), url('Saturn-Bold.ttf') format('truetype'); }
+@font-face { font-family: 'Gotham'; src: url('Gotham Book.otf') format('opentype'); font-weight: normal; }
+@font-face { font-family: 'Gotham'; src: url('Gotham Bold.otf') format('opentype'); font-weight: bold; }
+@font-face { font-family: 'Gotham'; src: url('Gotham Medium.otf') format('opentype'); font-weight: 500; }
+body, html { font-family: 'Gotham', sans-serif; }
+::placeholder { font-family: 'Gotham', sans-serif !important; opacity: 0.6; }
+"""
+
 CARD_STYLE = (
-    "font-family: 'Helvetica', sans-serif; font-size: 11px; font-weight: bold; "
+    "font-family: 'Gotham', sans-serif; font-size: 11px; font-weight: bold; "
     "background-color: white; padding: 5px 10px; border-radius: 8px; "
     "box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; "
     "display: inline-flex; align-items: center; border: none;"
@@ -190,8 +201,8 @@ def generate_map():
     appointments = get_appointments()
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles=None)
     
-    # --- Inject Favicons ---
-    favicon_html = """
+    favicon_html = f"""
+    {BRAND_CSS}
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
@@ -239,26 +250,25 @@ def generate_map():
                 mid = points[len(points)//2]
                 encoded_address = urllib.parse.quote(app['route_address']).replace("'", "%27")
                 waze_link = f"https://waze.com/ul?q={encoded_address}&navigate=yes"
-                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:{leg_color}; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{label_id} / {departure_dt.strftime('%H:%M')} / {buffered_mins} min</div></a>''')).add_to(fg)
+                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:{leg_color}; transform:translateY(-20px); font-family:'Gotham', sans-serif;"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{label_id} / {departure_dt.strftime('%H:%M')} / {buffered_mins} min</div></a>''')).add_to(fg)
 
                 short_cust_name = app['name'][:20]
                 display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
-                pill_content = f'{label_id} / {app["start_dt"].strftime("%H:%M")} / {short_cust_name} / {display_addr1}'
+                pill_content = f'<span style="font-family:\'Gotham\'; font-weight:bold;">{label_id} / {app["start_dt"].strftime("%H:%M")} / {short_cust_name}</span> / <span style="font-family:\'Gotham\'; font-weight:normal;">{display_addr1}</span>'
                 
                 if app.get('phone'):
                     cust_first_name = app['name'].split()[0].replace("'", "\\'")
                     mech_name = app['mechanic'].replace("'", "\\'")
                     orig_time = app['start_dt'].strftime('%H:%M')
                     phone = app['phone']
-                    pill_html = f'<div onclick="openWaModal(\'{phone}\', \'{cust_first_name}\', \'{mech_name}\', \'{orig_time}\')" style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:auto; cursor:pointer; box-shadow: 0px 4px 10px rgba(0,0,0,0.3); border: 1px solid #ddd;">{pill_content}</div>'
+                    pill_html = f'<div onclick="openWaModal(\'{phone}\', \'{cust_first_name}\', \'{mech_name}\', \'{orig_time}\')" style="{CARD_STYLE} color:{CHUM_BLUE}; transform:translate(-10%, -50%); pointer-events:auto; cursor:pointer; box-shadow: 0px 4px 10px rgba(0,0,0,0.3); border: 1px solid #ddd;">{pill_content}</div>'
                 else:
-                    pill_html = f'<div style="{CARD_STYLE} color:black; transform:translate(-10%, -50%); pointer-events:none;">{pill_content}</div>'
+                    pill_html = f'<div style="{CARD_STYLE} color:{CHUM_BLUE}; transform:translate(-10%, -50%); pointer-events:none;">{pill_content}</div>'
                 
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=pill_html)).add_to(fg)
                 
                 table_address = f"{app['address1']} {app['address2']} {app['comuna']}".strip()
-                # Encoded properly to fix apostrophe click bugs
                 encoded_notas = urllib.parse.quote(app.get('notas', '')).replace("'", "%27")
                 
                 table_rows_html += f"""
@@ -291,7 +301,7 @@ def generate_map():
                 mid = points[len(points)//2]
                 waze_link = f"https://waze.com/ul?ll={BASE_LOCATION[0]},{BASE_LOCATION[1]}&navigate=yes"
                 base_label = f"{info['initial']}{len(mech_apps) + 1}"
-                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#666; transform:translateY(-20px);"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{base_label} / Base / {buffered_mins} min</div></a>''')).add_to(fg)
+                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#8A9892; transform:translateY(-20px); font-family:'Gotham', sans-serif;"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{base_label} / Base / {buffered_mins} min</div></a>''')).add_to(fg)
 
     folium.LayerControl(collapsed=False).add_to(m)
 
@@ -303,132 +313,132 @@ def generate_map():
 
     if not table_rows_html: table_rows_html = f'<tr><td colspan="5" style="text-align:left; padding: 10px; font-weight:normal; font-size:10px;"><b>No hay rutas para este dia.</b></td></tr>'
 
-    modal_html = """
-    <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:100000;"></div>
-    <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Helvetica', sans-serif; font-size:14px; font-weight:normal; color:#333; border: 2px solid #ccc;">
-        <div style="margin-bottom: 10px; font-size: 11px; color: #888; text-transform: uppercase; font-weight:bold;">Notas de la Cita</div>
+    modal_html = f"""
+    <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.4); z-index:100000;"></div>
+    <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Gotham', sans-serif; font-size:14px; font-weight:normal; color:{CHUM_BLUE}; border: 2px solid {CHUM_BLUE};">
+        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: uppercase; font-family:'Saturn-Bold';">Notas de la Cita</div>
         <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
-        <div style="margin-top: 15px; text-align: right;"><button onclick="closeNotes()" style="background:#007bff; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">Cerrar</button></div>
+        <div style="margin-top: 15px; text-align: right;"><button onclick="closeNotes()" style="background:{CHUM_BLUE}; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-family:'Gotham'; font-weight:bold;">Cerrar</button></div>
     </div>
     <script>
-        function showNotes(text) {
+        function showNotes(text) {{
             document.getElementById('notes-content').textContent = (!text || text.trim() === '') ? 'Sin notas para esta cita.' : text;
             document.getElementById('notes-backdrop').style.display = 'block';
             document.getElementById('notes-modal').style.display = 'block';
-        }
-        function closeNotes() {
+        }}
+        function closeNotes() {{
             document.getElementById('notes-backdrop').style.display = 'none';
             document.getElementById('notes-modal').style.display = 'none';
-        }
+        }}
     </script>
     """
 
-    wa_modal_html = """
-    <div id="wa-backdrop" onclick="closeWaModal()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:100004;"></div>
-    <div id="wa-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:12px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; width:85%; max-width:380px; font-family:'Helvetica', sans-serif; max-height:90vh; overflow-y:auto;">
-        <div style="margin-bottom: 15px; font-size: 14px; color: #333; font-weight:bold; text-align:center;">Contactar a <span id="wa-cust-name"></span></div>
+    wa_modal_html = f"""
+    <div id="wa-backdrop" onclick="closeWaModal()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.5); z-index:100004;"></div>
+    <div id="wa-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:12px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; width:85%; max-width:380px; font-family:'Gotham', sans-serif; max-height:90vh; overflow-y:auto; border: 2px solid {CHUM_BLUE};">
+        <div style="margin-bottom: 15px; font-size: 14px; color: {CHUM_BLUE}; font-family:'Saturn-Bold'; text-align:center;">Contactar a <span id="wa-cust-name"></span></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <button onclick="sendWa('hablar')" style="background:#25D366; color:white; border:none; padding:15px 5px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Hablar</button>
-            <button onclick="sendWa('voy')" style="background:#007bff; color:white; border:none; padding:15px 5px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Voy</button>
+            <button onclick="sendWa('hablar')" style="background:#25D366; color:white; border:none; padding:15px 5px; border-radius:8px; font-family:'Gotham'; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Hablar</button>
+            <button onclick="sendWa('voy')" style="background:#007bff; color:white; border:none; padding:15px 5px; border-radius:8px; font-family:'Gotham'; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Voy</button>
             
             <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <span style="font-size:13px; font-weight:bold; color:#856404;">Tarde</span>
+                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#856404;">Tarde</span>
                 <div style="display:flex; align-items:center; gap:5px;">
-                    <input type="number" id="mins-tarde" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box;">
+                    <input type="number" id="mins-tarde" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:'Gotham';">
                     <span style="font-size:12px; color:#666;">min</span>
                 </div>
-                <button onclick="sendWa('tarde')" style="background:#ffc107; color:#333; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+                <button onclick="sendWa('tarde')" style="background:#ffc107; color:#333; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
             </div>
             
             <div style="background:#d4edda; border:1px solid #c3e6cb; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <span style="font-size:13px; font-weight:bold; color:#155724;">Temprano</span>
+                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#155724;">Temprano</span>
                 <div style="display:flex; align-items:center; gap:5px;">
-                    <input type="number" id="mins-temprano" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box;">
+                    <input type="number" id="mins-temprano" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:'Gotham';">
                     <span style="font-size:12px; color:#666;">min</span>
                 </div>
-                <button onclick="sendWa('temprano')" style="background:#28a745; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+                <button onclick="sendWa('temprano')" style="background:#28a745; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
             </div>
 
             <div style="background:#d1ecf1; border:1px solid #bee5eb; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-weight:bold; color:#0c5460; text-align:center;">Llegué</span>
+               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#0c5460; text-align:center;">Llegué</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="llegue_opt" value="normal" checked> Normal</label>
                    <label><input type="radio" name="llegue_opt" value="avisar"> Avisar</label>
                    <label><input type="radio" name="llegue_opt" value="porton"> Portón</label>
                    <label><input type="radio" name="llegue_opt" value="donde"> Donde</label>
                </div>
-               <button onclick="sendWa('llegue')" style="background:#17a2b8; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+               <button onclick="sendWa('llegue')" style="background:#17a2b8; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
            </div>
 
            <div style="background:#e2d9f3; border:1px solid #d3c2ee; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-weight:bold; color:#3b1c6e; text-align:center;">Listo</span>
+               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#3b1c6e; text-align:center;">Listo</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="listo_opt" value="buscar" checked> Buscar</label>
                    <label><input type="radio" name="listo_opt" value="proxima"> Proxima</label>
                    <label><input type="radio" name="listo_opt" value="recibir"> Recibir</label>
                    <label><input type="radio" name="listo_opt" value="conserje"> Conserje</label>
                </div>
-               <button onclick="sendWa('listo')" style="background:#6f42c1; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-weight:bold; cursor:pointer;">Enviar</button>
+               <button onclick="sendWa('listo')" style="background:#6f42c1; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
            </div>
         </div>
         <div style="margin-top: 15px; text-align: center;">
-            <button onclick="closeWaModal()" style="background:#eee; color:#333; border:none; padding:8px 20px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:12px;">Cancelar</button>
+            <button onclick="closeWaModal()" style="background:#eee; color:{CHUM_BLUE}; border:none; padding:8px 20px; border-radius:4px; cursor:pointer; font-family:'Gotham'; font-weight:bold; font-size:12px;">Cancelar</button>
         </div>
     </div>
     <script>
-        let currentWaData = {};
-        function openWaModal(phone, custName, mechName, origTime) {
-            currentWaData = { phone, custName, mechName, origTime };
+        let currentWaData = {{}};
+        function openWaModal(phone, custName, mechName, origTime) {{
+            currentWaData = {{ phone, custName, mechName, origTime }};
             document.getElementById('wa-cust-name').innerText = custName;
             document.getElementById('mins-tarde').value = '';
             document.getElementById('mins-temprano').value = '';
             document.getElementById('wa-backdrop').style.display = 'block';
             document.getElementById('wa-modal').style.display = 'block';
-        }
-        function closeWaModal() {
+        }}
+        function closeWaModal() {{
             document.getElementById('wa-backdrop').style.display = 'none';
             document.getElementById('wa-modal').style.display = 'none';
-        }
-        function calculateNewTime(origTime, minsOffset) {
+        }}
+        function calculateNewTime(origTime, minsOffset) {{
             let parts = origTime.split(':');
             let d = new Date(); d.setHours(parseInt(parts[0], 10)); d.setMinutes(parseInt(parts[1], 10) + minsOffset);
             return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-        }
-        function sendWa(type) {
+        }}
+        function sendWa(type) {{
             let phone = currentWaData.phone; let cName = currentWaData.custName;
             let mName = currentWaData.mechName; let oTime = currentWaData.origTime;
             let text = "";
             
-            if (type === 'hablar') { window.open('https://wa.me/' + phone, '_blank'); closeWaModal(); return; } 
-            else if (type === 'voy') { text = `Hola ${cName}! Te habla ${mName}, tu mecánico asignado por Chum para el día de hoy, para avisarte que ya estamos en camino hacia ti y tu bici. Cuando hayamos llegado te avisaremos por esta vía. Si hay cualquier instrucción especifica para llegar, porfa avísanos.`; } 
-            else if (type === 'temprano') {
+            if (type === 'hablar') {{ window.open('https://wa.me/' + phone, '_blank'); closeWaModal(); return; }} 
+            else if (type === 'voy') {{ text = `Hola ${{cName}}! Te habla ${{mName}}, tu mecánico asignado por Chum para el día de hoy, para avisarte que ya estamos en camino hacia ti y tu bici. Cuando hayamos llegado te avisaremos por esta vía. Si hay cualquier instrucción especifica para llegar, porfa avísanos.`; }} 
+            else if (type === 'temprano') {{
                 let mins = parseInt(document.getElementById('mins-temprano').value, 10);
-                if (isNaN(mins) || mins <= 0) { alert('Ingresa un número válido.'); return; }
-                text = `Hola ${cName}, por aquí ${mName} tu mecánico de Chum, pasa que vamos un poco adelantados en la ruta de hoy y por lo mismo te queríamos preguntar si te sirve y puedes recibirnos unos ${mins} minutos antes? es decir aproximadamente a las ${calculateNewTime(oTime, -mins)}`;
-            } 
-            else if (type === 'tarde') {
+                if (isNaN(mins) || mins <= 0) {{ alert('Ingresa un número válido.'); return; }}
+                text = `Hola ${{cName}}, por aquí ${{mName}} tu mecánico de Chum, pasa que vamos un poco adelantados en la ruta de hoy y por lo mismo te queríamos preguntar si te sirve y puedes recibirnos unos ${{mins}} minutos antes? es decir aproximadamente a las ${{calculateNewTime(oTime, -mins)}}`;
+            }} 
+            else if (type === 'tarde') {{
                 let mins = parseInt(document.getElementById('mins-tarde').value, 10);
-                if (isNaN(mins) || mins <= 0) { alert('Ingresa un número válido.'); return; }
-                text = `Hola ${cName}, por aquí ${mName} tu mecánico de Chum, lo lamentamos muchisimo pero tenemos que comunicar un retraso de aproximadamente ${mins} minutos. Es posible para tí recibirnos, o prefieres que reagendemos o cancelemos?\\nLa hora prevista modificada en este momento es a las ${calculateNewTime(oTime, mins)}`;
-            }
-            else if (type === 'llegue') {
+                if (isNaN(mins) || mins <= 0) {{ alert('Ingresa un número válido.'); return; }}
+                text = `Hola ${{cName}}, por aquí ${{mName}} tu mecánico de Chum, lo lamentamos muchisimo pero tenemos que comunicar un retraso de aproximadamente ${{mins}} minutos. Es posible para tí recibirnos, o prefieres que reagendemos o cancelemos?\\nLa hora prevista modificada en este momento es a las ${{calculateNewTime(oTime, mins)}}`;
+            }}
+            else if (type === 'llegue') {{
                 let opt = document.querySelector('input[name="llegue_opt"]:checked').value;
-                if(opt === 'normal') text = `Hola ${cName}, ya estamos en el lugar y listos para recibir la bicicleta`;
-                else if(opt === 'avisar') text = `Hola ${cName}, ya estamos en el lugar para que le puedas avisar a la persona que nos traerá la bici`;
-                else if(opt === 'porton') text = `Hola ${cName}, estamos ya en la entrada y te pedimos si nos puedes ayudar para que nos abran para pasar`;
-                else if(opt === 'donde') text = `Hola ${cName}, estamos ya en el lugar y te queríamos preguntar si esperamos la bici en el estacionamiento o si vamos a conserjería o si a algun otro lugar?`;
-            }
-            else if (type === 'listo') {
+                if(opt === 'normal') text = `Hola ${{cName}}, ya estamos en el lugar y listos para recibir la bicicleta`;
+                else if(opt === 'avisar') text = `Hola ${{cName}}, ya estamos en el lugar para que le puedas avisar a la persona que nos traerá la bici`;
+                else if(opt === 'porton') text = `Hola ${{cName}}, estamos ya en la entrada y te pedimos si nos puedes ayudar para que nos abran para pasar`;
+                else if(opt === 'donde') text = `Hola ${{cName}}, estamos ya en el lugar y te queríamos preguntar si esperamos la bici en el estacionamiento o si vamos a conserjería o si a algun otro lugar?`;
+            }}
+            else if (type === 'listo') {{
                 let opt = document.querySelector('input[name="listo_opt"]:checked').value;
-                if(opt === 'buscar') text = `Hola ${cName}, ya tenemos tu bici lista para retirar acá en el taller móvil.`;
-                else if(opt === 'proxima') text = `Hola ${cName}, ya terminamos la bici con que estábamos trabajando, nos pueden traer ahora la próxima?`;
-                else if(opt === 'recibir') text = `Hola ${cName}, te cuento que ya estamos listos por acá y vamos camino a entregar la bici, para que nos puedan recibir.`;
-                else if(opt === 'conserje') text = `Hola ${cName}, ya terminamos la misión y entregamos las bicis según acordado, acá va una foto de como quedaron entregadas! Pronto te estaremos enviando la nota de venta con los datos de pago y el detalle de lo realizado.`;
-            }
+                if(opt === 'buscar') text = `Hola ${{cName}}, ya tenemos tu bici lista para retirar acá en el taller móvil.`;
+                else if(opt === 'proxima') text = `Hola ${{cName}}, ya terminamos la bici con que estábamos trabajando, nos pueden traer ahora la próxima?`;
+                else if(opt === 'recibir') text = `Hola ${{cName}}, te cuento que ya estamos listos por acá y vamos camino a entregar la bici, para que nos puedan recibir.`;
+                else if(opt === 'conserje') text = `Hola ${{cName}}, ya terminamos la misión y entregamos las bicis según acordado, acá va una foto de como quedaron entregadas! Pronto te estaremos enviando la nota de venta con los datos de pago y el detalle de lo realizado.`;
+            }}
 
             window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(text), '_blank');
             closeWaModal();
-        }
+        }}
     </script>
     """
 
@@ -437,11 +447,12 @@ def generate_map():
         #mbs-table-container table tbody tr:nth-child(even) {{ background-color: #f8f9fa; }}
         #mbs-table-container table tbody tr:nth-child(odd) {{ background-color: #ffffff; }}
         .leaflet-bottom {{ bottom: 28% !important; }} 
-        .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; }} 
+        .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; font-family:'Saturn-Bold'; font-size:14px; color:{CHUM_BLUE}; }} 
         .leaflet-control-layers-base {{ display: none; }}
+        .leaflet-control-layers {{ border: 2px solid {CHUM_BLUE} !important; border-radius: 8px !important; color: {CHUM_BLUE} !important; font-family: 'Gotham', sans-serif; }}
     </style>
-    <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid #ddd;">
-        <table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
+    <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid {CHUM_BLUE};">
+        <table style="width: 100%; border-collapse: collapse; font-family: 'Gotham', sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
             <tbody>{table_rows_html}</tbody>
         </table>
     </div>
