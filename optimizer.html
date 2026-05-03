@@ -37,7 +37,7 @@ body, html { font-family: Gotham, sans-serif; }
         </style>
     </head>
     <body>
-        <iframe id="map-frame" src="desktop_map_2026-05-03.html?optimizer=true" style="width: 63vw; height: 100vh; border: none; position: absolute; left: 0; top: 0;"></iframe>
+        <iframe id="map-frame" src="desktop_map_2026-05-04.html?optimizer=true" style="width: 63vw; height: 100vh; border: none; position: absolute; left: 0; top: 0;"></iframe>
         
         <div class="panel">
             <div class="header">optimización de agendamiento</div>
@@ -72,7 +72,7 @@ body, html { font-family: Gotham, sans-serif; }
 
             // Safely Generate 3 Working Days (Skipping Weekends and Holidays)
             const targetDates = [];
-            let dateParts = '2026-05-03'.split('-');
+            let dateParts = '2026-05-04'.split('-');
             let dateCursor = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
 
             while(targetDates.length < 3) {
