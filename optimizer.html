@@ -210,8 +210,8 @@ body, html { font-family: Gotham, sans-serif; }
                     let dateDisplay = dateObj.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month:'short' });
                     
                     let mechColor = mechanicColors[opt.mechanic];
-                    let pTime = new Date(opt.prev.isBase ? opt.prev.ts*1000 : (opt.prev.ts + opt.prev.dur*60)*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-                    let nTime = new Date(opt.next.ts*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+                    let pTime = new Date(opt.prev.isBase ? opt.prev.ts*1000 : (opt.prev.ts + opt.prev.dur*60)*1000).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', hour12: false});
+                    let nTime = new Date(opt.next.ts*1000).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', hour12: false});
                     
                     let prevAddr = opt.prev.isBase ? 'Base' : opt.prev.address.split(',')[0];
                     let nextAddr = opt.next.isBase ? 'Base' : opt.next.address.split(',')[0];
