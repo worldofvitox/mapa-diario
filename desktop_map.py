@@ -229,6 +229,16 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
     m.get_root().header.add_child(folium.Element(f'<script src="https://maps.googleapis.com/maps/api/js?key={GMAPS_KEY}"></script>'))
     
+    # Anti-flicker pre-render script to fix the layout instantly for Optimizer
+    anti_flicker_html = """
+    <script>
+    if (window.location.search.includes('optimizer=true')) {
+        document.write('<style>#desktop-side-panel { display: none !important; } .leaflet-container { width: 100vw !important; }</style>');
+    }
+    </script>
+    """
+    m.get_root().header.add_child(folium.Element(anti_flicker_html))
+
     favicon_html = f"""
     <style>{BRAND_CSS}</style>
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
@@ -245,6 +255,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     all_points = [BASE_LOCATION]
     global_max_n = 1
     
+    # Grid Logic
     grid_lines_html = ""
     offset_mins = 9 * 60 + 30 
     for h in range(9, 19):
@@ -443,6 +454,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         for j in range(n):
             anim_css += f".fade-{n}-{j} {{ animation: fade{n} {n*3}s infinite; animation-delay: {j*3}s; opacity: 0; }}\n"
 
+    # Matched height and border-radius to the draft box exactly
     carousel_html = f"""
     <div id="date-carousel" style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 0 10px; height: 32px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 15px; border: 2px solid {CHUM_BLUE}; box-sizing: border-box;">
         <a href="desktop_map_{prev_date.strftime('%Y-%m-%d')}.html" style="text-decoration:none; color: {CHUM_BLUE}; font-size: 16px; padding: 0 5px; font-weight:bold;">&lt;</a>
@@ -511,29 +523,23 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             setInterval(updateVans, 5000); updateVans();
             setInterval(updateTimeLine, 300000); updateTimeLine();
             
-            // Check if Optimizer sent a draft address via URL
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('draft_address')) {{
                 document.getElementById('global-draft-input').value = urlParams.get('draft_address');
                 plantGlobalPin();
             }}
             
-            // If inside optimizer iframe, clean up UI completely and force map width to fill iframe gap
+            // If inside optimizer iframe, clean up UI completely
             if(urlParams.has('optimizer') && urlParams.get('optimizer') === 'true') {{
-                document.getElementById('desktop-side-panel').style.display = 'none';
-                
-                // Hard inject style so Leaflet can't override it inline
-                var style = document.createElement('style');
-                style.innerHTML = '.leaflet-container {{ width: 100vw !important; }}';
-                document.head.appendChild(style);
-                
-                // Force Leaflet to resize canvas to the new width
-                setTimeout(function() {{ window.dispatchEvent(new Event('resize')); }}, 500);
-
                 document.getElementById('date-carousel').style.display = 'none';
                 document.getElementById('draft-container').style.display = 'none';
                 var dBox = document.getElementById('draft-info-box');
                 if(dBox) dBox.style.display = 'none';
+                
+                // Force Leaflet engine to recalculate tiles after the window physically expands
+                setTimeout(function() {{ 
+                    {map_var_name}.invalidateSize(true); 
+                }}, 400);
             }}
         }});
     </script>
@@ -753,10 +759,10 @@ def generate_optimizer_page(base_date):
             .btn-optimizar:hover {{ background: #022b5e; }}
             .results-container {{ flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #fff; }}
             
-            .pill {{ display: flex; flex-direction: row; align-items: stretch; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; }}
+            .pill {{ width: 100%; display: flex; flex-direction: row; align-items: stretch; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; box-sizing: border-box; }}
             .pill:hover {{ transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.15); border-color: {CHUM_BLUE}; }}
-            .pill-endcap {{ flex: 0 0 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; padding: 5px; text-align: center; font-family: Gotham, sans-serif; box-sizing: border-box; }}
-            .pill-body {{ flex: 1 1 auto; min-width: 0; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: Gotham, sans-serif; font-weight: normal; box-sizing: border-box; }}
+            .pill-endcap {{ flex: 0 0 45px; width: 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; padding: 5px; text-align: center; font-family: Gotham, sans-serif; box-sizing: border-box; }}
+            .pill-body {{ flex: 1 1 auto; min-width: 0; width: 100%; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: Gotham, sans-serif; font-weight: normal; box-sizing: border-box; }}
             .transit-box {{ flex: 0 0 auto; background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: Gotham, sans-serif; }}
             .address-text {{ flex: 1 1 0; min-width: 0; text-align: center; padding: 0 5px; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: normal; }}
             
@@ -825,6 +831,12 @@ def generate_optimizer_page(base_date):
                         allAppointments = Object.values(data);
                     }});
             }};
+
+            // Force strict 24-hour time formatting
+            function format24hTime(tsSeconds) {{
+                let d = new Date(tsSeconds * 1000);
+                return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+            }}
 
             function runOptimization() {{
                 const newAddress = document.getElementById('opt-address').value;
@@ -937,8 +949,10 @@ def generate_optimizer_page(base_date):
                     let dateDisplay = dateObj.toLocaleDateString('es-ES', {{ weekday: 'short', day: 'numeric', month:'short' }});
                     
                     let mechColor = mechanicColors[opt.mechanic];
-                    let pTime = new Date(opt.prev.isBase ? opt.prev.ts*1000 : (opt.prev.ts + opt.prev.dur*60)*1000).toLocaleTimeString('es-ES', {{hour:'2-digit', minute:'2-digit', hour12: false}});
-                    let nTime = new Date(opt.next.ts*1000).toLocaleTimeString('es-ES', {{hour:'2-digit', minute:'2-digit', hour12: false}});
+                    
+                    let pTs = opt.prev.isBase ? opt.prev.ts : (opt.prev.ts + opt.prev.dur*60);
+                    let pTime = format24hTime(pTs);
+                    let nTime = format24hTime(opt.next.ts);
                     
                     let prevAddr = opt.prev.isBase ? 'Base' : opt.prev.address.split(',')[0];
                     let nextAddr = opt.next.isBase ? 'Base' : opt.next.address.split(',')[0];
