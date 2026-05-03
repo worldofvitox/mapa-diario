@@ -20,12 +20,14 @@ except:
 # ⚠️ PASTE YOUR FIREBASE URL HERE
 FIREBASE_URL = 'https://vantracker-7cdef-default-rtdb.firebaseio.com/vans.json'
 
-# ⚠️ IF YOUR GITHUB ACTION CRASHED, HARDCODE YOUR KEY HERE
+# ⚠️ GMAPS KEY
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
 
-BASE_LOCATION = [-33.45219480797122, -70.5787333882418] 
+BASE_LOCATION = "-33.45219480797122, -70.5787333882418"
+BASE_COORDS = [-33.45219480797122, -70.5787333882418]
+
 CALENDAR_URL = 'https://calendar.google.com/calendar/ical/c_0e3e9c70ab1527edfef805c43e9fd06dabb0fdfab8e5081f4feb40565337708b%40group.calendar.google.com/private-a534c46e66604fef2e96a3dc4810f688/basic.ics'
 CACHE_FILE = 'appointments_cache.json'
 CONFIG_URL = 'https://docs.google.com/spreadsheets/d/1Sgtl_4Fm88-vVMfCrGxULl1Tg0ekD6rXT-P59hUlVSw/export?format=csv'
@@ -38,7 +40,6 @@ MECHANICS = {
     'Seba': {'palette': ['#007bff', '#0056b3', '#004085', '#3399ff', '#66b2ff'], 'initial': 'S', 'offset': (-0.00012, -0.00012)}
 }
 
-# Universal Brand Fonts CSS
 BRAND_CSS = """
 @font-face { font-family: 'Saturn-Bold'; src: url('Saturn-Bold.woff') format('woff'), url('Saturn-Bold.ttf') format('truetype'); }
 @font-face { font-family: 'Gotham'; src: url('Gotham%20Book.otf') format('opentype'); font-weight: normal; }
@@ -226,10 +227,9 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     display_date = target_date.strftime('%a, %d %b')
     day_apps = [a for a in all_apps if a['start_dt'].date() == target_date]
     
-    m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
+    m = folium.Map(location=BASE_COORDS, zoom_start=12, tiles=None)
     m.get_root().header.add_child(folium.Element(f'<script src="https://maps.googleapis.com/maps/api/js?key={GMAPS_KEY}"></script>'))
     
-    # Anti-flicker pre-render script to fix the layout instantly for Optimizer
     anti_flicker_html = """
     <script>
     if (window.location.search.includes('optimizer=true')) {
@@ -249,13 +249,12 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     m.get_root().header.add_child(folium.Element(favicon_html))
 
     folium.TileLayer('cartodbpositron', control=False).add_to(m)
-    folium.Marker(location=BASE_LOCATION, icon=folium.CustomIcon('base_icon.png', icon_size=(28, 28))).add_to(m)
+    folium.Marker(location=BASE_COORDS, icon=folium.CustomIcon('base_icon.png', icon_size=(28, 28))).add_to(m)
     map_var_name = m.get_name()
     
-    all_points = [BASE_LOCATION]
+    all_points = [BASE_COORDS]
     global_max_n = 1
     
-    # Grid Logic (Starting at 9:30)
     grid_lines_html = ""
     offset_mins = 9 * 60 + 30 
     for h in range(9, 19):
@@ -270,7 +269,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         info = MECHANICS[name]
         fg = folium.FeatureGroup(name=name).add_to(m)
         mech_apps = sorted([a for a in day_apps if a['mechanic'] == name], key=lambda x: x['start_dt'])
-        current_loc = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
+        current_loc = BASE_LOCATION
         
         ui_apps = []
         ui_transits = []
@@ -322,7 +321,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 short_cust_name = app['name'][:20]
                 display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
-                pill_content = f'<span style="font-family:Gotham, sans-serif; font-weight:bold;">{label_id} / {app["start_dt"].strftime("%H:%M")} / {short_cust_name}</span> / <span style="font-family:Gotham, sans-serif; font-weight:normal;">{display_addr1}</span>'
+                pill_content = f'<span style="font-family:Gotham; font-weight:bold;">{label_id} / {app["start_dt"].strftime("%H:%M")} / {short_cust_name}</span> / <span style="font-family:Gotham; font-weight:normal;">{display_addr1}</span>'
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color:{CHUM_BLUE}; transform:translate(-10%, -50%); pointer-events:none;">{pill_content}</div>')).add_to(fg)
 
                 current_loc = app['route_address']
@@ -336,17 +335,17 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
 
         for i, app in enumerate(mech_apps):
             if i + 1 < len(mech_apps):
-                app['next_lat'] = mech_apps[i+1].get('lat', BASE_LOCATION[0])
-                app['next_lng'] = mech_apps[i+1].get('lng', BASE_LOCATION[1])
+                app['next_lat'] = mech_apps[i+1].get('lat', BASE_COORDS[0])
+                app['next_lng'] = mech_apps[i+1].get('lng', BASE_COORDS[1])
                 app['next_start_ts'] = mech_apps[i+1]['start_dt'].timestamp()
                 app['next_address'] = mech_apps[i+1]['route_address']
             else:
-                app['next_lat'], app['next_lng'] = BASE_LOCATION[0], BASE_LOCATION[1]
+                app['next_lat'], app['next_lng'] = BASE_COORDS[0], BASE_COORDS[1]
                 app['next_start_ts'] = (now_dt.replace(hour=19, minute=0, second=0)).timestamp()
                 app['next_address'] = "Base"
 
         if mech_apps:
-            base_str = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
+            base_str = BASE_LOCATION
             return_target = mech_apps[-1]['start_dt'] + timedelta(hours=1)
             
             if return_target.date() > now_dt.date(): directions = gmaps.directions(current_loc, base_str, mode="driving")
@@ -368,7 +367,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 points = apply_offset(raw_pts, info['offset'])
                 folium.PolyLine(points, color=info['palette'][0], weight=5, opacity=0.6, dash_array='7, 7').add_to(fg)
                 mid = points[len(points)//2]
-                waze_link = f"https://waze.com/ul?ll={BASE_LOCATION[0]},{BASE_LOCATION[1]}&navigate=yes"
+                waze_link = f"https://waze.com/ul?ll={BASE_COORDS[0]},{BASE_COORDS[1]}&navigate=yes"
                 base_label = f"{info['initial']}{len(mech_apps) + 1}"
                 folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#8A9892; transform:translateY(-20px); font-family:Gotham, sans-serif;"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{base_label} / Base / {buffered_mins} min</div></a>''')).add_to(fg)
 
@@ -402,7 +401,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             for item in cluster:
                 planner_html += f"""
                 <div class="{item['anim_class']}" style="position: absolute; top: {item['top']}px; left: 1%; width: 9%; height: {item['height']}px; display: flex; align-items: flex-end; justify-content: center; z-index: 2; padding-bottom: 2px; box-sizing: border-box;">
-                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-family:Gotham, sans-serif; font-weight:normal; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden;">{item['mins']}m</div>
+                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-family:Gotham; font-weight:normal; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden;">{item['mins']}m</div>
                 </div>
                 """
             
@@ -414,9 +413,9 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 encoded_notas = urllib.parse.quote(app.get('notas', '')).replace("'", "%27")
                 
                 raw_json = json.dumps({
-                    'lat': app.get('lat', BASE_LOCATION[0]), 'lng': app.get('lng', BASE_LOCATION[1]),
+                    'lat': app.get('lat', BASE_COORDS[0]), 'lng': app.get('lng', BASE_COORDS[1]),
                     'address': app.get('address', ''), 'end_time_ts': app.get('end_time_ts', 0),
-                    'next_lat': app.get('next_lat', BASE_LOCATION[0]), 'next_lng': app.get('next_lng', BASE_LOCATION[1]),
+                    'next_lat': app.get('next_lat', BASE_COORDS[0]), 'next_lng': app.get('next_lng', BASE_COORDS[1]),
                     'next_start_ts': app.get('next_start_ts', 0), 'next_address': app.get('next_address', 'Base')
                 })
                 app_data_json = urllib.parse.quote(raw_json).replace("'", "%27")
@@ -465,10 +464,10 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     modal_html = f"""
     <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.4); z-index:100000;"></div>
     <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:Gotham, sans-serif; font-size:14px; font-weight:normal; color:#011E41; border: 2px solid #011E41;">
-        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: lowercase; font-family:'Saturn-Bold', sans-serif;">notas de la cita</div>
+        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: lowercase; font-family:'Saturn-Bold';">notas de la cita</div>
         <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
         <div style="margin-top: 15px; text-align: right;">
-            <button onclick="closeNotes()" style="background:#011E41; color:white; border:none; padding:5px 15px; border-radius:18px; cursor:pointer; font-weight:bold; font-family:Gotham, sans-serif;">Cerrar</button>
+            <button onclick="closeNotes()" style="background:#011E41; color:white; border:none; padding:5px 15px; border-radius:18px; cursor:pointer; font-weight:bold; font-family:Gotham;">Cerrar</button>
         </div>
     </div>
     <script>
@@ -522,17 +521,39 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             setInterval(updateVans, 5000); updateVans();
             setInterval(updateTimeLine, 300000); updateTimeLine();
             
+            // Sync Draft inputs
+            const savedDraft = localStorage.getItem('chum_draft_address');
+            if(savedDraft) {{
+                const dInput = document.getElementById('global-draft-input');
+                if(dInput) dInput.value = savedDraft;
+            }}
+            
+            const gInput = document.getElementById('global-draft-input');
+            if(gInput) {{
+                gInput.addEventListener('input', function() {{
+                    localStorage.setItem('chum_draft_address', this.value);
+                }});
+            }}
+            
             const urlParams = new URLSearchParams(window.location.search);
-            if(urlParams.has('draft_address')) {{
-                document.getElementById('global-draft-input').value = urlParams.get('draft_address');
+            if(urlParams.has('draft_address') && !urlParams.has('optimizer')) {{
                 plantGlobalPin();
             }}
             
-            // If inside optimizer iframe, trigger native resize to fill dead space
+            // Handle Optimizer Auto-Routing Request
+            let storedDraftData = localStorage.getItem('chum_auto_draft_data');
             if(urlParams.has('optimizer') && urlParams.get('optimizer') === 'true') {{
-                setTimeout(function() {{ 
-                    window.dispatchEvent(new Event('resize')); 
-                    {map_var_name}.invalidateSize(true); 
+                setTimeout(function() {{
+                    window.dispatchEvent(new Event('resize'));
+                    {map_var_name}.invalidateSize(true);
+                    
+                    if(storedDraftData) {{
+                        currentDraftApp = JSON.parse(storedDraftData);
+                        draftAddress = localStorage.getItem('chum_draft_address') || "";
+                        document.getElementById('modal-draft-input').value = draftAddress;
+                        calcDraft();
+                        localStorage.removeItem('chum_auto_draft_data');
+                    }}
                 }}, 400);
             }}
         }});
@@ -546,8 +567,8 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </div>
 
     <div id="draft-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; font-family:Gotham, sans-serif; border: 2px solid {CHUM_BLUE};">
-        <h3 style="margin-top:0; font-family:'Saturn-Bold', sans-serif; color:{CHUM_BLUE}; text-transform: lowercase;">resultados intercalar</h3>
-        <input type="text" id="modal-draft-input" style="width:250px; padding:8px; border:1px solid #ccc; border-radius:18px; margin-bottom:15px; font-family:Gotham, sans-serif; font-weight:normal;">
+        <h3 style="margin-top:0; font-family:'Saturn-Bold'; color:{CHUM_BLUE}; text-transform: lowercase;">resultados intercalar</h3>
+        <input type="text" id="modal-draft-input" style="width:250px; padding:8px; border:1px solid #ccc; border-radius:18px; margin-bottom:15px; font-family:Gotham; font-weight:normal;">
         <div style="display:flex; justify-content:flex-end; gap:10px;">
             <button onclick="document.getElementById('draft-modal').style.display='none'" style="padding:8px 15px; border:none; border-radius:18px; cursor:pointer; background:#eee; color:#333; font-weight:bold;">Cancelar</button>
             <button onclick="calcDraft()" style="padding:8px 15px; background:{CHUM_BLUE}; color:white; border:none; border-radius:18px; cursor:pointer; font-weight:bold;">Calcular</button>
@@ -555,7 +576,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </div>
 
     <div id="draft-info-box" style="display:none; position:absolute; bottom:60px; left:20px; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:Gotham, sans-serif; font-size:13px; max-width:350px; border: 2px solid {CHUM_BLUE};">
-        <div id="draft-info-header" style="font-family:'Saturn-Bold', sans-serif; text-transform: lowercase; color:{CHUM_BLUE}; font-size:14px; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
+        <div id="draft-info-header" style="font-family:'Saturn-Bold'; text-transform: lowercase; color:{CHUM_BLUE}; font-size:14px; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
             <span>resultados intercalar</span>
         </div>
         <div id="draft-info-1" style="margin-bottom:8px; color:#444; font-weight:normal;"></div>
@@ -615,24 +636,34 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         }}
 
         function calcDraft() {{
-            const inputVal = document.getElementById('modal-draft-input').value;
+            const inputVal = document.getElementById('modal-draft-input').value || localStorage.getItem('chum_draft_address');
             if (!inputVal) return;
             draftAddress = inputVal;
-            document.getElementById('global-draft-input').value = draftAddress; // Sync
+            
+            let gInp = document.getElementById('global-draft-input');
+            if(gInp) gInp.value = draftAddress;
             localStorage.setItem('chum_draft_address', draftAddress);
-            document.getElementById('draft-modal').style.display = 'none';
+            
+            let dMod = document.getElementById('draft-modal');
+            if(dMod) dMod.style.display = 'none';
             closeDraftInfo();
 
             const appData = currentDraftApp;
+            if(!appData) return;
+            
             const dirService = new google.maps.DirectionsService();
+            
+            // Allow string parsing for Base location fallback
+            let originLoc = (appData.lat && appData.lng) ? new google.maps.LatLng(appData.lat, appData.lng) : appData.address;
+            let destLoc = (appData.next_lat && appData.next_lng) ? new google.maps.LatLng(appData.next_lat, appData.next_lng) : appData.next_address;
 
             dirService.route({{
-                origin: new google.maps.LatLng(appData.lat, appData.lng), destination: draftAddress, travelMode: 'DRIVING'
+                origin: originLoc, destination: draftAddress, travelMode: 'DRIVING'
             }}, function(res1, status1) {{
                 if (status1 !== 'OK') {{ alert('No se pudo rutear al draft: ' + status1); return; }}
 
                 dirService.route({{
-                    origin: draftAddress, destination: new google.maps.LatLng(appData.next_lat, appData.next_lng), travelMode: 'DRIVING'
+                    origin: draftAddress, destination: destLoc, travelMode: 'DRIVING'
                 }}, function(res2, status2) {{
                     if (status2 !== 'OK') {{ alert('No se pudo rutear al siguiente destino: ' + status2); return; }}
 
@@ -654,18 +685,24 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
 
                     let availMins = Math.round((appData.next_start_ts - appData.end_time_ts) / 60) - (min1 + min2);
                     if (availMins < 0) availMins = 0;
+                    
+                    let baseStr = "{BASE_LOCATION}";
+                    let displayAddr1 = (appData.address === baseStr) ? "Base" : appData.address.split(',')[0];
+                    let displayAddr2 = (appData.next_address === baseStr || appData.next_address === "Base") ? "Base" : appData.next_address.split(',')[0];
 
-                    document.getElementById('draft-info-1').innerHTML = `<b style="color:{CHUM_BLUE};">${{min1}} min</b> ${{appData.address.split(',')[0]}} hasta <b>${{draftAddress.split(',')[0]}}</b>`;
-                    document.getElementById('draft-info-2').innerHTML = `<b style="color:{CHUM_BLUE};">${{min2}} min</b> <b>${{draftAddress.split(',')[0]}}</b> hasta ${{appData.next_address.split(',')[0]}}`;
+                    document.getElementById('draft-info-1').innerHTML = `<b style="color:{CHUM_BLUE};">${{min1}} min</b> ${{displayAddr1}} hasta <b>${{draftAddress.split(',')[0]}}</b>`;
+                    document.getElementById('draft-info-2').innerHTML = `<b style="color:{CHUM_BLUE};">${{min2}} min</b> <b>${{draftAddress.split(',')[0]}}</b> hasta ${{displayAddr2}}`;
                     document.getElementById('draft-info-time').innerText = availMins;
-                    document.getElementById('draft-info-box').style.display = 'block';
+                    
+                    let dBox = document.getElementById('draft-info-box');
+                    if(dBox) dBox.style.display = 'block';
                 }});
             }});
         }}
 
-        // Make the draft info box draggable
         dragElement(document.getElementById("draft-info-box"));
         function dragElement(elmnt) {{
+            if(!elmnt) return;
             var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             if (document.getElementById("draft-info-header")) {{
                 document.getElementById("draft-info-header").onmousedown = dragMouseDown;
@@ -705,14 +742,13 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         body, html {{ margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; font-family: Gotham, sans-serif; }}
         
         /* Map Standard Layout */
-        .leaflet-container {{ width: 63vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }}
+        .leaflet-container {{ width: 63vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; transition: width 0.3s ease; }}
         
-        /* Optimizer Override Layout */
-        html.is-optimizer .leaflet-container {{ width: 100% !important; }}
+        /* Optimizer Native Override */
+        html.is-optimizer .leaflet-container {{ width: 100vw !important; }}
         html.is-optimizer #desktop-side-panel {{ display: none !important; }}
         html.is-optimizer #date-carousel {{ display: none !important; }}
         html.is-optimizer #draft-container {{ display: none !important; }}
-        html.is-optimizer #draft-info-box {{ display: none !important; }}
         
         /* General Layout */
         .leaflet-control-layers-list::before {{ content: 'ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: 'Saturn-Bold', sans-serif; color: {CHUM_BLUE}; text-transform: lowercase;}}
@@ -767,15 +803,15 @@ def generate_optimizer_page(base_date):
             .pill {{ width: 100%; display: flex; flex-direction: row; align-items: stretch; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; box-sizing: border-box; }}
             .pill:hover {{ transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.15); border-color: {CHUM_BLUE}; }}
             .pill-endcap {{ flex: 0 0 45px; width: 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; padding: 5px; text-align: center; font-family: Gotham, sans-serif; box-sizing: border-box; }}
-            .pill-body {{ flex: 1 1 auto; min-width: 0; width: 100%; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: Gotham, sans-serif; font-weight: normal; box-sizing: border-box; }}
+            .pill-body {{ flex: 1 1 auto; min-width: 0; width: 100%; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: Gotham, sans-serif; font-weight: normal; box-sizing: border-box; line-height: 1.2; }}
             .transit-box {{ flex: 0 0 auto; background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: Gotham, sans-serif; }}
             .address-text {{ flex: 1 1 0; min-width: 0; text-align: center; padding: 0 5px; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: normal; }}
             
-            .loading {{ text-align: center; padding: 30px; font-family: 'Saturn-Bold', sans-serif; text-transform: lowercase; color: {CHUM_BLUE}; font-size: 18px; }}
+            .loading {{ text-align: center; padding: 30px; font-family: 'Saturn-Bold'; text-transform: lowercase; color: {CHUM_BLUE}; font-size: 18px; }}
         </style>
     </head>
     <body>
-        <iframe id="map-frame" src="desktop_map_{base_date.strftime('%Y-%m-%d')}.html?optimizer=true" style="width: 63vw; height: 100vh; border: none; position: absolute; left: 0; top: 0;"></iframe>
+        <iframe id="map-frame" src="desktop_map_{base_date.strftime('%Y-%m-%d')}.html?optimizer=true" style="width: 100%; height: 100vh; border: none; position: absolute; left: 0; top: 0;"></iframe>
         
         <div class="panel">
             <div class="header">optimización de agendamiento</div>
@@ -799,7 +835,7 @@ def generate_optimizer_page(base_date):
         <script>
             let allAppointments = [];
             const mechanicColors = {{ 'Juan': '#dc3545', 'Seba': '#007bff', 'Base': '#8A9892' }};
-            const baseLocation = "-33.45219480797122, -70.5787333882418";
+            const baseLocation = "{BASE_LOCATION}";
             
             // Chilean Holidays 2026
             const clHolidays = [
@@ -808,7 +844,7 @@ def generate_optimizer_page(base_date):
                 "2026-09-19", "2026-10-12", "2026-10-31", "2026-12-08", "2026-12-25"
             ];
 
-            // Safely Generate 3 Working Days (Skipping Weekends and Holidays)
+            // Safely Generate 3 Working Days
             const targetDates = [];
             let dateParts = '{base_date.isoformat()}'.split('-');
             let dateCursor = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
@@ -830,6 +866,10 @@ def generate_optimizer_page(base_date):
                 const savedAddress = localStorage.getItem('chum_draft_address');
                 if(savedAddress) document.getElementById('opt-address').value = savedAddress;
                 
+                document.getElementById('opt-address').addEventListener('input', function() {{
+                    localStorage.setItem('chum_draft_address', this.value);
+                }});
+                
                 fetch('{CACHE_FILE}')
                     .then(r => r.json())
                     .then(data => {{
@@ -837,7 +877,6 @@ def generate_optimizer_page(base_date):
                     }});
             }};
 
-            // Force strict 24-hour time formatting
             function format24hTime(tsSeconds) {{
                 let d = new Date(tsSeconds * 1000);
                 return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
@@ -949,7 +988,6 @@ def generate_optimizer_page(base_date):
                 
                 let html = '';
                 options.forEach(opt => {{
-                    // Fixing UTC offset bugs by using manual parsing
                     let parts = opt.date.split('-');
                     let dateObj = new Date(parts[0], parts[1]-1, parts[2]);
                     let dateDisplay = dateObj.toLocaleDateString('es-ES', {{ weekday: 'short', day: 'numeric', month:'short' }});
@@ -962,7 +1000,15 @@ def generate_optimizer_page(base_date):
                     let prevAddr = opt.prev.isBase ? 'Base' : opt.prev.address.split(',')[0];
                     let nextAddr = opt.next.isBase ? 'Base' : opt.next.address.split(',')[0];
                     
-                    let onClick = `loadMapForDraft('${{opt.date}}', '${{opt.mechanic}}')`;
+                    // Bundle the parameters to Auto-Draft the map
+                    let autoDraftData = {{
+                        address: opt.prev.address,
+                        next_address: opt.next.address,
+                        end_time_ts: pTs,
+                        next_start_ts: opt.next.ts
+                    }};
+                    let encodedData = encodeURIComponent(JSON.stringify(autoDraftData));
+                    let onClick = `loadMapForDraft('${{opt.date}}', '${{opt.mechanic}}', '${{encodedData}}')`;
                     
                     html += `
                     <div class="pill" onclick="${{onClick}}">
@@ -974,7 +1020,7 @@ def generate_optimizer_page(base_date):
                         <div class="pill-body">
                             <div class="address-text">${{prevAddr}}</div>
                             <div class="transit-box">${{opt.min1}}</div>
-                            <div class="address-text" style="color:{CHUM_BLUE}; font-weight:bold;">
+                            <div class="address-text">
                                 ${{dateDisplay}}<br>${{newAddress.split(',')[0]}}
                             </div>
                             <div class="transit-box">${{opt.min2}}</div>
@@ -990,9 +1036,10 @@ def generate_optimizer_page(base_date):
                 resultsDiv.innerHTML = html;
             }}
 
-            function loadMapForDraft(dateStr, mechanic) {{
+            function loadMapForDraft(dateStr, mechanic, encodedData) {{
+                localStorage.setItem('chum_auto_draft_data', decodeURIComponent(encodedData));
                 const iframe = document.getElementById('map-frame');
-                iframe.src = `desktop_map_${{dateStr}}.html?optimizer=true&draft_address=${{encodeURIComponent(document.getElementById('opt-address').value)}}&mechanic=${{mechanic}}`;
+                iframe.src = `desktop_map_${{dateStr}}.html?optimizer=true&mechanic=${{mechanic}}`;
             }}
         </script>
     </body>
