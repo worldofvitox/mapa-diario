@@ -29,15 +29,15 @@ body, html { font-family: Gotham, sans-serif; }
             .pill { width: 100%; display: flex; flex-direction: row; align-items: stretch; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; box-sizing: border-box; }
             .pill:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.15); border-color: #011E41; }
             .pill-endcap { flex: 0 0 45px; width: 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; padding: 5px; text-align: center; font-family: Gotham, sans-serif; box-sizing: border-box; }
-            .pill-body { flex: 1 1 auto; min-width: 0; width: 100%; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: Gotham, sans-serif; font-weight: normal; box-sizing: border-box; }
+            .pill-body { flex: 1 1 auto; min-width: 0; width: 100%; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: Gotham, sans-serif; font-weight: normal; box-sizing: border-box; line-height: 1.2; }
             .transit-box { flex: 0 0 auto; background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: Gotham, sans-serif; }
             .address-text { flex: 1 1 0; min-width: 0; text-align: center; padding: 0 5px; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: normal; }
             
-            .loading { text-align: center; padding: 30px; font-family: 'Saturn-Bold', sans-serif; text-transform: lowercase; color: #011E41; font-size: 18px; }
+            .loading { text-align: center; padding: 30px; font-family: 'Saturn-Bold'; text-transform: lowercase; color: #011E41; font-size: 18px; }
         </style>
     </head>
     <body>
-        <iframe id="map-frame" src="desktop_map_2026-05-04.html?optimizer=true" style="width: 63vw; height: 100vh; border: none; position: absolute; left: 0; top: 0;"></iframe>
+        <iframe id="map-frame" src="desktop_map_2026-05-04.html?optimizer=true" style="width: 100%; height: 100vh; border: none; position: absolute; left: 0; top: 0;"></iframe>
         
         <div class="panel">
             <div class="header">optimización de agendamiento</div>
@@ -70,7 +70,7 @@ body, html { font-family: Gotham, sans-serif; }
                 "2026-09-19", "2026-10-12", "2026-10-31", "2026-12-08", "2026-12-25"
             ];
 
-            // Safely Generate 3 Working Days (Skipping Weekends and Holidays)
+            // Safely Generate 3 Working Days
             const targetDates = [];
             let dateParts = '2026-05-04'.split('-');
             let dateCursor = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
@@ -92,6 +92,10 @@ body, html { font-family: Gotham, sans-serif; }
                 const savedAddress = localStorage.getItem('chum_draft_address');
                 if(savedAddress) document.getElementById('opt-address').value = savedAddress;
                 
+                document.getElementById('opt-address').addEventListener('input', function() {
+                    localStorage.setItem('chum_draft_address', this.value);
+                });
+                
                 fetch('appointments_cache.json')
                     .then(r => r.json())
                     .then(data => {
@@ -99,7 +103,6 @@ body, html { font-family: Gotham, sans-serif; }
                     });
             };
 
-            // Force strict 24-hour time formatting
             function format24hTime(tsSeconds) {
                 let d = new Date(tsSeconds * 1000);
                 return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
@@ -211,7 +214,6 @@ body, html { font-family: Gotham, sans-serif; }
                 
                 let html = '';
                 options.forEach(opt => {
-                    // Fixing UTC offset bugs by using manual parsing
                     let parts = opt.date.split('-');
                     let dateObj = new Date(parts[0], parts[1]-1, parts[2]);
                     let dateDisplay = dateObj.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month:'short' });
@@ -224,7 +226,15 @@ body, html { font-family: Gotham, sans-serif; }
                     let prevAddr = opt.prev.isBase ? 'Base' : opt.prev.address.split(',')[0];
                     let nextAddr = opt.next.isBase ? 'Base' : opt.next.address.split(',')[0];
                     
-                    let onClick = `loadMapForDraft('${opt.date}', '${opt.mechanic}')`;
+                    // Bundle the parameters to Auto-Draft the map
+                    let autoDraftData = {
+                        address: opt.prev.address,
+                        next_address: opt.next.address,
+                        end_time_ts: pTs,
+                        next_start_ts: opt.next.ts
+                    };
+                    let encodedData = encodeURIComponent(JSON.stringify(autoDraftData));
+                    let onClick = `loadMapForDraft('${opt.date}', '${opt.mechanic}', '${encodedData}')`;
                     
                     html += `
                     <div class="pill" onclick="${onClick}">
@@ -236,7 +246,7 @@ body, html { font-family: Gotham, sans-serif; }
                         <div class="pill-body">
                             <div class="address-text">${prevAddr}</div>
                             <div class="transit-box">${opt.min1}</div>
-                            <div class="address-text" style="color:#011E41; font-weight:bold;">
+                            <div class="address-text">
                                 ${dateDisplay}<br>${newAddress.split(',')[0]}
                             </div>
                             <div class="transit-box">${opt.min2}</div>
@@ -252,9 +262,10 @@ body, html { font-family: Gotham, sans-serif; }
                 resultsDiv.innerHTML = html;
             }
 
-            function loadMapForDraft(dateStr, mechanic) {
+            function loadMapForDraft(dateStr, mechanic, encodedData) {
+                localStorage.setItem('chum_auto_draft_data', decodeURIComponent(encodedData));
                 const iframe = document.getElementById('map-frame');
-                iframe.src = `desktop_map_${dateStr}.html?optimizer=true&draft_address=${encodeURIComponent(document.getElementById('opt-address').value)}&mechanic=${mechanic}`;
+                iframe.src = `desktop_map_${dateStr}.html?optimizer=true&mechanic=${mechanic}`;
             }
         </script>
     </body>
