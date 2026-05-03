@@ -20,7 +20,7 @@ except:
 # ⚠️ PASTE YOUR FIREBASE URL HERE
 FIREBASE_URL = 'https://vantracker-7cdef-default-rtdb.firebaseio.com/vans.json'
 
-# ⚠️ GMAPS KEY
+# ⚠️ IF YOUR GITHUB ACTION CRASHED, HARDCODE YOUR KEY HERE
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
 timezone = pytz.timezone('America/Santiago')
@@ -233,7 +233,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     anti_flicker_html = """
     <script>
     if (window.location.search.includes('optimizer=true')) {
-        document.write('<style>#desktop-side-panel { display: none !important; } .leaflet-container { width: 100vw !important; }</style>');
+        document.documentElement.classList.add('is-optimizer');
     }
     </script>
     """
@@ -255,7 +255,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     all_points = [BASE_LOCATION]
     global_max_n = 1
     
-    # Grid Logic
+    # Grid Logic (Starting at 9:30)
     grid_lines_html = ""
     offset_mins = 9 * 60 + 30 
     for h in range(9, 19):
@@ -322,7 +322,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 short_cust_name = app['name'][:20]
                 display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
-                pill_content = f'<span style="font-family:Gotham; font-weight:bold;">{label_id} / {app["start_dt"].strftime("%H:%M")} / {short_cust_name}</span> / <span style="font-family:Gotham; font-weight:normal;">{display_addr1}</span>'
+                pill_content = f'<span style="font-family:Gotham, sans-serif; font-weight:bold;">{label_id} / {app["start_dt"].strftime("%H:%M")} / {short_cust_name}</span> / <span style="font-family:Gotham, sans-serif; font-weight:normal;">{display_addr1}</span>'
                 folium.Marker(location=end_pt, icon=folium.DivIcon(html=f'<div style="{CARD_STYLE} color:{CHUM_BLUE}; transform:translate(-10%, -50%); pointer-events:none;">{pill_content}</div>')).add_to(fg)
 
                 current_loc = app['route_address']
@@ -402,7 +402,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             for item in cluster:
                 planner_html += f"""
                 <div class="{item['anim_class']}" style="position: absolute; top: {item['top']}px; left: 1%; width: 9%; height: {item['height']}px; display: flex; align-items: flex-end; justify-content: center; z-index: 2; padding-bottom: 2px; box-sizing: border-box;">
-                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-family:Gotham; font-weight:normal; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden;">{item['mins']}m</div>
+                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-family:Gotham, sans-serif; font-weight:normal; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden;">{item['mins']}m</div>
                 </div>
                 """
             
@@ -454,7 +454,6 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         for j in range(n):
             anim_css += f".fade-{n}-{j} {{ animation: fade{n} {n*3}s infinite; animation-delay: {j*3}s; opacity: 0; }}\n"
 
-    # Matched height and border-radius to the draft box exactly
     carousel_html = f"""
     <div id="date-carousel" style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 0 10px; height: 32px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 15px; border: 2px solid {CHUM_BLUE}; box-sizing: border-box;">
         <a href="desktop_map_{prev_date.strftime('%Y-%m-%d')}.html" style="text-decoration:none; color: {CHUM_BLUE}; font-size: 16px; padding: 0 5px; font-weight:bold;">&lt;</a>
@@ -466,10 +465,10 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     modal_html = f"""
     <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.4); z-index:100000;"></div>
     <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:Gotham, sans-serif; font-size:14px; font-weight:normal; color:#011E41; border: 2px solid #011E41;">
-        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: lowercase; font-family:'Saturn-Bold';">notas de la cita</div>
+        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: lowercase; font-family:'Saturn-Bold', sans-serif;">notas de la cita</div>
         <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
         <div style="margin-top: 15px; text-align: right;">
-            <button onclick="closeNotes()" style="background:#011E41; color:white; border:none; padding:5px 15px; border-radius:18px; cursor:pointer; font-weight:bold; font-family:Gotham;">Cerrar</button>
+            <button onclick="closeNotes()" style="background:#011E41; color:white; border:none; padding:5px 15px; border-radius:18px; cursor:pointer; font-weight:bold; font-family:Gotham, sans-serif;">Cerrar</button>
         </div>
     </div>
     <script>
@@ -529,15 +528,10 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 plantGlobalPin();
             }}
             
-            // If inside optimizer iframe, clean up UI completely
+            // If inside optimizer iframe, trigger native resize to fill dead space
             if(urlParams.has('optimizer') && urlParams.get('optimizer') === 'true') {{
-                document.getElementById('date-carousel').style.display = 'none';
-                document.getElementById('draft-container').style.display = 'none';
-                var dBox = document.getElementById('draft-info-box');
-                if(dBox) dBox.style.display = 'none';
-                
-                // Force Leaflet engine to recalculate tiles after the window physically expands
                 setTimeout(function() {{ 
+                    window.dispatchEvent(new Event('resize')); 
                     {map_var_name}.invalidateSize(true); 
                 }}, 400);
             }}
@@ -552,8 +546,8 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </div>
 
     <div id="draft-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; font-family:Gotham, sans-serif; border: 2px solid {CHUM_BLUE};">
-        <h3 style="margin-top:0; font-family:'Saturn-Bold'; color:{CHUM_BLUE}; text-transform: lowercase;">resultados intercalar</h3>
-        <input type="text" id="modal-draft-input" style="width:250px; padding:8px; border:1px solid #ccc; border-radius:18px; margin-bottom:15px; font-family:Gotham; font-weight:normal;">
+        <h3 style="margin-top:0; font-family:'Saturn-Bold', sans-serif; color:{CHUM_BLUE}; text-transform: lowercase;">resultados intercalar</h3>
+        <input type="text" id="modal-draft-input" style="width:250px; padding:8px; border:1px solid #ccc; border-radius:18px; margin-bottom:15px; font-family:Gotham, sans-serif; font-weight:normal;">
         <div style="display:flex; justify-content:flex-end; gap:10px;">
             <button onclick="document.getElementById('draft-modal').style.display='none'" style="padding:8px 15px; border:none; border-radius:18px; cursor:pointer; background:#eee; color:#333; font-weight:bold;">Cancelar</button>
             <button onclick="calcDraft()" style="padding:8px 15px; background:{CHUM_BLUE}; color:white; border:none; border-radius:18px; cursor:pointer; font-weight:bold;">Calcular</button>
@@ -561,7 +555,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     </div>
 
     <div id="draft-info-box" style="display:none; position:absolute; bottom:60px; left:20px; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:Gotham, sans-serif; font-size:13px; max-width:350px; border: 2px solid {CHUM_BLUE};">
-        <div id="draft-info-header" style="font-family:'Saturn-Bold'; text-transform: lowercase; color:{CHUM_BLUE}; font-size:14px; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
+        <div id="draft-info-header" style="font-family:'Saturn-Bold', sans-serif; text-transform: lowercase; color:{CHUM_BLUE}; font-size:14px; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
             <span>resultados intercalar</span>
         </div>
         <div id="draft-info-1" style="margin-bottom:8px; color:#444; font-weight:normal;"></div>
@@ -709,7 +703,18 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
     <style>
         {BRAND_CSS}
         body, html {{ margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; font-family: Gotham, sans-serif; }}
+        
+        /* Map Standard Layout */
         .leaflet-container {{ width: 63vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }}
+        
+        /* Optimizer Override Layout */
+        html.is-optimizer .leaflet-container {{ width: 100% !important; }}
+        html.is-optimizer #desktop-side-panel {{ display: none !important; }}
+        html.is-optimizer #date-carousel {{ display: none !important; }}
+        html.is-optimizer #draft-container {{ display: none !important; }}
+        html.is-optimizer #draft-info-box {{ display: none !important; }}
+        
+        /* General Layout */
         .leaflet-control-layers-list::before {{ content: 'ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: 'Saturn-Bold', sans-serif; color: {CHUM_BLUE}; text-transform: lowercase;}}
         .leaflet-control-layers-base {{ display: none; }}
         .leaflet-control-layers {{ border: 2px solid {CHUM_BLUE} !important; border-radius: 8px !important; color: {CHUM_BLUE} !important; font-family: Gotham, sans-serif; font-weight: bold; }}
@@ -766,7 +771,7 @@ def generate_optimizer_page(base_date):
             .transit-box {{ flex: 0 0 auto; background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: Gotham, sans-serif; }}
             .address-text {{ flex: 1 1 0; min-width: 0; text-align: center; padding: 0 5px; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: normal; }}
             
-            .loading {{ text-align: center; padding: 30px; font-family: 'Saturn-Bold'; text-transform: lowercase; color: {CHUM_BLUE}; font-size: 18px; }}
+            .loading {{ text-align: center; padding: 30px; font-family: 'Saturn-Bold', sans-serif; text-transform: lowercase; color: {CHUM_BLUE}; font-size: 18px; }}
         </style>
     </head>
     <body>
@@ -886,7 +891,7 @@ def generate_optimizer_page(base_date):
                 }});
 
                 if(validGaps.length === 0) {{
-                    resultsDiv.innerHTML = '<div style="text-align:center; color:red; padding:20px; font-family:Gotham;">No hay bloques de tiempo suficientemente grandes.</div>';
+                    resultsDiv.innerHTML = '<div style="text-align:center; color:red; padding:20px; font-family:Gotham, sans-serif;">No hay bloques de tiempo suficientemente grandes.</div>';
                     return;
                 }}
 
@@ -938,18 +943,18 @@ def generate_optimizer_page(base_date):
             function renderResults(options, newAddress) {{
                 const resultsDiv = document.getElementById('results');
                 if(options.length === 0) {{
-                    resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; font-family:Gotham;">Ningun bloque cumple con el tiempo de viaje necesario.</div>';
+                    resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; font-family:Gotham, sans-serif;">Ningun bloque cumple con el tiempo de viaje necesario.</div>';
                     return;
                 }}
                 
                 let html = '';
                 options.forEach(opt => {{
+                    // Fixing UTC offset bugs by using manual parsing
                     let parts = opt.date.split('-');
                     let dateObj = new Date(parts[0], parts[1]-1, parts[2]);
                     let dateDisplay = dateObj.toLocaleDateString('es-ES', {{ weekday: 'short', day: 'numeric', month:'short' }});
                     
                     let mechColor = mechanicColors[opt.mechanic];
-                    
                     let pTs = opt.prev.isBase ? opt.prev.ts : (opt.prev.ts + opt.prev.dur*60);
                     let pTime = format24hTime(pTs);
                     let nTime = format24hTime(opt.next.ts);
