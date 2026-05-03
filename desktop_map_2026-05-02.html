@@ -5,6 +5,13 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMi_wbYarCHOgAHMdgxHecbCihjhUv-Cs"></script>
     
+    <script>
+    if (window.location.search.includes('optimizer=true')) {
+        document.write('<style>#desktop-side-panel { display: none !important; } .leaflet-container { width: 100vw !important; }</style>');
+    }
+    </script>
+    
+    
     <style>
 @font-face { font-family: 'Saturn-Bold'; src: url('Saturn-Bold.woff') format('woff'), url('Saturn-Bold.ttf') format('truetype'); }
 @font-face { font-family: 'Gotham'; src: url('Gotham%20Book.otf') format('opentype'); font-weight: normal; }
@@ -32,7 +39,7 @@ body, html { font-family: Gotham, sans-serif; }
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_216b76d6c3e43b51332ae8874c0c692e {
+                #map_c9d512f4389e7e187d364a9dff75b98e {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -173,7 +180,7 @@ body, html { font-family: Gotham, sans-serif; }
         let draftLines = [];
         let currentDraftApp = null;
 
-        function getMapInstance() { return map_216b76d6c3e43b51332ae8874c0c692e; }
+        function getMapInstance() { return map_c9d512f4389e7e187d364a9dff75b98e; }
 
         function plantGlobalPin() {
             const inputVal = document.getElementById('global-draft-input').value;
@@ -316,7 +323,7 @@ body, html { font-family: Gotham, sans-serif; }
                             if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
                             if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
                             var vanIcon = L.icon({ iconUrl: iconUrl, iconSize: [28, 28], iconAnchor: [14, 14] });
-                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_216b76d6c3e43b51332ae8874c0c692e);
+                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_c9d512f4389e7e187d364a9dff75b98e);
                         }
                     }
                 })
@@ -337,43 +344,37 @@ body, html { font-family: Gotham, sans-serif; }
             setInterval(updateVans, 5000); updateVans();
             setInterval(updateTimeLine, 300000); updateTimeLine();
             
-            // Check if Optimizer sent a draft address via URL
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('draft_address')) {
                 document.getElementById('global-draft-input').value = urlParams.get('draft_address');
                 plantGlobalPin();
             }
             
-            // If inside optimizer iframe, clean up UI completely and force map width to fill iframe gap
+            // If inside optimizer iframe, clean up UI completely
             if(urlParams.has('optimizer') && urlParams.get('optimizer') === 'true') {
-                document.getElementById('desktop-side-panel').style.display = 'none';
-                
-                // Hard inject style so Leaflet can't override it inline
-                var style = document.createElement('style');
-                style.innerHTML = '.leaflet-container { width: 100vw !important; }';
-                document.head.appendChild(style);
-                
-                // Force Leaflet to resize canvas to the new width
-                setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 500);
-
                 document.getElementById('date-carousel').style.display = 'none';
                 document.getElementById('draft-container').style.display = 'none';
                 var dBox = document.getElementById('draft-info-box');
                 if(dBox) dBox.style.display = 'none';
+                
+                // Force Leaflet engine to recalculate tiles after the window physically expands
+                setTimeout(function() { 
+                    map_c9d512f4389e7e187d364a9dff75b98e.invalidateSize(true); 
+                }, 400);
             }
         });
     </script>
     
     
     
-            <div class="folium-map" id="map_216b76d6c3e43b51332ae8874c0c692e" ></div>
+            <div class="folium-map" id="map_c9d512f4389e7e187d364a9dff75b98e" ></div>
         
 </body>
 <script>
     
     
-            var map_216b76d6c3e43b51332ae8874c0c692e = L.map(
-                "map_216b76d6c3e43b51332ae8874c0c692e",
+            var map_c9d512f4389e7e187d364a9dff75b98e = L.map(
+                "map_c9d512f4389e7e187d364a9dff75b98e",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -390,7 +391,7 @@ body, html { font-family: Gotham, sans-serif; }
 
         
     
-            var tile_layer_eb5513662d03c3718fcc8c531fbcc0d9 = L.tileLayer(
+            var tile_layer_cc3f108f7ca2e631d88b9d429129187f = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -407,60 +408,60 @@ body, html { font-family: Gotham, sans-serif; }
             );
         
     
-            tile_layer_eb5513662d03c3718fcc8c531fbcc0d9.addTo(map_216b76d6c3e43b51332ae8874c0c692e);
+            tile_layer_cc3f108f7ca2e631d88b9d429129187f.addTo(map_c9d512f4389e7e187d364a9dff75b98e);
         
     
-            var marker_1173c2e467aa129cd0fa1a38340f9209 = L.marker(
+            var marker_b9f92e6dc6641e71852bfd1f638678b2 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_216b76d6c3e43b51332ae8874c0c692e);
+            ).addTo(map_c9d512f4389e7e187d364a9dff75b98e);
         
     
-        var icon_fd6ac6e820733572540edc68052ca9fc = L.icon({
+        var icon_7846154b602809375b287e1db56077be = L.icon({
   "iconUrl": "data:image/png;base64,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",
   "iconSize": [28, 28],
 });
         
     
-                marker_1173c2e467aa129cd0fa1a38340f9209.setIcon(icon_fd6ac6e820733572540edc68052ca9fc);
+                marker_b9f92e6dc6641e71852bfd1f638678b2.setIcon(icon_7846154b602809375b287e1db56077be);
             
     
-            var feature_group_f061de19dfbf550bea7b7be3da272439 = L.featureGroup(
+            var feature_group_f1c986ed2f79796ade3a6b7db6c91353 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_f061de19dfbf550bea7b7be3da272439.addTo(map_216b76d6c3e43b51332ae8874c0c692e);
+            feature_group_f1c986ed2f79796ade3a6b7db6c91353.addTo(map_c9d512f4389e7e187d364a9dff75b98e);
         
     
-            var feature_group_06c4cf2221acd093b9b28fc38a98483a = L.featureGroup(
+            var feature_group_3f936f397054ebe56e6e65092dbfe2b2 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_06c4cf2221acd093b9b28fc38a98483a.addTo(map_216b76d6c3e43b51332ae8874c0c692e);
+            feature_group_3f936f397054ebe56e6e65092dbfe2b2.addTo(map_c9d512f4389e7e187d364a9dff75b98e);
         
     
-            var layer_control_abf3995e28a29d7d424e1419a142df8a_layers = {
+            var layer_control_8598a3a84da052dc884f5db35058d940_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_f061de19dfbf550bea7b7be3da272439,
-                    "Seba" : feature_group_06c4cf2221acd093b9b28fc38a98483a,
+                    "Juan" : feature_group_f1c986ed2f79796ade3a6b7db6c91353,
+                    "Seba" : feature_group_3f936f397054ebe56e6e65092dbfe2b2,
                 },
             };
-            let layer_control_abf3995e28a29d7d424e1419a142df8a = L.control.layers(
-                layer_control_abf3995e28a29d7d424e1419a142df8a_layers.base_layers,
-                layer_control_abf3995e28a29d7d424e1419a142df8a_layers.overlays,
+            let layer_control_8598a3a84da052dc884f5db35058d940 = L.control.layers(
+                layer_control_8598a3a84da052dc884f5db35058d940_layers.base_layers,
+                layer_control_8598a3a84da052dc884f5db35058d940_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_216b76d6c3e43b51332ae8874c0c692e);
+            ).addTo(map_c9d512f4389e7e187d364a9dff75b98e);
 
         
 </script>

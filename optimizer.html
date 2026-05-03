@@ -26,10 +26,10 @@ body, html { font-family: Gotham, sans-serif; }
             .btn-optimizar:hover { background: #022b5e; }
             .results-container { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #fff; }
             
-            .pill { display: flex; flex-direction: row; align-items: stretch; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; }
+            .pill { width: 100%; display: flex; flex-direction: row; align-items: stretch; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; box-sizing: border-box; }
             .pill:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.15); border-color: #011E41; }
-            .pill-endcap { flex: 0 0 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; padding: 5px; text-align: center; font-family: Gotham, sans-serif; box-sizing: border-box; }
-            .pill-body { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: Gotham, sans-serif; font-weight: normal; box-sizing: border-box; }
+            .pill-endcap { flex: 0 0 45px; width: 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; padding: 5px; text-align: center; font-family: Gotham, sans-serif; box-sizing: border-box; }
+            .pill-body { flex: 1 1 auto; min-width: 0; width: 100%; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: Gotham, sans-serif; font-weight: normal; box-sizing: border-box; }
             .transit-box { flex: 0 0 auto; background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: Gotham, sans-serif; }
             .address-text { flex: 1 1 0; min-width: 0; text-align: center; padding: 0 5px; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: normal; }
             
@@ -98,6 +98,12 @@ body, html { font-family: Gotham, sans-serif; }
                         allAppointments = Object.values(data);
                     });
             };
+
+            // Force strict 24-hour time formatting
+            function format24hTime(tsSeconds) {
+                let d = new Date(tsSeconds * 1000);
+                return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+            }
 
             function runOptimization() {
                 const newAddress = document.getElementById('opt-address').value;
@@ -210,8 +216,10 @@ body, html { font-family: Gotham, sans-serif; }
                     let dateDisplay = dateObj.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month:'short' });
                     
                     let mechColor = mechanicColors[opt.mechanic];
-                    let pTime = new Date(opt.prev.isBase ? opt.prev.ts*1000 : (opt.prev.ts + opt.prev.dur*60)*1000).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', hour12: false});
-                    let nTime = new Date(opt.next.ts*1000).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', hour12: false});
+                    
+                    let pTs = opt.prev.isBase ? opt.prev.ts : (opt.prev.ts + opt.prev.dur*60);
+                    let pTime = format24hTime(pTs);
+                    let nTime = format24hTime(opt.next.ts);
                     
                     let prevAddr = opt.prev.isBase ? 'Base' : opt.prev.address.split(',')[0];
                     let nextAddr = opt.next.isBase ? 'Base' : opt.next.address.split(',')[0];
