@@ -29,9 +29,9 @@ MECHANICS = {
 
 BRAND_CSS = """
 @font-face { font-family: 'Saturn-Bold'; src: url('Saturn-Bold.woff') format('woff'), url('Saturn-Bold.ttf') format('truetype'); }
-@font-face { font-family: 'Gotham'; src: url('Gotham Book.otf') format('opentype'); font-weight: normal; }
-@font-face { font-family: 'Gotham'; src: url('Gotham Bold.otf') format('opentype'); font-weight: bold; }
-@font-face { font-family: 'Gotham'; src: url('Gotham Medium.otf') format('opentype'); font-weight: 500; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Book.otf') format('opentype'); font-weight: normal; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Bold.otf') format('opentype'); font-weight: bold; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Medium.otf') format('opentype'); font-weight: 500; }
 body, html { font-family: 'Gotham', sans-serif; }
 ::placeholder { font-family: 'Gotham', sans-serif !important; opacity: 0.6; }
 """
@@ -202,7 +202,7 @@ def generate_map():
     m = folium.Map(location=BASE_LOCATION, zoom_start=13, tiles=None)
     
     favicon_html = f"""
-    {BRAND_CSS}
+    <style>{BRAND_CSS}</style>
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
@@ -316,9 +316,9 @@ def generate_map():
     modal_html = f"""
     <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.4); z-index:100000;"></div>
     <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Gotham', sans-serif; font-size:14px; font-weight:normal; color:{CHUM_BLUE}; border: 2px solid {CHUM_BLUE};">
-        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: uppercase; font-family:'Saturn-Bold';">Notas de la Cita</div>
+        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: lowercase; font-family:'Saturn-Bold';">notas de la cita</div>
         <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
-        <div style="margin-top: 15px; text-align: right;"><button onclick="closeNotes()" style="background:{CHUM_BLUE}; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-family:'Gotham'; font-weight:bold;">Cerrar</button></div>
+        <div style="margin-top: 15px; text-align: right;"><button onclick="closeNotes()" style="background:{CHUM_BLUE}; color:white; border:none; padding:5px 15px; border-radius:18px; cursor:pointer; font-family:'Gotham'; font-weight:bold;">Cerrar</button></div>
     </div>
     <script>
         function showNotes(text) {{
@@ -342,7 +342,7 @@ def generate_map():
             <button onclick="sendWa('voy')" style="background:#007bff; color:white; border:none; padding:15px 5px; border-radius:8px; font-family:'Gotham'; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Voy</button>
             
             <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#856404;">Tarde</span>
+                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#856404; text-transform: lowercase;">tarde</span>
                 <div style="display:flex; align-items:center; gap:5px;">
                     <input type="number" id="mins-tarde" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:'Gotham';">
                     <span style="font-size:12px; color:#666;">min</span>
@@ -351,7 +351,7 @@ def generate_map():
             </div>
             
             <div style="background:#d4edda; border:1px solid #c3e6cb; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#155724;">Temprano</span>
+                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#155724; text-transform: lowercase;">temprano</span>
                 <div style="display:flex; align-items:center; gap:5px;">
                     <input type="number" id="mins-temprano" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:'Gotham';">
                     <span style="font-size:12px; color:#666;">min</span>
@@ -360,7 +360,7 @@ def generate_map():
             </div>
 
             <div style="background:#d1ecf1; border:1px solid #bee5eb; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#0c5460; text-align:center;">Llegué</span>
+               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#0c5460; text-align:center; text-transform: lowercase;">llegué</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="llegue_opt" value="normal" checked> Normal</label>
                    <label><input type="radio" name="llegue_opt" value="avisar"> Avisar</label>
@@ -371,7 +371,7 @@ def generate_map():
            </div>
 
            <div style="background:#e2d9f3; border:1px solid #d3c2ee; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#3b1c6e; text-align:center;">Listo</span>
+               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#3b1c6e; text-align:center; text-transform: lowercase;">listo</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="listo_opt" value="buscar" checked> Buscar</label>
                    <label><input type="radio" name="listo_opt" value="proxima"> Proxima</label>
@@ -382,7 +382,7 @@ def generate_map():
            </div>
         </div>
         <div style="margin-top: 15px; text-align: center;">
-            <button onclick="closeWaModal()" style="background:#eee; color:{CHUM_BLUE}; border:none; padding:8px 20px; border-radius:4px; cursor:pointer; font-family:'Gotham'; font-weight:bold; font-size:12px;">Cancelar</button>
+            <button onclick="closeWaModal()" style="background:#eee; color:{CHUM_BLUE}; border:none; padding:8px 20px; border-radius:18px; cursor:pointer; font-family:'Gotham'; font-weight:bold; font-size:12px;">Cancelar</button>
         </div>
     </div>
     <script>
@@ -447,12 +447,12 @@ def generate_map():
         #mbs-table-container table tbody tr:nth-child(even) {{ background-color: #f8f9fa; }}
         #mbs-table-container table tbody tr:nth-child(odd) {{ background-color: #ffffff; }}
         .leaflet-bottom {{ bottom: 28% !important; }} 
-        .leaflet-control-layers-list::before {{ content: 'Ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; font-family:'Saturn-Bold'; font-size:14px; color:{CHUM_BLUE}; }} 
+        .leaflet-control-layers-list::before {{ content: 'ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; font-family:'Saturn-Bold'; font-size:14px; color:{CHUM_BLUE}; text-transform: lowercase; }} 
         .leaflet-control-layers-base {{ display: none; }}
-        .leaflet-control-layers {{ border: 2px solid {CHUM_BLUE} !important; border-radius: 8px !important; color: {CHUM_BLUE} !important; font-family: 'Gotham', sans-serif; }}
+        .leaflet-control-layers {{ border: 2px solid {CHUM_BLUE} !important; border-radius: 8px !important; color: {CHUM_BLUE} !important; font-family: 'Gotham', sans-serif; font-weight: bold; }}
     </style>
     <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid {CHUM_BLUE};">
-        <table style="width: 100%; border-collapse: collapse; font-family: 'Gotham', sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
+        <table style="width: 100%; border-collapse: collapse; font-family: 'Gotham', sans-serif; font-size: 12px; font-weight: normal; table-layout: fixed;">
             <tbody>{table_rows_html}</tbody>
         </table>
     </div>
