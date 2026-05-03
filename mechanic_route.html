@@ -4,14 +4,14 @@
     
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     
-    
+    <style>
 @font-face { font-family: 'Saturn-Bold'; src: url('Saturn-Bold.woff') format('woff'), url('Saturn-Bold.ttf') format('truetype'); }
-@font-face { font-family: 'Gotham'; src: url('Gotham Book.otf') format('opentype'); font-weight: normal; }
-@font-face { font-family: 'Gotham'; src: url('Gotham Bold.otf') format('opentype'); font-weight: bold; }
-@font-face { font-family: 'Gotham'; src: url('Gotham Medium.otf') format('opentype'); font-weight: 500; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Book.otf') format('opentype'); font-weight: normal; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Bold.otf') format('opentype'); font-weight: bold; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Medium.otf') format('opentype'); font-weight: 500; }
 body, html { font-family: 'Gotham', sans-serif; }
 ::placeholder { font-family: 'Gotham', sans-serif !important; opacity: 0.6; }
-
+</style>
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
@@ -31,7 +31,7 @@ body, html { font-family: 'Gotham', sans-serif; }
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_2f7cae39c615de5763fdde8b7b302497 {
+                #map_f27c36cc1661a4d523f22c46f2ed03cc {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -72,21 +72,21 @@ body, html { font-family: 'Gotham', sans-serif; }
         #mbs-table-container table tbody tr:nth-child(even) { background-color: #f8f9fa; }
         #mbs-table-container table tbody tr:nth-child(odd) { background-color: #ffffff; }
         .leaflet-bottom { bottom: 28% !important; } 
-        .leaflet-control-layers-list::before { content: 'Ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; font-family:'Saturn-Bold'; font-size:14px; color:#011E41; } 
+        .leaflet-control-layers-list::before { content: 'ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; font-family:'Saturn-Bold'; font-size:14px; color:#011E41; text-transform: lowercase; } 
         .leaflet-control-layers-base { display: none; }
-        .leaflet-control-layers { border: 2px solid #011E41 !important; border-radius: 8px !important; color: #011E41 !important; font-family: 'Gotham', sans-serif; }
+        .leaflet-control-layers { border: 2px solid #011E41 !important; border-radius: 8px !important; color: #011E41 !important; font-family: 'Gotham', sans-serif; font-weight: bold; }
     </style>
     <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid #011E41;">
-        <table style="width: 100%; border-collapse: collapse; font-family: 'Gotham', sans-serif; font-size: 12px; font-weight: bold; table-layout: fixed;">
+        <table style="width: 100%; border-collapse: collapse; font-family: 'Gotham', sans-serif; font-size: 12px; font-weight: normal; table-layout: fixed;">
             <tbody><tr><td colspan="5" style="text-align:left; padding: 10px; font-weight:normal; font-size:10px;"><b>No hay rutas para este dia.</b></td></tr></tbody>
         </table>
     </div>
     
     <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.4); z-index:100000;"></div>
     <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Gotham', sans-serif; font-size:14px; font-weight:normal; color:#011E41; border: 2px solid #011E41;">
-        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: uppercase; font-family:'Saturn-Bold';">Notas de la Cita</div>
+        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: lowercase; font-family:'Saturn-Bold';">notas de la cita</div>
         <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
-        <div style="margin-top: 15px; text-align: right;"><button onclick="closeNotes()" style="background:#011E41; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-family:'Gotham'; font-weight:bold;">Cerrar</button></div>
+        <div style="margin-top: 15px; text-align: right;"><button onclick="closeNotes()" style="background:#011E41; color:white; border:none; padding:5px 15px; border-radius:18px; cursor:pointer; font-family:'Gotham'; font-weight:bold;">Cerrar</button></div>
     </div>
     <script>
         function showNotes(text) {
@@ -109,7 +109,7 @@ body, html { font-family: 'Gotham', sans-serif; }
             <button onclick="sendWa('voy')" style="background:#007bff; color:white; border:none; padding:15px 5px; border-radius:8px; font-family:'Gotham'; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Voy</button>
             
             <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#856404;">Tarde</span>
+                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#856404; text-transform: lowercase;">tarde</span>
                 <div style="display:flex; align-items:center; gap:5px;">
                     <input type="number" id="mins-tarde" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:'Gotham';">
                     <span style="font-size:12px; color:#666;">min</span>
@@ -118,7 +118,7 @@ body, html { font-family: 'Gotham', sans-serif; }
             </div>
             
             <div style="background:#d4edda; border:1px solid #c3e6cb; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#155724;">Temprano</span>
+                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#155724; text-transform: lowercase;">temprano</span>
                 <div style="display:flex; align-items:center; gap:5px;">
                     <input type="number" id="mins-temprano" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:'Gotham';">
                     <span style="font-size:12px; color:#666;">min</span>
@@ -127,7 +127,7 @@ body, html { font-family: 'Gotham', sans-serif; }
             </div>
 
             <div style="background:#d1ecf1; border:1px solid #bee5eb; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#0c5460; text-align:center;">Llegué</span>
+               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#0c5460; text-align:center; text-transform: lowercase;">llegué</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="llegue_opt" value="normal" checked> Normal</label>
                    <label><input type="radio" name="llegue_opt" value="avisar"> Avisar</label>
@@ -138,7 +138,7 @@ body, html { font-family: 'Gotham', sans-serif; }
            </div>
 
            <div style="background:#e2d9f3; border:1px solid #d3c2ee; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#3b1c6e; text-align:center;">Listo</span>
+               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#3b1c6e; text-align:center; text-transform: lowercase;">listo</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="listo_opt" value="buscar" checked> Buscar</label>
                    <label><input type="radio" name="listo_opt" value="proxima"> Proxima</label>
@@ -149,7 +149,7 @@ body, html { font-family: 'Gotham', sans-serif; }
            </div>
         </div>
         <div style="margin-top: 15px; text-align: center;">
-            <button onclick="closeWaModal()" style="background:#eee; color:#011E41; border:none; padding:8px 20px; border-radius:4px; cursor:pointer; font-family:'Gotham'; font-weight:bold; font-size:12px;">Cancelar</button>
+            <button onclick="closeWaModal()" style="background:#eee; color:#011E41; border:none; padding:8px 20px; border-radius:18px; cursor:pointer; font-family:'Gotham'; font-weight:bold; font-size:12px;">Cancelar</button>
         </div>
     </div>
     <script>
@@ -210,14 +210,14 @@ body, html { font-family: 'Gotham', sans-serif; }
     
     <script>function autoFilter(){const p=new URLSearchParams(window.location.search);const m=p.get('mechanic');if(!m)return;const t=m.toLowerCase();const s=document.querySelectorAll('.leaflet-control-layers-selector');if(s.length===0){setTimeout(autoFilter,300);return}s.forEach(i=>{const l=i.nextElementSibling.innerText.trim().toLowerCase();if((l==='juan'||l==='seba')&&l!==t){if(i.checked)i.click()}})}window.addEventListener('load',autoFilter)</script>
     
-            <div class="folium-map" id="map_2f7cae39c615de5763fdde8b7b302497" ></div>
+            <div class="folium-map" id="map_f27c36cc1661a4d523f22c46f2ed03cc" ></div>
         
 </body>
 <script>
     
     
-            var map_2f7cae39c615de5763fdde8b7b302497 = L.map(
-                "map_2f7cae39c615de5763fdde8b7b302497",
+            var map_f27c36cc1661a4d523f22c46f2ed03cc = L.map(
+                "map_f27c36cc1661a4d523f22c46f2ed03cc",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -234,7 +234,7 @@ body, html { font-family: 'Gotham', sans-serif; }
 
         
     
-            var tile_layer_d8eb1f040611cead2c2bb94cf305a8a7 = L.tileLayer(
+            var tile_layer_56c3f6db8570b28a258a61dcc0f25c62 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -251,60 +251,60 @@ body, html { font-family: 'Gotham', sans-serif; }
             );
         
     
-            tile_layer_d8eb1f040611cead2c2bb94cf305a8a7.addTo(map_2f7cae39c615de5763fdde8b7b302497);
+            tile_layer_56c3f6db8570b28a258a61dcc0f25c62.addTo(map_f27c36cc1661a4d523f22c46f2ed03cc);
         
     
-            var marker_545c15885ea0540096c821a9459635de = L.marker(
+            var marker_550ae6b2d32eb2b58055b5254d84c7a9 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_2f7cae39c615de5763fdde8b7b302497);
+            ).addTo(map_f27c36cc1661a4d523f22c46f2ed03cc);
         
     
-        var icon_12c5e4531a5b1644b3544dbe2dfae446 = L.icon({
+        var icon_ff610e9bfefa12dcca0c1855c9c4b442 = L.icon({
   "iconUrl": "data:image/png;base64,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",
   "iconSize": [28, 28],
 });
         
     
-                marker_545c15885ea0540096c821a9459635de.setIcon(icon_12c5e4531a5b1644b3544dbe2dfae446);
+                marker_550ae6b2d32eb2b58055b5254d84c7a9.setIcon(icon_ff610e9bfefa12dcca0c1855c9c4b442);
             
     
-            var feature_group_785137ebed779f8c5c6713d14d82cb60 = L.featureGroup(
+            var feature_group_255d179accfdf38be2ff3b24ce1c7b2c = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_785137ebed779f8c5c6713d14d82cb60.addTo(map_2f7cae39c615de5763fdde8b7b302497);
+            feature_group_255d179accfdf38be2ff3b24ce1c7b2c.addTo(map_f27c36cc1661a4d523f22c46f2ed03cc);
         
     
-            var feature_group_a81edb000b7ced9342657bd74abc8cc9 = L.featureGroup(
+            var feature_group_bcb67b5c11de36c78be7497051fb79be = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_a81edb000b7ced9342657bd74abc8cc9.addTo(map_2f7cae39c615de5763fdde8b7b302497);
+            feature_group_bcb67b5c11de36c78be7497051fb79be.addTo(map_f27c36cc1661a4d523f22c46f2ed03cc);
         
     
-            var layer_control_b0e0d1c39b6d9af984d409f3003a514f_layers = {
+            var layer_control_665c665e597eef238f75006fd5244e52_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_785137ebed779f8c5c6713d14d82cb60,
-                    "Seba" : feature_group_a81edb000b7ced9342657bd74abc8cc9,
+                    "Juan" : feature_group_255d179accfdf38be2ff3b24ce1c7b2c,
+                    "Seba" : feature_group_bcb67b5c11de36c78be7497051fb79be,
                 },
             };
-            let layer_control_b0e0d1c39b6d9af984d409f3003a514f = L.control.layers(
-                layer_control_b0e0d1c39b6d9af984d409f3003a514f_layers.base_layers,
-                layer_control_b0e0d1c39b6d9af984d409f3003a514f_layers.overlays,
+            let layer_control_665c665e597eef238f75006fd5244e52 = L.control.layers(
+                layer_control_665c665e597eef238f75006fd5244e52_layers.base_layers,
+                layer_control_665c665e597eef238f75006fd5244e52_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_2f7cae39c615de5763fdde8b7b302497);
+            ).addTo(map_f27c36cc1661a4d523f22c46f2ed03cc);
 
         
 </script>

@@ -8,30 +8,30 @@
         <style>
             
 @font-face { font-family: 'Saturn-Bold'; src: url('Saturn-Bold.woff') format('woff'), url('Saturn-Bold.ttf') format('truetype'); }
-@font-face { font-family: 'Gotham'; src: url('Gotham Book.otf') format('opentype'); font-weight: normal; }
-@font-face { font-family: 'Gotham'; src: url('Gotham Bold.otf') format('opentype'); font-weight: bold; }
-@font-face { font-family: 'Gotham'; src: url('Gotham Medium.otf') format('opentype'); font-weight: 500; }
-body, html { font-family: 'Gotham', sans-serif; }
-::placeholder { font-family: 'Gotham', sans-serif !important; opacity: 0.6; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Book.otf') format('opentype'); font-weight: normal; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Bold.otf') format('opentype'); font-weight: bold; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Medium.otf') format('opentype'); font-weight: 500; }
+body, html { font-family: Gotham, sans-serif; }
+::placeholder { font-family: Gotham, sans-serif !important; opacity: 0.6; }
 
             body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; }
             .panel { width: 37vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
             .header { padding: 12px 15px; background: #011E41; color: white; font-family: 'Saturn-Bold', sans-serif; font-size: 22px; font-weight: normal; text-align: center; text-transform: lowercase; }
             .inputs-container { padding: 20px; background: #f8f9fa; border-bottom: 1px solid #ddd; }
             .input-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; justify-content: space-between; }
-            input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 18px; font-family: 'Gotham', sans-serif; outline: none; }
+            input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 18px; font-family: Gotham, sans-serif; outline: none; font-weight: normal; }
             .address-input { flex-grow: 1; width: 100%; }
             .num-input { width: 60px; text-align: center; }
-            .btn-optimizar { width: 100%; padding: 12px; background: #011E41; color: white; border: none; border-radius: 18px; font-family: 'Gotham', sans-serif; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; }
+            .btn-optimizar { width: 100%; padding: 12px; background: #011E41; color: white; border: none; border-radius: 18px; font-family: Gotham, sans-serif; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; }
             .btn-optimizar:hover { background: #022b5e; }
             .results-container { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #fff; }
             
             .pill { display: flex; flex-direction: row; align-items: stretch; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; }
             .pill:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.15); border-color: #011E41; }
-            .pill-endcap { flex: 0 0 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; padding: 5px; text-align: center; font-family: 'Gotham', sans-serif; box-sizing: border-box; }
-            .pill-body { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: 'Gotham', sans-serif; box-sizing: border-box; }
-            .transit-box { flex: 0 0 auto; background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: 'Gotham', sans-serif; }
-            .address-text { flex: 1 1 0; min-width: 0; text-align: center; padding: 0 5px; white-space: normal; word-wrap: break-word; line-height: 1.2; }
+            .pill-endcap { flex: 0 0 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; padding: 5px; text-align: center; font-family: Gotham, sans-serif; box-sizing: border-box; }
+            .pill-body { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: Gotham, sans-serif; font-weight: normal; box-sizing: border-box; }
+            .transit-box { flex: 0 0 auto; background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: Gotham, sans-serif; }
+            .address-text { flex: 1 1 0; min-width: 0; text-align: center; padding: 0 5px; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: normal; }
             
             .loading { text-align: center; padding: 30px; font-family: 'Saturn-Bold'; text-transform: lowercase; color: #011E41; font-size: 18px; }
         </style>
@@ -47,14 +47,14 @@ body, html { font-family: 'Gotham', sans-serif; }
                     <input type="text" id="opt-address" class="address-input" placeholder="Nueva Dirección">
                 </div>
                 <div class="input-row" style="justify-content: flex-start; gap: 20px;">
-                    <label style="font-family:'Gotham', sans-serif; font-weight:bold; color:#011E41; font-size:12px;">Duración <input type="number" id="opt-dur" class="num-input" value="60"></label>
-                    <label style="font-family:'Gotham', sans-serif; font-weight:bold; color:#011E41; font-size:12px;">Holgura <input type="number" id="opt-cush" class="num-input" value="30"></label>
+                    <label style="font-family:Gotham, sans-serif; font-weight:bold; color:#011E41; font-size:12px;">Duración <input type="number" id="opt-dur" class="num-input" value="60"></label>
+                    <label style="font-family:Gotham, sans-serif; font-weight:bold; color:#011E41; font-size:12px;">Holgura <input type="number" id="opt-cush" class="num-input" value="30"></label>
                 </div>
                 <button class="btn-optimizar" onclick="runOptimization()">Optimizar</button>
             </div>
             
             <div id="results" class="results-container">
-                <div style="text-align:center; color:#8A9892; margin-top:20px; font-size:12px; font-family:'Gotham', sans-serif;">Ingresa una dirección y presiona Optimizar para buscar los mejores horarios en los próximos 3 días hábiles.</div>
+                <div style="text-align:center; color:#8A9892; margin-top:20px; font-size:12px; font-family:Gotham, sans-serif; font-weight:normal;">Ingresa una dirección y presiona Optimizar para buscar los mejores horarios en los próximos 3 días hábiles.</div>
             </div>
         </div>
 
@@ -147,7 +147,7 @@ body, html { font-family: 'Gotham', sans-serif; }
                 });
 
                 if(validGaps.length === 0) {
-                    resultsDiv.innerHTML = '<div style="text-align:center; color:red; padding:20px; font-family:\'Gotham\';">No hay bloques de tiempo suficientemente grandes.</div>';
+                    resultsDiv.innerHTML = '<div style="text-align:center; color:red; padding:20px; font-family:Gotham;">No hay bloques de tiempo suficientemente grandes.</div>';
                     return;
                 }
 
@@ -199,13 +199,12 @@ body, html { font-family: 'Gotham', sans-serif; }
             function renderResults(options, newAddress) {
                 const resultsDiv = document.getElementById('results');
                 if(options.length === 0) {
-                    resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; font-family:\'Gotham\';">Ningun bloque cumple con el tiempo de viaje necesario.</div>';
+                    resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; font-family:Gotham;">Ningun bloque cumple con el tiempo de viaje necesario.</div>';
                     return;
                 }
                 
                 let html = '';
                 options.forEach(opt => {
-                    // Fixing UTC offset bugs by using manual parsing
                     let parts = opt.date.split('-');
                     let dateObj = new Date(parts[0], parts[1]-1, parts[2]);
                     let dateDisplay = dateObj.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month:'short' });
