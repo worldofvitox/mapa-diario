@@ -19,21 +19,21 @@ body, html { font-family: 'Gotham', sans-serif; }
             .header { padding: 12px 15px; background: #011E41; color: white; font-family: 'Saturn-Bold', sans-serif; font-size: 22px; font-weight: normal; text-align: center; text-transform: lowercase; }
             .inputs-container { padding: 20px; background: #f8f9fa; border-bottom: 1px solid #ddd; }
             .input-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; justify-content: space-between; }
-            input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Gotham', sans-serif; outline: none; }
+            input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 18px; font-family: 'Gotham', sans-serif; outline: none; }
             .address-input { flex-grow: 1; width: 100%; }
             .num-input { width: 60px; text-align: center; }
-            .btn-optimizar { width: 100%; padding: 12px; background: #011E41; color: white; border: none; border-radius: 4px; font-family: 'Gotham', sans-serif; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; }
+            .btn-optimizar { width: 100%; padding: 12px; background: #011E41; color: white; border: none; border-radius: 18px; font-family: 'Gotham', sans-serif; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; }
             .btn-optimizar:hover { background: #022b5e; }
             .results-container { flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #fff; }
             
-            .pill { display: flex; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; }
+            .pill { display: flex; flex-direction: row; align-items: stretch; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; }
             .pill:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.15); border-color: #011E41; }
-            .pill-endcap { width: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; flex-shrink: 0; padding: 5px; text-align: center; font-family: 'Gotham', sans-serif; }
-            .pill-body { flex-grow: 1; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: 'Gotham', sans-serif; }
-            .transit-box { background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: 'Gotham', sans-serif; }
-            .address-text { flex: 1; text-align: center; padding: 0 5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+            .pill-endcap { flex: 0 0 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; padding: 5px; text-align: center; font-family: 'Gotham', sans-serif; box-sizing: border-box; }
+            .pill-body { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: 'Gotham', sans-serif; box-sizing: border-box; }
+            .transit-box { flex: 0 0 auto; background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: 'Gotham', sans-serif; }
+            .address-text { flex: 1 1 0; min-width: 0; text-align: center; padding: 0 5px; white-space: normal; word-wrap: break-word; line-height: 1.2; }
             
-            .loading { text-align: center; padding: 30px; font-family: 'Saturn-Bold'; color: #011E41; font-size: 18px; }
+            .loading { text-align: center; padding: 30px; font-family: 'Saturn-Bold'; text-transform: lowercase; color: #011E41; font-size: 18px; }
         </style>
     </head>
     <body>
@@ -54,7 +54,7 @@ body, html { font-family: 'Gotham', sans-serif; }
             </div>
             
             <div id="results" class="results-container">
-                <div style="text-align:center; color:#8A9892; margin-top:20px; font-size:12px; font-family:'Gotham', sans-serif;">Ingresa una dirección y presiona Optimizar para buscar los mejores horarios en los próximos 3 días.</div>
+                <div style="text-align:center; color:#8A9892; margin-top:20px; font-size:12px; font-family:'Gotham', sans-serif;">Ingresa una dirección y presiona Optimizar para buscar los mejores horarios en los próximos 3 días hábiles.</div>
             </div>
         </div>
 
@@ -63,15 +63,31 @@ body, html { font-family: 'Gotham', sans-serif; }
             const mechanicColors = { 'Juan': '#dc3545', 'Seba': '#007bff', 'Base': '#8A9892' };
             const baseLocation = "-33.45219480797122, -70.5787333882418";
             
-            // Generate the 3 target dates
-            const today = new Date('2026-05-03');
-            const targetDates = [
-                today.toISOString().split('T')[0],
-                new Date(today.getTime() + 86400000).toISOString().split('T')[0],
-                new Date(today.getTime() + 172800000).toISOString().split('T')[0]
+            // Chilean Holidays 2026
+            const clHolidays = [
+                "2026-01-01", "2026-04-03", "2026-04-04", "2026-05-01", "2026-05-21", 
+                "2026-06-21", "2026-06-29", "2026-07-16", "2026-08-15", "2026-09-18", 
+                "2026-09-19", "2026-10-12", "2026-10-31", "2026-12-08", "2026-12-25"
             ];
 
-            // On Load
+            // Safely Generate 3 Working Days (Skipping Weekends and Holidays)
+            const targetDates = [];
+            let dateParts = '2026-05-03'.split('-');
+            let dateCursor = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+            while(targetDates.length < 3) {
+                let dayOfWeek = dateCursor.getDay(); // 0 = Sun, 6 = Sat
+                let y = dateCursor.getFullYear();
+                let m = String(dateCursor.getMonth() + 1).padStart(2, '0');
+                let d = String(dateCursor.getDate()).padStart(2, '0');
+                let dateStr = y + '-' + m + '-' + d;
+
+                if (dayOfWeek !== 0 && dayOfWeek !== 6 && !clHolidays.includes(dateStr)) {
+                    targetDates.push(dateStr);
+                }
+                dateCursor.setDate(dateCursor.getDate() + 1);
+            }
+
             window.onload = function() {
                 const savedAddress = localStorage.getItem('chum_draft_address');
                 if(savedAddress) document.getElementById('opt-address').value = savedAddress;
@@ -92,19 +108,16 @@ body, html { font-family: 'Gotham', sans-serif; }
                 if(!newAddress) return alert("Ingresa una dirección primero.");
                 localStorage.setItem('chum_draft_address', newAddress);
                 
-                resultsDiv.innerHTML = '<div class="loading">Calculando Rutas...</div>';
+                resultsDiv.innerHTML = '<div class="loading">calculando rutas...</div>';
 
                 let validGaps = [];
 
-                // 1. Build Schedules and Find Gaps
                 targetDates.forEach(dateStr => {
                     ['Juan', 'Seba'].forEach(mech => {
-                        // Get apps for this day/mech, sorted
                         let dayApps = allAppointments.filter(a => a.start_dt.startsWith(dateStr) && a.mechanic === mech);
                         dayApps.sort((a, b) => a.start_timestamp - b.start_timestamp);
                         
                         let schedule = [];
-                        // Base Start
                         let dObj = new Date(dateStr + "T09:30:00-04:00");
                         schedule.push({ id: 'Base', address: baseLocation, ts: dObj.getTime()/1000, isBase: true });
                         
@@ -112,11 +125,9 @@ body, html { font-family: 'Gotham', sans-serif; }
                             schedule.push({ id: mech[0] + (idx+1), address: a.route_address, ts: a.start_timestamp, dur: a.duration, isBase: false });
                         });
                         
-                        // Base End (17:30 constraint)
                         let endObj = new Date(dateStr + "T17:30:00-04:00");
                         schedule.push({ id: 'Base', address: baseLocation, ts: endObj.getTime()/1000, isBase: true });
                         
-                        // Find gaps
                         for(let i=0; i < schedule.length - 1; i++) {
                             let prev = schedule[i];
                             let next = schedule[i+1];
@@ -140,17 +151,13 @@ body, html { font-family: 'Gotham', sans-serif; }
                     return;
                 }
 
-                // 2. Call Google Distance Matrix
                 const matrix = new google.maps.DistanceMatrixService();
-                
-                // We need travel times: Prev -> New, and New -> Next
                 let originsLeg1 = validGaps.map(g => g.prev.address);
                 let destsLeg2 = validGaps.map(g => g.next.address);
                 
-                // We batch this in 2 calls. (Assuming < 25 gaps. If more, we slice it, but usually fine for 3 days).
                 let originsSliced = originsLeg1.slice(0, 25);
                 let destsSliced = destsLeg2.slice(0, 25);
-                let processingGaps = validGaps.slice(0, 25); // cap at 25 for API limits
+                let processingGaps = validGaps.slice(0, 25); 
                 
                 matrix.getDistanceMatrix({
                     origins: originsSliced, destinations: [newAddress], travelMode: 'DRIVING'
@@ -174,7 +181,6 @@ body, html { font-family: 'Gotham', sans-serif; }
                                 let min2 = Math.round((elem2.duration.value * 1.07) / 60);
                                 let totalDrive = min1 + min2;
                                 
-                                // Final check: does it actually fit with driving time?
                                 if (gap.availableMins >= (dur + min1 + min2)) {
                                     gap.min1 = min1;
                                     gap.min2 = min2;
@@ -184,7 +190,6 @@ body, html { font-family: 'Gotham', sans-serif; }
                             }
                         }
                         
-                        // Sort by lowest driving time
                         finalOptions.sort((a, b) => a.totalDrive - b.totalDrive);
                         renderResults(finalOptions, newAddress);
                     });
@@ -200,13 +205,18 @@ body, html { font-family: 'Gotham', sans-serif; }
                 
                 let html = '';
                 options.forEach(opt => {
-                    let dateObj = new Date(opt.date + "T12:00:00");
+                    // Fixing UTC offset bugs by using manual parsing
+                    let parts = opt.date.split('-');
+                    let dateObj = new Date(parts[0], parts[1]-1, parts[2]);
                     let dateDisplay = dateObj.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month:'short' });
+                    
                     let mechColor = mechanicColors[opt.mechanic];
                     let pTime = new Date(opt.prev.isBase ? opt.prev.ts*1000 : (opt.prev.ts + opt.prev.dur*60)*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
                     let nTime = new Date(opt.next.ts*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
                     
-                    // The magic click: Load map for that day, and set parameters to auto-draft & optimize
+                    let prevAddr = opt.prev.isBase ? 'Base' : opt.prev.address.split(',')[0];
+                    let nextAddr = opt.next.isBase ? 'Base' : opt.next.address.split(',')[0];
+                    
                     let onClick = `loadMapForDraft('${opt.date}', '${opt.mechanic}')`;
                     
                     html += `
@@ -217,13 +227,13 @@ body, html { font-family: 'Gotham', sans-serif; }
                         </div>
                         
                         <div class="pill-body">
-                            <div class="address-text">${opt.prev.address.split(',')[0]}</div>
+                            <div class="address-text">${prevAddr}</div>
                             <div class="transit-box">${opt.min1}</div>
                             <div class="address-text" style="color:#011E41; font-weight:bold;">
                                 ${dateDisplay}<br>${newAddress.split(',')[0]}
                             </div>
                             <div class="transit-box">${opt.min2}</div>
-                            <div class="address-text">${opt.next.address.split(',')[0]}</div>
+                            <div class="address-text">${nextAddr}</div>
                         </div>
                         
                         <div class="pill-endcap" style="background:${opt.next.id === 'Base' ? '#8A9892' : mechColor};">

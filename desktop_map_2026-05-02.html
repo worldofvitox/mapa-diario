@@ -5,6 +5,14 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMi_wbYarCHOgAHMdgxHecbCihjhUv-Cs"></script>
     
+    <style>
+@font-face { font-family: 'Saturn-Bold'; src: url('Saturn-Bold.woff') format('woff'), url('Saturn-Bold.ttf') format('truetype'); }
+@font-face { font-family: 'Gotham'; src: url('Gotham Book.otf') format('opentype'); font-weight: normal; }
+@font-face { font-family: 'Gotham'; src: url('Gotham Bold.otf') format('opentype'); font-weight: bold; }
+@font-face { font-family: 'Gotham'; src: url('Gotham Medium.otf') format('opentype'); font-weight: 500; }
+body, html { font-family: 'Gotham', sans-serif; }
+::placeholder { font-family: 'Gotham', sans-serif !important; opacity: 0.6; }
+</style>
     <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png?v=2">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png?v=2">
@@ -24,7 +32,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_ad779fafa873a2253833556146b1f236 {
+                #map_d00c615a32c58986b3c989b095852c2f {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -61,7 +69,8 @@
 <body>
     
     
-    
+    <style>
+        
 @font-face { font-family: 'Saturn-Bold'; src: url('Saturn-Bold.woff') format('woff'), url('Saturn-Bold.ttf') format('truetype'); }
 @font-face { font-family: 'Gotham'; src: url('Gotham Book.otf') format('opentype'); font-weight: normal; }
 @font-face { font-family: 'Gotham'; src: url('Gotham Bold.otf') format('opentype'); font-weight: bold; }
@@ -69,12 +78,11 @@
 body, html { font-family: 'Gotham', sans-serif; }
 ::placeholder { font-family: 'Gotham', sans-serif !important; opacity: 0.6; }
 
-    <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; font-family: 'Gotham', sans-serif; }
         .leaflet-container { width: 63vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }
-        .leaflet-control-layers-list::before { content: 'Ruta'; display: block; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: 'Saturn-Bold', sans-serif; color: #011E41;}
+        .leaflet-control-layers-list::before { content: 'ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: 'Saturn-Bold', sans-serif; color: #011E41; text-transform: lowercase;}
         .leaflet-control-layers-base { display: none; }
-        .leaflet-control-layers { border: 2px solid #011E41 !important; border-radius: 8px !important; color: #011E41 !important; font-family: 'Gotham', sans-serif; }
+        .leaflet-control-layers { border: 2px solid #011E41 !important; border-radius: 8px !important; color: #011E41 !important; font-family: 'Gotham', sans-serif; font-weight: bold; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
@@ -84,7 +92,7 @@ body, html { font-family: 'Gotham', sans-serif; }
     
     <div id="desktop-side-panel" style="width: 37vw; height: 100vh; position: absolute; right: 0; top: 0; background: white; z-index: 9999; box-shadow: -4px 0 15px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
         <div style="padding: 12px 15px; background: #011E41; color: white; font-family: 'Saturn-Bold', sans-serif; font-size: 20px; font-weight: normal; flex-shrink: 0; text-align: center; text-transform: lowercase;">
-            planificación diaria: Sat, 02 may
+            planificación diaria: Sat, 02 May
         </div>
         <div style="display: flex; flex-direction: row; flex-grow: 1; overflow: hidden; width: 100%;">
             
@@ -107,17 +115,17 @@ body, html { font-family: 'Gotham', sans-serif; }
     
     <div id="date-carousel" style="position: absolute; top: 15px; left: 60px; z-index: 9999; background: white; padding: 0 15px; height: 36px; border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 20px; border: 2px solid #011E41; box-sizing: border-box;">
         <a href="desktop_map_2026-05-01.html" style="text-decoration:none; color: #011E41; font-size: 18px; padding: 0 5px; font-weight:bold;">&lt;</a>
-        <span style="color: #011E41; font-family:'Gotham', sans-serif; font-weight: normal; font-size: 14px; min-width: 120px; text-align: center; text-transform: capitalize;">Sat, 02 may</span>
+        <span style="color: #011E41; font-family:'Gotham', sans-serif; font-weight: normal; font-size: 14px; min-width: 120px; text-align: center; text-transform: lowercase;">Sat, 02 May</span>
         <a href="desktop_map_2026-05-03.html" style="text-decoration:none; color: #011E41; font-size: 18px; padding: 0 5px; font-weight:bold;">&gt;</a>
     </div>
     
     
     <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.4); z-index:100000;"></div>
     <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Gotham', sans-serif; font-size:14px; font-weight:normal; color:#011E41; border: 2px solid #011E41;">
-        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: uppercase; font-family:'Saturn-Bold';">Notas de la Cita</div>
+        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: lowercase; font-family:'Saturn-Bold';">notas de la cita</div>
         <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
         <div style="margin-top: 15px; text-align: right;">
-            <button onclick="closeNotes()" style="background:#011E41; color:white; border:none; padding:5px 15px; border-radius:4px; cursor:pointer; font-weight:bold; font-family:'Gotham';">Cerrar</button>
+            <button onclick="closeNotes()" style="background:#011E41; color:white; border:none; padding:5px 15px; border-radius:18px; cursor:pointer; font-weight:bold; font-family:'Gotham';">Cerrar</button>
         </div>
     </div>
     <script>
@@ -136,26 +144,26 @@ body, html { font-family: 'Gotham', sans-serif; }
     
     <div id="draft-container" style="position:absolute; bottom:20px; left:20px; z-index:9999; background:white; padding:0 5px; height: 36px; border-radius:18px; box-sizing: border-box; box-shadow:0 2px 10px rgba(0,0,0,0.2); font-family:'Gotham', sans-serif; font-size:12px; display:flex; gap:5px; align-items:center; border: 2px solid #011E41;">
         <input type="text" id="global-draft-input" placeholder="Intercalar dirección" style="width:160px; padding:5px 10px; border:none; outline:none; font-family:'Gotham', sans-serif;">
-        <button onclick="plantGlobalPin()" style="padding:4px 12px; background:#011E41; color:white; border:none; border-radius:15px; cursor:pointer; font-weight:bold;">Marcar</button>
+        <button onclick="plantGlobalPin()" style="padding:4px 12px; background:#011E41; color:white; border:none; border-radius:15px; cursor:pointer; font-family:'Gotham', sans-serif; font-weight:bold;">Marcar</button>
     </div>
 
     <div id="draft-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; font-family:'Gotham', sans-serif; border: 2px solid #011E41;">
-        <h3 style="margin-top:0; font-family:'Saturn-Bold'; color:#011E41;">Resultados Intercalar</h3>
-        <input type="text" id="modal-draft-input" style="width:250px; padding:8px; border:1px solid #ccc; border-radius:4px; margin-bottom:15px; font-family:'Gotham';">
+        <h3 style="margin-top:0; font-family:'Saturn-Bold'; color:#011E41; text-transform: lowercase;">resultados intercalar</h3>
+        <input type="text" id="modal-draft-input" style="width:250px; padding:8px; border:1px solid #ccc; border-radius:18px; margin-bottom:15px; font-family:'Gotham';">
         <div style="display:flex; justify-content:flex-end; gap:10px;">
-            <button onclick="document.getElementById('draft-modal').style.display='none'" style="padding:8px 15px; border:none; border-radius:4px; cursor:pointer; background:#eee; color:#333; font-weight:bold;">Cancelar</button>
-            <button onclick="calcDraft()" style="padding:8px 15px; background:#011E41; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Calcular</button>
+            <button onclick="document.getElementById('draft-modal').style.display='none'" style="padding:8px 15px; border:none; border-radius:18px; cursor:pointer; background:#eee; color:#333; font-weight:bold;">Cancelar</button>
+            <button onclick="calcDraft()" style="padding:8px 15px; background:#011E41; color:white; border:none; border-radius:18px; cursor:pointer; font-weight:bold;">Calcular</button>
         </div>
     </div>
 
-    <div id="draft-info-box" style="display:none; position:absolute; bottom:70px; left:20px; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:'Gotham', sans-serif; font-size:13px; max-width:350px; border: 2px solid #011E41;">
-        <div id="draft-info-header" style="font-family:'Saturn-Bold'; color:#011E41; font-size:14px; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
-            <span>Resultados Intercalar</span>
+    <div id="draft-info-box" style="display:none; position:absolute; bottom:60px; left:20px; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:'Gotham', sans-serif; font-size:13px; max-width:350px; border: 2px solid #011E41;">
+        <div id="draft-info-header" style="font-family:'Saturn-Bold'; text-transform: lowercase; color:#011E41; font-size:14px; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
+            <span>resultados intercalar</span>
         </div>
         <div id="draft-info-1" style="margin-bottom:8px; color:#444;"></div>
         <div id="draft-info-2" style="margin-bottom:15px; color:#444;"></div>
         <div style="font-weight:bold; color:#011E41; font-size:15px; border-top:1px solid #eee; padding-top:10px;">Tiempo Disponible: <span id="draft-info-time"></span> min</div>
-        <button onclick="closeDraftInfo()" style="margin-top:15px; width:100%; padding:8px; background:#eee; color:#011E41; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">OK</button>
+        <button onclick="closeDraftInfo()" style="margin-top:15px; width:100%; padding:8px; background:#eee; color:#011E41; border:none; border-radius:18px; cursor:pointer; font-family:'Gotham', sans-serif; font-weight:bold;">OK</button>
     </div>
 
     <script>
@@ -165,7 +173,7 @@ body, html { font-family: 'Gotham', sans-serif; }
         let draftLines = [];
         let currentDraftApp = null;
 
-        function getMapInstance() { return map_ad779fafa873a2253833556146b1f236; }
+        function getMapInstance() { return map_d00c615a32c58986b3c989b095852c2f; }
 
         function plantGlobalPin() {
             const inputVal = document.getElementById('global-draft-input').value;
@@ -308,7 +316,7 @@ body, html { font-family: 'Gotham', sans-serif; }
                             if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
                             if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
                             var vanIcon = L.icon({ iconUrl: iconUrl, iconSize: [28, 28], iconAnchor: [14, 14] });
-                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_ad779fafa873a2253833556146b1f236);
+                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_d00c615a32c58986b3c989b095852c2f);
                         }
                     }
                 })
@@ -336,7 +344,7 @@ body, html { font-family: 'Gotham', sans-serif; }
                 plantGlobalPin();
             }
             
-            // If inside optimizer iframe, clean up UI
+            // If inside optimizer iframe, clean up UI completely
             if(urlParams.has('optimizer') && urlParams.get('optimizer') === 'true') {
                 document.getElementById('desktop-side-panel').style.display = 'none';
                 document.querySelector('.leaflet-container').style.width = '100vw';
@@ -350,14 +358,14 @@ body, html { font-family: 'Gotham', sans-serif; }
     
     
     
-            <div class="folium-map" id="map_ad779fafa873a2253833556146b1f236" ></div>
+            <div class="folium-map" id="map_d00c615a32c58986b3c989b095852c2f" ></div>
         
 </body>
 <script>
     
     
-            var map_ad779fafa873a2253833556146b1f236 = L.map(
-                "map_ad779fafa873a2253833556146b1f236",
+            var map_d00c615a32c58986b3c989b095852c2f = L.map(
+                "map_d00c615a32c58986b3c989b095852c2f",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -374,7 +382,7 @@ body, html { font-family: 'Gotham', sans-serif; }
 
         
     
-            var tile_layer_208dc62daff8963d3b8967ae504c07ac = L.tileLayer(
+            var tile_layer_5f84ce0bd2918f793e18061e72ac857e = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -391,60 +399,60 @@ body, html { font-family: 'Gotham', sans-serif; }
             );
         
     
-            tile_layer_208dc62daff8963d3b8967ae504c07ac.addTo(map_ad779fafa873a2253833556146b1f236);
+            tile_layer_5f84ce0bd2918f793e18061e72ac857e.addTo(map_d00c615a32c58986b3c989b095852c2f);
         
     
-            var marker_e9ef048c439792f3902306c29d5d51d5 = L.marker(
+            var marker_610671d21c10f0fa5f3a75642ba61790 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_ad779fafa873a2253833556146b1f236);
+            ).addTo(map_d00c615a32c58986b3c989b095852c2f);
         
     
-        var icon_45332565be5f5f23ac1d91c08fcf9ded = L.icon({
+        var icon_93070b467b538f1ca3ed66e802e30c79 = L.icon({
   "iconUrl": "data:image/png;base64,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",
   "iconSize": [28, 28],
 });
         
     
-                marker_e9ef048c439792f3902306c29d5d51d5.setIcon(icon_45332565be5f5f23ac1d91c08fcf9ded);
+                marker_610671d21c10f0fa5f3a75642ba61790.setIcon(icon_93070b467b538f1ca3ed66e802e30c79);
             
     
-            var feature_group_832d3cb4ed0eb1b21b0b5b782da07913 = L.featureGroup(
+            var feature_group_81e82f8fd02ff104947c487f7d426f59 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_832d3cb4ed0eb1b21b0b5b782da07913.addTo(map_ad779fafa873a2253833556146b1f236);
+            feature_group_81e82f8fd02ff104947c487f7d426f59.addTo(map_d00c615a32c58986b3c989b095852c2f);
         
     
-            var feature_group_1592a75812065f851d9226046618e6a1 = L.featureGroup(
+            var feature_group_54d41bfb268e9d35efd1b7189653be30 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_1592a75812065f851d9226046618e6a1.addTo(map_ad779fafa873a2253833556146b1f236);
+            feature_group_54d41bfb268e9d35efd1b7189653be30.addTo(map_d00c615a32c58986b3c989b095852c2f);
         
     
-            var layer_control_93ca03854fbcee19dfe3cea1028341be_layers = {
+            var layer_control_c1dfbd0d2446cfc3ddd25b9812c71a87_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_832d3cb4ed0eb1b21b0b5b782da07913,
-                    "Seba" : feature_group_1592a75812065f851d9226046618e6a1,
+                    "Juan" : feature_group_81e82f8fd02ff104947c487f7d426f59,
+                    "Seba" : feature_group_54d41bfb268e9d35efd1b7189653be30,
                 },
             };
-            let layer_control_93ca03854fbcee19dfe3cea1028341be = L.control.layers(
-                layer_control_93ca03854fbcee19dfe3cea1028341be_layers.base_layers,
-                layer_control_93ca03854fbcee19dfe3cea1028341be_layers.overlays,
+            let layer_control_c1dfbd0d2446cfc3ddd25b9812c71a87 = L.control.layers(
+                layer_control_c1dfbd0d2446cfc3ddd25b9812c71a87_layers.base_layers,
+                layer_control_c1dfbd0d2446cfc3ddd25b9812c71a87_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_ad779fafa873a2253833556146b1f236);
+            ).addTo(map_d00c615a32c58986b3c989b095852c2f);
 
         
 </script>
