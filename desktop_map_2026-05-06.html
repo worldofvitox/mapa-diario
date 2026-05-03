@@ -7,7 +7,7 @@
     
     <script>
     if (window.location.search.includes('optimizer=true')) {
-        document.write('<style>#desktop-side-panel { display: none !important; } .leaflet-container { width: 100vw !important; }</style>');
+        document.documentElement.classList.add('is-optimizer');
     }
     </script>
     
@@ -39,7 +39,7 @@ body, html { font-family: Gotham, sans-serif; }
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_1eebf293de40b1c46dd62c8d5235dbab {
+                #map_7dbf24349dfb7dbcf02fc3a78ceaa297 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -86,7 +86,18 @@ body, html { font-family: Gotham, sans-serif; }
 ::placeholder { font-family: Gotham, sans-serif !important; opacity: 0.6; }
 
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #f4f6f8; font-family: Gotham, sans-serif; }
+        
+        /* Map Standard Layout */
         .leaflet-container { width: 63vw !important; height: 100vh !important; position: absolute !important; left: 0 !important; top: 0 !important; }
+        
+        /* Optimizer Override Layout */
+        html.is-optimizer .leaflet-container { width: 100% !important; }
+        html.is-optimizer #desktop-side-panel { display: none !important; }
+        html.is-optimizer #date-carousel { display: none !important; }
+        html.is-optimizer #draft-container { display: none !important; }
+        html.is-optimizer #draft-info-box { display: none !important; }
+        
+        /* General Layout */
         .leaflet-control-layers-list::before { content: 'ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; padding-bottom: 3px; font-family: 'Saturn-Bold', sans-serif; color: #011E41; text-transform: lowercase;}
         .leaflet-control-layers-base { display: none; }
         .leaflet-control-layers { border: 2px solid #011E41 !important; border-radius: 8px !important; color: #011E41 !important; font-family: Gotham, sans-serif; font-weight: bold; }
@@ -118,11 +129,11 @@ body, html { font-family: Gotham, sans-serif; }
                     <div class="current-time-line" style="position:absolute; left:0; right:0; height:2px; background:#dc3545; z-index:4; display:none; pointer-events:none;"></div>
         
                 <div class="" style="position: absolute; top: 382.5px; left: 1%; width: 9%; height: 22.5px; display: flex; align-items: flex-end; justify-content: center; z-index: 2; padding-bottom: 2px; box-sizing: border-box;">
-                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-family:Gotham; font-weight:normal; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden;">8m</div>
+                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-family:Gotham, sans-serif; font-weight:normal; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden;">8m</div>
                 </div>
                 
                 <div class="" style="position: absolute; top: 525.0px; left: 1%; width: 9%; height: 22.5px; display: flex; align-items: flex-end; justify-content: center; z-index: 2; padding-bottom: 2px; box-sizing: border-box;">
-                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-family:Gotham; font-weight:normal; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden;">6m</div>
+                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-family:Gotham, sans-serif; font-weight:normal; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden;">6m</div>
                 </div>
                 
                 <div class="" style="position: absolute; top: 405.0px; left: 10%; width: 88%; height: 120.0px; padding: 2px; box-sizing: border-box; z-index: 3; cursor: pointer; font-family:Gotham, sans-serif;">
@@ -130,7 +141,7 @@ body, html { font-family: Gotham, sans-serif; }
                         <div onclick="showNotes(decodeURIComponent('%235321'))" style="background: #007bff; width: 30px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; flex-shrink: 0; font-size: 11px;">
                             S1
                         </div>
-                        <div onclick="openDraftModal('%7B%22lat%22%3A%20-33.4544813%2C%20%22lng%22%3A%20-70.5882836%2C%20%22address%22%3A%20%22Augusto%20Villanueva%2065%20%5Cu00d1u%5Cu00f1oa%2C%20Santiago%2C%20Santiago%2C%20Chile%22%2C%20%22end_time_ts%22%3A%201778095200.0%2C%20%22next_lat%22%3A%20-33.45219480797122%2C%20%22next_lng%22%3A%20-70.5787333882418%2C%20%22next_start_ts%22%3A%201777762800.642404%2C%20%22next_address%22%3A%20%22Base%22%7D')" style="flex-grow: 1; padding: 5px 8px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; white-space: normal; word-wrap: break-word; font-family:Gotham, sans-serif;">
+                        <div onclick="openDraftModal('%7B%22lat%22%3A%20-33.4544813%2C%20%22lng%22%3A%20-70.5882836%2C%20%22address%22%3A%20%22Augusto%20Villanueva%2065%20%5Cu00d1u%5Cu00f1oa%2C%20Santiago%2C%20Santiago%2C%20Chile%22%2C%20%22end_time_ts%22%3A%201778095200.0%2C%20%22next_lat%22%3A%20-33.45219480797122%2C%20%22next_lng%22%3A%20-70.5787333882418%2C%20%22next_start_ts%22%3A%201777762800.841605%2C%20%22next_address%22%3A%20%22Base%22%7D')" style="flex-grow: 1; padding: 5px 8px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; white-space: normal; word-wrap: break-word; font-family:Gotham, sans-serif;">
                             <div style="font-size: 11px; color: #011E41; font-weight: bold;">14:00 - Guillermo Guzmán</div>
                             <div style="font-size: 10px; color: #8A9892; margin-top: 2px; line-height: 1.1; font-weight: normal;">Augusto Villanueva 65 Ñuñoa 414 Santiago</div>
                         </div>
@@ -152,10 +163,10 @@ body, html { font-family: Gotham, sans-serif; }
     
     <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.4); z-index:100000;"></div>
     <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:Gotham, sans-serif; font-size:14px; font-weight:normal; color:#011E41; border: 2px solid #011E41;">
-        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: lowercase; font-family:'Saturn-Bold';">notas de la cita</div>
+        <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: lowercase; font-family:'Saturn-Bold', sans-serif;">notas de la cita</div>
         <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
         <div style="margin-top: 15px; text-align: right;">
-            <button onclick="closeNotes()" style="background:#011E41; color:white; border:none; padding:5px 15px; border-radius:18px; cursor:pointer; font-weight:bold; font-family:Gotham;">Cerrar</button>
+            <button onclick="closeNotes()" style="background:#011E41; color:white; border:none; padding:5px 15px; border-radius:18px; cursor:pointer; font-weight:bold; font-family:Gotham, sans-serif;">Cerrar</button>
         </div>
     </div>
     <script>
@@ -178,8 +189,8 @@ body, html { font-family: Gotham, sans-serif; }
     </div>
 
     <div id="draft-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; font-family:Gotham, sans-serif; border: 2px solid #011E41;">
-        <h3 style="margin-top:0; font-family:'Saturn-Bold'; color:#011E41; text-transform: lowercase;">resultados intercalar</h3>
-        <input type="text" id="modal-draft-input" style="width:250px; padding:8px; border:1px solid #ccc; border-radius:18px; margin-bottom:15px; font-family:Gotham; font-weight:normal;">
+        <h3 style="margin-top:0; font-family:'Saturn-Bold', sans-serif; color:#011E41; text-transform: lowercase;">resultados intercalar</h3>
+        <input type="text" id="modal-draft-input" style="width:250px; padding:8px; border:1px solid #ccc; border-radius:18px; margin-bottom:15px; font-family:Gotham, sans-serif; font-weight:normal;">
         <div style="display:flex; justify-content:flex-end; gap:10px;">
             <button onclick="document.getElementById('draft-modal').style.display='none'" style="padding:8px 15px; border:none; border-radius:18px; cursor:pointer; background:#eee; color:#333; font-weight:bold;">Cancelar</button>
             <button onclick="calcDraft()" style="padding:8px 15px; background:#011E41; color:white; border:none; border-radius:18px; cursor:pointer; font-weight:bold;">Calcular</button>
@@ -187,7 +198,7 @@ body, html { font-family: Gotham, sans-serif; }
     </div>
 
     <div id="draft-info-box" style="display:none; position:absolute; bottom:60px; left:20px; z-index:9999; background:white; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); font-family:Gotham, sans-serif; font-size:13px; max-width:350px; border: 2px solid #011E41;">
-        <div id="draft-info-header" style="font-family:'Saturn-Bold'; text-transform: lowercase; color:#011E41; font-size:14px; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
+        <div id="draft-info-header" style="font-family:'Saturn-Bold', sans-serif; text-transform: lowercase; color:#011E41; font-size:14px; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
             <span>resultados intercalar</span>
         </div>
         <div id="draft-info-1" style="margin-bottom:8px; color:#444; font-weight:normal;"></div>
@@ -203,7 +214,7 @@ body, html { font-family: Gotham, sans-serif; }
         let draftLines = [];
         let currentDraftApp = null;
 
-        function getMapInstance() { return map_1eebf293de40b1c46dd62c8d5235dbab; }
+        function getMapInstance() { return map_7dbf24349dfb7dbcf02fc3a78ceaa297; }
 
         function plantGlobalPin() {
             const inputVal = document.getElementById('global-draft-input').value;
@@ -346,7 +357,7 @@ body, html { font-family: Gotham, sans-serif; }
                             if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
                             if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
                             var vanIcon = L.icon({ iconUrl: iconUrl, iconSize: [28, 28], iconAnchor: [14, 14] });
-                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_1eebf293de40b1c46dd62c8d5235dbab);
+                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_7dbf24349dfb7dbcf02fc3a78ceaa297);
                         }
                     }
                 })
@@ -373,16 +384,11 @@ body, html { font-family: Gotham, sans-serif; }
                 plantGlobalPin();
             }
             
-            // If inside optimizer iframe, clean up UI completely
+            // If inside optimizer iframe, trigger native resize to fill dead space
             if(urlParams.has('optimizer') && urlParams.get('optimizer') === 'true') {
-                document.getElementById('date-carousel').style.display = 'none';
-                document.getElementById('draft-container').style.display = 'none';
-                var dBox = document.getElementById('draft-info-box');
-                if(dBox) dBox.style.display = 'none';
-                
-                // Force Leaflet engine to recalculate tiles after the window physically expands
                 setTimeout(function() { 
-                    map_1eebf293de40b1c46dd62c8d5235dbab.invalidateSize(true); 
+                    window.dispatchEvent(new Event('resize')); 
+                    map_7dbf24349dfb7dbcf02fc3a78ceaa297.invalidateSize(true); 
                 }, 400);
             }
         });
@@ -390,14 +396,14 @@ body, html { font-family: Gotham, sans-serif; }
     
     
     
-            <div class="folium-map" id="map_1eebf293de40b1c46dd62c8d5235dbab" ></div>
+            <div class="folium-map" id="map_7dbf24349dfb7dbcf02fc3a78ceaa297" ></div>
         
 </body>
 <script>
     
     
-            var map_1eebf293de40b1c46dd62c8d5235dbab = L.map(
-                "map_1eebf293de40b1c46dd62c8d5235dbab",
+            var map_7dbf24349dfb7dbcf02fc3a78ceaa297 = L.map(
+                "map_7dbf24349dfb7dbcf02fc3a78ceaa297",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -414,7 +420,7 @@ body, html { font-family: Gotham, sans-serif; }
 
         
     
-            var tile_layer_b7a685bfa2489eb6301df12eb41f6221 = L.tileLayer(
+            var tile_layer_1af5023de20b58e6361345fcc8e0a717 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -431,124 +437,124 @@ body, html { font-family: Gotham, sans-serif; }
             );
         
     
-            tile_layer_b7a685bfa2489eb6301df12eb41f6221.addTo(map_1eebf293de40b1c46dd62c8d5235dbab);
+            tile_layer_1af5023de20b58e6361345fcc8e0a717.addTo(map_7dbf24349dfb7dbcf02fc3a78ceaa297);
         
     
-            var marker_0b6becf8f5e62dd4d248bc729faad507 = L.marker(
+            var marker_6dc235e6bf1dabc942849675fc1e7238 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_1eebf293de40b1c46dd62c8d5235dbab);
+            ).addTo(map_7dbf24349dfb7dbcf02fc3a78ceaa297);
         
     
-        var icon_f8594dd4955407cc6b1297577d64b130 = L.icon({
+        var icon_2d555da0244673a48ccd88a6a0a2ecdf = L.icon({
   "iconUrl": "data:image/png;base64,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",
   "iconSize": [28, 28],
 });
         
     
-                marker_0b6becf8f5e62dd4d248bc729faad507.setIcon(icon_f8594dd4955407cc6b1297577d64b130);
+                marker_6dc235e6bf1dabc942849675fc1e7238.setIcon(icon_2d555da0244673a48ccd88a6a0a2ecdf);
             
     
-            var feature_group_c06285e5c8ce4e295639caf5bcb0a5da = L.featureGroup(
+            var feature_group_420758cf4d3ca07088e72cc0d00a57ca = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_c06285e5c8ce4e295639caf5bcb0a5da.addTo(map_1eebf293de40b1c46dd62c8d5235dbab);
+            feature_group_420758cf4d3ca07088e72cc0d00a57ca.addTo(map_7dbf24349dfb7dbcf02fc3a78ceaa297);
         
     
-            var feature_group_97f310e62153f5770cfa3e99348e9894 = L.featureGroup(
+            var feature_group_f1f6f580223dc85bdfada84e1f584362 = L.featureGroup(
                 {
 }
             );
         
     
-            var poly_line_1eaf2fd5112f60bc294084ed4777f72e = L.polyline(
+            var poly_line_b6dd76a840a25f019c7cbadb0a2f8fc4 = L.polyline(
                 [[-33.452290000000005, -70.57889], [-33.45226, -70.57884], [-33.45224, -70.57851], [-33.452220000000004, -70.57807], [-33.45224, -70.57803], [-33.452420000000004, -70.57799], [-33.45309, -70.57791], [-33.45317000000001, -70.5779], [-33.453140000000005, -70.57835], [-33.453100000000006, -70.57885], [-33.453100000000006, -70.57898], [-33.45338, -70.58237], [-33.45295000000001, -70.58312000000001], [-33.45277000000001, -70.58341], [-33.452380000000005, -70.58403], [-33.45197, -70.58479], [-33.45156000000001, -70.58546], [-33.451440000000005, -70.58571], [-33.451220000000006, -70.58616], [-33.45082000000001, -70.58702], [-33.450540000000004, -70.58759], [-33.450810000000004, -70.58774], [-33.45103, -70.58785], [-33.451220000000006, -70.58793], [-33.45139, -70.58796], [-33.45262, -70.58813], [-33.45421, -70.58835], [-33.454600000000006, -70.58840000000001]],
                 {"bubblingMouseEvents": true, "color": "#007bff", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#007bff", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.85, "smoothFactor": 1.0, "stroke": true, "weight": 6}
-            ).addTo(feature_group_97f310e62153f5770cfa3e99348e9894);
+            ).addTo(feature_group_f1f6f580223dc85bdfada84e1f584362);
         
     
-            var marker_a29885d7cf413656c828c5427f9eb5c7 = L.marker(
+            var marker_cac9c6500f4d126e05d7e3fe421de576 = L.marker(
                 [-33.452380000000005, -70.58403],
                 {
 }
-            ).addTo(feature_group_97f310e62153f5770cfa3e99348e9894);
+            ).addTo(feature_group_f1f6f580223dc85bdfada84e1f584362);
         
     
-            var div_icon_7e645b327bc268cef71526a0403c82bd = L.divIcon({
+            var div_icon_f43aeb827753ec1381f19d6556714481 = L.divIcon({
   "html": "\u003ca href=\"https://waze.com/ul?ll=-33.4544813,-70.5882836\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: Gotham, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#007bff; transform:translateY(-20px);\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eS1 / 13:52 / 8 min\u003c/div\u003e\u003c/a\u003e",
   "className": "empty",
 });
         
     
-                marker_a29885d7cf413656c828c5427f9eb5c7.setIcon(div_icon_7e645b327bc268cef71526a0403c82bd);
+                marker_cac9c6500f4d126e05d7e3fe421de576.setIcon(div_icon_f43aeb827753ec1381f19d6556714481);
             
     
-            var marker_8c9d33af4e5b00e4c73785c0bbcebebc = L.marker(
+            var marker_642d6b1f03c97ef318052a457e4638c1 = L.marker(
                 [-33.4546013, -70.58840359999999],
                 {
 }
-            ).addTo(feature_group_97f310e62153f5770cfa3e99348e9894);
+            ).addTo(feature_group_f1f6f580223dc85bdfada84e1f584362);
         
     
-            var div_icon_06155965de069130cae608937adb23f7 = L.divIcon({
-  "html": "\u003cdiv style=\"font-family: Gotham, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#011E41; transform:translate(-10%, -50%); pointer-events:none;\"\u003e\u003cspan style=\"font-family:Gotham; font-weight:bold;\"\u003eS1 / 14:00 / Guillermo Guzm\u00e1n\u003c/span\u003e / \u003cspan style=\"font-family:Gotham; font-weight:normal;\"\u003eAugusto Villanueva 6...\u003c/span\u003e\u003c/div\u003e",
+            var div_icon_3055980c132014af288f560e1eae030e = L.divIcon({
+  "html": "\u003cdiv style=\"font-family: Gotham, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#011E41; transform:translate(-10%, -50%); pointer-events:none;\"\u003e\u003cspan style=\"font-family:Gotham, sans-serif; font-weight:bold;\"\u003eS1 / 14:00 / Guillermo Guzm\u00e1n\u003c/span\u003e / \u003cspan style=\"font-family:Gotham, sans-serif; font-weight:normal;\"\u003eAugusto Villanueva 6...\u003c/span\u003e\u003c/div\u003e",
   "className": "empty",
 });
         
     
-                marker_8c9d33af4e5b00e4c73785c0bbcebebc.setIcon(div_icon_06155965de069130cae608937adb23f7);
+                marker_642d6b1f03c97ef318052a457e4638c1.setIcon(div_icon_3055980c132014af288f560e1eae030e);
             
     
-            var poly_line_e5c2d04cbc86942b04ebd57a7cd198d8 = L.polyline(
+            var poly_line_faf278325a2f611663cc7f73f0a59600 = L.polyline(
                 [[-33.454600000000006, -70.58840000000001], [-33.452890000000004, -70.58817], [-33.452130000000004, -70.58806], [-33.451220000000006, -70.58793], [-33.450810000000004, -70.58774], [-33.450540000000004, -70.58759], [-33.45082000000001, -70.58702], [-33.451220000000006, -70.58616], [-33.451440000000005, -70.58571], [-33.45156000000001, -70.58546], [-33.451370000000004, -70.58544], [-33.45076, -70.58537], [-33.45074, -70.58387], [-33.450720000000004, -70.5819], [-33.450720000000004, -70.57956], [-33.45073000000001, -70.57859], [-33.45094, -70.57858], [-33.45129000000001, -70.57859], [-33.45158000000001, -70.57859], [-33.45224, -70.57851], [-33.452220000000004, -70.57807], [-33.45224, -70.57803], [-33.452420000000004, -70.57799], [-33.45309, -70.57791], [-33.45317000000001, -70.5779], [-33.453140000000005, -70.57835], [-33.453100000000006, -70.57885], [-33.45268000000001, -70.57889], [-33.45232000000001, -70.57891000000001]],
                 {"bubblingMouseEvents": true, "color": "#007bff", "dashArray": "7, 7", "dashOffset": null, "fill": false, "fillColor": "#007bff", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.6, "smoothFactor": 1.0, "stroke": true, "weight": 5}
-            ).addTo(feature_group_97f310e62153f5770cfa3e99348e9894);
+            ).addTo(feature_group_f1f6f580223dc85bdfada84e1f584362);
         
     
-            var marker_c8f63e8554aef2bc15e5f30d4c6cb3c2 = L.marker(
+            var marker_610976673147ac03417c5adaea919d45 = L.marker(
                 [-33.450720000000004, -70.57956],
                 {
 }
-            ).addTo(feature_group_97f310e62153f5770cfa3e99348e9894);
+            ).addTo(feature_group_f1f6f580223dc85bdfada84e1f584362);
         
     
-            var div_icon_a4afbd8467d11b2a57e0c03a7d1ecd44 = L.divIcon({
+            var div_icon_7591796a9927345757d4e9e17a7fc6ad = L.divIcon({
   "html": "\u003ca href=\"https://waze.com/ul?ll=-33.45219480797122,-70.5787333882418\u0026navigate=yes\" target=\"_blank\" style=\"text-decoration:none;\"\u003e\u003cdiv style=\"font-family: Gotham, sans-serif; font-size: 11px; font-weight: bold; background-color: white; padding: 5px 10px; border-radius: 8px; box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; display: inline-flex; align-items: center; border: none; color:#8A9892; transform:translateY(-20px); font-family:Gotham, sans-serif;\"\u003e\u003cimg src=\"waze.png\" style=\"width:16px; margin-right:5px;\"\u003eS2 / Base / 6 min\u003c/div\u003e\u003c/a\u003e",
   "className": "empty",
 });
         
     
-                marker_c8f63e8554aef2bc15e5f30d4c6cb3c2.setIcon(div_icon_a4afbd8467d11b2a57e0c03a7d1ecd44);
+                marker_610976673147ac03417c5adaea919d45.setIcon(div_icon_7591796a9927345757d4e9e17a7fc6ad);
             
     
-            feature_group_97f310e62153f5770cfa3e99348e9894.addTo(map_1eebf293de40b1c46dd62c8d5235dbab);
+            feature_group_f1f6f580223dc85bdfada84e1f584362.addTo(map_7dbf24349dfb7dbcf02fc3a78ceaa297);
         
     
-            var layer_control_b5379493baa84e5a409f018ed893b886_layers = {
+            var layer_control_db370a5880a2f3bb3963ec598be6928e_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_c06285e5c8ce4e295639caf5bcb0a5da,
-                    "Seba" : feature_group_97f310e62153f5770cfa3e99348e9894,
+                    "Juan" : feature_group_420758cf4d3ca07088e72cc0d00a57ca,
+                    "Seba" : feature_group_f1f6f580223dc85bdfada84e1f584362,
                 },
             };
-            let layer_control_b5379493baa84e5a409f018ed893b886 = L.control.layers(
-                layer_control_b5379493baa84e5a409f018ed893b886_layers.base_layers,
-                layer_control_b5379493baa84e5a409f018ed893b886_layers.overlays,
+            let layer_control_db370a5880a2f3bb3963ec598be6928e = L.control.layers(
+                layer_control_db370a5880a2f3bb3963ec598be6928e_layers.base_layers,
+                layer_control_db370a5880a2f3bb3963ec598be6928e_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_1eebf293de40b1c46dd62c8d5235dbab);
+            ).addTo(map_7dbf24349dfb7dbcf02fc3a78ceaa297);
 
         
     
-            map_1eebf293de40b1c46dd62c8d5235dbab.fitBounds(
+            map_7dbf24349dfb7dbcf02fc3a78ceaa297.fitBounds(
                 [[-33.45219480797122, -70.5787333882418], [-33.45217, -70.57877], [-33.45214, -70.57872], [-33.45212, -70.57839], [-33.4521, -70.57795], [-33.45212, -70.57791], [-33.4523, -70.57787], [-33.45297, -70.57779000000001], [-33.453050000000005, -70.57778], [-33.45302, -70.57823], [-33.452980000000004, -70.57873000000001], [-33.452980000000004, -70.57886], [-33.45326, -70.58225], [-33.452830000000006, -70.58300000000001], [-33.452650000000006, -70.58329], [-33.45226, -70.58391], [-33.45185, -70.58467], [-33.451440000000005, -70.58534], [-33.45132, -70.58559000000001], [-33.451100000000004, -70.58604000000001], [-33.450700000000005, -70.5869], [-33.45042, -70.58747000000001], [-33.45069, -70.58762], [-33.45091, -70.58773000000001], [-33.451100000000004, -70.58781], [-33.45127, -70.58784], [-33.4525, -70.58801000000001], [-33.45409, -70.58823000000001], [-33.454480000000004, -70.58828000000001], [-33.454480000000004, -70.58828000000001], [-33.45277, -70.58805000000001], [-33.45201, -70.58794], [-33.451100000000004, -70.58781], [-33.45069, -70.58762], [-33.45042, -70.58747000000001], [-33.450700000000005, -70.5869], [-33.451100000000004, -70.58604000000001], [-33.45132, -70.58559000000001], [-33.451440000000005, -70.58534], [-33.45125, -70.58532000000001], [-33.45064, -70.58525], [-33.45062, -70.58375000000001], [-33.4506, -70.58178000000001], [-33.4506, -70.57944], [-33.450610000000005, -70.57847000000001], [-33.45082, -70.57846], [-33.451170000000005, -70.57847000000001], [-33.451460000000004, -70.57847000000001], [-33.45212, -70.57839], [-33.4521, -70.57795], [-33.45212, -70.57791], [-33.4523, -70.57787], [-33.45297, -70.57779000000001], [-33.453050000000005, -70.57778], [-33.45302, -70.57823], [-33.452980000000004, -70.57873000000001], [-33.452560000000005, -70.57877], [-33.452200000000005, -70.57879000000001]],
                 {}
             );

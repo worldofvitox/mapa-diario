@@ -33,7 +33,7 @@ body, html { font-family: Gotham, sans-serif; }
             .transit-box { flex: 0 0 auto; background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: Gotham, sans-serif; }
             .address-text { flex: 1 1 0; min-width: 0; text-align: center; padding: 0 5px; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: normal; }
             
-            .loading { text-align: center; padding: 30px; font-family: 'Saturn-Bold'; text-transform: lowercase; color: #011E41; font-size: 18px; }
+            .loading { text-align: center; padding: 30px; font-family: 'Saturn-Bold', sans-serif; text-transform: lowercase; color: #011E41; font-size: 18px; }
         </style>
     </head>
     <body>
@@ -153,7 +153,7 @@ body, html { font-family: Gotham, sans-serif; }
                 });
 
                 if(validGaps.length === 0) {
-                    resultsDiv.innerHTML = '<div style="text-align:center; color:red; padding:20px; font-family:Gotham;">No hay bloques de tiempo suficientemente grandes.</div>';
+                    resultsDiv.innerHTML = '<div style="text-align:center; color:red; padding:20px; font-family:Gotham, sans-serif;">No hay bloques de tiempo suficientemente grandes.</div>';
                     return;
                 }
 
@@ -205,18 +205,18 @@ body, html { font-family: Gotham, sans-serif; }
             function renderResults(options, newAddress) {
                 const resultsDiv = document.getElementById('results');
                 if(options.length === 0) {
-                    resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; font-family:Gotham;">Ningun bloque cumple con el tiempo de viaje necesario.</div>';
+                    resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; font-family:Gotham, sans-serif;">Ningun bloque cumple con el tiempo de viaje necesario.</div>';
                     return;
                 }
                 
                 let html = '';
                 options.forEach(opt => {
+                    // Fixing UTC offset bugs by using manual parsing
                     let parts = opt.date.split('-');
                     let dateObj = new Date(parts[0], parts[1]-1, parts[2]);
                     let dateDisplay = dateObj.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month:'short' });
                     
                     let mechColor = mechanicColors[opt.mechanic];
-                    
                     let pTs = opt.prev.isBase ? opt.prev.ts : (opt.prev.ts + opt.prev.dur*60);
                     let pTime = format24hTime(pTs);
                     let nTime = format24hTime(opt.next.ts);
