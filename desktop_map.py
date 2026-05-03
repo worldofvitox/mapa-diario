@@ -37,12 +37,12 @@ MECHANICS = {
     'Seba': {'palette': ['#007bff', '#0056b3', '#004085', '#3399ff', '#66b2ff'], 'initial': 'S', 'offset': (-0.00012, -0.00012)}
 }
 
-# Universal Brand Fonts CSS
+# Universal Brand Fonts CSS (Fixed spaces in URLs with %20)
 BRAND_CSS = """
 @font-face { font-family: 'Saturn-Bold'; src: url('Saturn-Bold.woff') format('woff'), url('Saturn-Bold.ttf') format('truetype'); }
-@font-face { font-family: 'Gotham'; src: url('Gotham Book.otf') format('opentype'); font-weight: normal; }
-@font-face { font-family: 'Gotham'; src: url('Gotham Bold.otf') format('opentype'); font-weight: bold; }
-@font-face { font-family: 'Gotham'; src: url('Gotham Medium.otf') format('opentype'); font-weight: 500; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Book.otf') format('opentype'); font-weight: normal; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Bold.otf') format('opentype'); font-weight: bold; }
+@font-face { font-family: 'Gotham'; src: url('Gotham%20Medium.otf') format('opentype'); font-weight: 500; }
 body, html { font-family: 'Gotham', sans-serif; }
 ::placeholder { font-family: 'Gotham', sans-serif !important; opacity: 0.6; }
 """
@@ -222,7 +222,7 @@ def get_all_appointments():
 def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, now_dt):
     global all_legs_data
     date_str = target_date.strftime('%Y-%m-%d')
-    display_date = target_date.strftime('%a, %d %b')
+    display_date = target_date.strftime('%a, %d %b').capitalize()
     day_apps = [a for a in all_apps if a['start_dt'].date() == target_date]
     
     m = folium.Map(location=BASE_LOCATION, zoom_start=12, tiles=None)
@@ -391,7 +391,7 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
             for item in cluster:
                 planner_html += f"""
                 <div class="{item['anim_class']}" style="position: absolute; top: {item['top']}px; left: 1%; width: 9%; height: {item['height']}px; display: flex; align-items: flex-end; justify-content: center; z-index: 2; padding-bottom: 2px; box-sizing: border-box;">
-                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-family:'Gotham'; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; font-weight: bold; overflow: hidden;">{item['mins']}m</div>
+                    <div style="background: #f8f9fa; border: 1px solid #ccc; border-radius: 5px; font-family:'Gotham'; font-weight:normal; font-size: 9px; color: #444; width: 100%; height: 100%; max-height: 25px; display: flex; align-items: center; justify-content: center; overflow: hidden;">{item['mins']}m</div>
                 </div>
                 """
             
@@ -518,10 +518,10 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
                 plantGlobalPin();
             }}
             
-            // If inside optimizer iframe, clean up UI completely
+            // If inside optimizer iframe, clean up UI completely and force map width to fill iframe gap
             if(urlParams.has('optimizer') && urlParams.get('optimizer') === 'true') {{
                 document.getElementById('desktop-side-panel').style.display = 'none';
-                document.querySelector('.leaflet-container').style.width = '100vw';
+                document.querySelector('.leaflet-container').style.setProperty('width', '100vw', 'important');
                 document.getElementById('date-carousel').style.display = 'none';
                 document.getElementById('draft-container').style.display = 'none';
                 var dBox = document.getElementById('draft-info-box');
@@ -533,13 +533,13 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
 
     drafting_html = f"""
     <div id="draft-container" style="position:absolute; bottom:20px; left:20px; z-index:9999; background:white; padding:0 5px; height: 36px; border-radius:18px; box-sizing: border-box; box-shadow:0 2px 10px rgba(0,0,0,0.2); font-family:'Gotham', sans-serif; font-size:12px; display:flex; gap:5px; align-items:center; border: 2px solid {CHUM_BLUE};">
-        <input type="text" id="global-draft-input" placeholder="Intercalar dirección" style="width:160px; padding:5px 10px; border:none; outline:none; font-family:'Gotham', sans-serif;">
+        <input type="text" id="global-draft-input" placeholder="Intercalar dirección" style="width:160px; padding:5px 10px; border:none; outline:none; font-family:'Gotham', sans-serif; font-weight:normal;">
         <button onclick="plantGlobalPin()" style="padding:4px 12px; background:{CHUM_BLUE}; color:white; border:none; border-radius:15px; cursor:pointer; font-family:'Gotham', sans-serif; font-weight:bold;">Marcar</button>
     </div>
 
     <div id="draft-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; font-family:'Gotham', sans-serif; border: 2px solid {CHUM_BLUE};">
         <h3 style="margin-top:0; font-family:'Saturn-Bold'; color:{CHUM_BLUE}; text-transform: lowercase;">resultados intercalar</h3>
-        <input type="text" id="modal-draft-input" style="width:250px; padding:8px; border:1px solid #ccc; border-radius:18px; margin-bottom:15px; font-family:'Gotham';">
+        <input type="text" id="modal-draft-input" style="width:250px; padding:8px; border:1px solid #ccc; border-radius:18px; margin-bottom:15px; font-family:'Gotham'; font-weight:normal;">
         <div style="display:flex; justify-content:flex-end; gap:10px;">
             <button onclick="document.getElementById('draft-modal').style.display='none'" style="padding:8px 15px; border:none; border-radius:18px; cursor:pointer; background:#eee; color:#333; font-weight:bold;">Cancelar</button>
             <button onclick="calcDraft()" style="padding:8px 15px; background:{CHUM_BLUE}; color:white; border:none; border-radius:18px; cursor:pointer; font-weight:bold;">Calcular</button>
@@ -550,8 +550,8 @@ def generate_desktop_map_for_date(target_date, prev_date, next_date, all_apps, n
         <div id="draft-info-header" style="font-family:'Saturn-Bold'; text-transform: lowercase; color:{CHUM_BLUE}; font-size:14px; margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:5px; cursor:move; display:flex; justify-content:space-between; align-items:center;">
             <span>resultados intercalar</span>
         </div>
-        <div id="draft-info-1" style="margin-bottom:8px; color:#444;"></div>
-        <div id="draft-info-2" style="margin-bottom:15px; color:#444;"></div>
+        <div id="draft-info-1" style="margin-bottom:8px; color:#444; font-weight:normal;"></div>
+        <div id="draft-info-2" style="margin-bottom:15px; color:#444; font-weight:normal;"></div>
         <div style="font-weight:bold; color:{CHUM_BLUE}; font-size:15px; border-top:1px solid #eee; padding-top:10px;">Tiempo Disponible: <span id="draft-info-time"></span> min</div>
         <button onclick="closeDraftInfo()" style="margin-top:15px; width:100%; padding:8px; background:#eee; color:{CHUM_BLUE}; border:none; border-radius:18px; cursor:pointer; font-family:'Gotham', sans-serif; font-weight:bold;">OK</button>
     </div>
@@ -740,295 +740,5 @@ def generate_optimizer_page(base_date):
             .header {{ padding: 12px 15px; background: {CHUM_BLUE}; color: white; font-family: 'Saturn-Bold', sans-serif; font-size: 22px; font-weight: normal; text-align: center; text-transform: lowercase; }}
             .inputs-container {{ padding: 20px; background: #f8f9fa; border-bottom: 1px solid #ddd; }}
             .input-row {{ display: flex; gap: 10px; margin-bottom: 15px; align-items: center; justify-content: space-between; }}
-            input {{ padding: 8px 12px; border: 1px solid #ccc; border-radius: 18px; font-family: 'Gotham', sans-serif; outline: none; }}
-            .address-input {{ flex-grow: 1; width: 100%; }}
-            .num-input {{ width: 60px; text-align: center; }}
-            .btn-optimizar {{ width: 100%; padding: 12px; background: {CHUM_BLUE}; color: white; border: none; border-radius: 18px; font-family: 'Gotham', sans-serif; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; }}
-            .btn-optimizar:hover {{ background: #022b5e; }}
-            .results-container {{ flex-grow: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #fff; }}
-            
-            .pill {{ display: flex; flex-direction: row; align-items: stretch; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); transition: transform 0.1s; background: white; }}
-            .pill:hover {{ transform: translateY(-2px); box-shadow: 0 5px 12px rgba(0,0,0,0.15); border-color: {CHUM_BLUE}; }}
-            .pill-endcap {{ flex: 0 0 45px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 11px; padding: 5px; text-align: center; font-family: 'Gotham', sans-serif; box-sizing: border-box; }}
-            .pill-body {{ flex: 1 1 auto; min-width: 0; display: flex; align-items: center; font-size: 10px; color: #444; padding: 5px; font-family: 'Gotham', sans-serif; box-sizing: border-box; }}
-            .transit-box {{ flex: 0 0 auto; background: #222; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 0 5px; white-space: nowrap; font-family: 'Gotham', sans-serif; }}
-            .address-text {{ flex: 1 1 0; min-width: 0; text-align: center; padding: 0 5px; white-space: normal; word-wrap: break-word; line-height: 1.2; }}
-            
-            .loading {{ text-align: center; padding: 30px; font-family: 'Saturn-Bold'; text-transform: lowercase; color: {CHUM_BLUE}; font-size: 18px; }}
-        </style>
-    </head>
-    <body>
-        <iframe id="map-frame" src="desktop_map_{base_date.strftime('%Y-%m-%d')}.html?optimizer=true" style="width: 63vw; height: 100vh; border: none; position: absolute; left: 0; top: 0;"></iframe>
-        
-        <div class="panel">
-            <div class="header">optimización de agendamiento</div>
-            
-            <div class="inputs-container">
-                <div class="input-row">
-                    <input type="text" id="opt-address" class="address-input" placeholder="Nueva Dirección">
-                </div>
-                <div class="input-row" style="justify-content: flex-start; gap: 20px;">
-                    <label style="font-family:'Gotham', sans-serif; font-weight:bold; color:{CHUM_BLUE}; font-size:12px;">Duración <input type="number" id="opt-dur" class="num-input" value="60"></label>
-                    <label style="font-family:'Gotham', sans-serif; font-weight:bold; color:{CHUM_BLUE}; font-size:12px;">Holgura <input type="number" id="opt-cush" class="num-input" value="30"></label>
-                </div>
-                <button class="btn-optimizar" onclick="runOptimization()">Optimizar</button>
-            </div>
-            
-            <div id="results" class="results-container">
-                <div style="text-align:center; color:#8A9892; margin-top:20px; font-size:12px; font-family:'Gotham', sans-serif;">Ingresa una dirección y presiona Optimizar para buscar los mejores horarios en los próximos 3 días hábiles.</div>
-            </div>
-        </div>
-
-        <script>
-            let allAppointments = [];
-            const mechanicColors = {{ 'Juan': '#dc3545', 'Seba': '#007bff', 'Base': '#8A9892' }};
-            const baseLocation = "-33.45219480797122, -70.5787333882418";
-            
-            // Chilean Holidays 2026
-            const clHolidays = [
-                "2026-01-01", "2026-04-03", "2026-04-04", "2026-05-01", "2026-05-21", 
-                "2026-06-21", "2026-06-29", "2026-07-16", "2026-08-15", "2026-09-18", 
-                "2026-09-19", "2026-10-12", "2026-10-31", "2026-12-08", "2026-12-25"
-            ];
-
-            // Safely Generate 3 Working Days (Skipping Weekends and Holidays)
-            const targetDates = [];
-            let dateParts = '{base_date.isoformat()}'.split('-');
-            let dateCursor = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-
-            while(targetDates.length < 3) {{
-                let dayOfWeek = dateCursor.getDay(); // 0 = Sun, 6 = Sat
-                let y = dateCursor.getFullYear();
-                let m = String(dateCursor.getMonth() + 1).padStart(2, '0');
-                let d = String(dateCursor.getDate()).padStart(2, '0');
-                let dateStr = y + '-' + m + '-' + d;
-
-                if (dayOfWeek !== 0 && dayOfWeek !== 6 && !clHolidays.includes(dateStr)) {{
-                    targetDates.push(dateStr);
-                }}
-                dateCursor.setDate(dateCursor.getDate() + 1);
-            }}
-
-            window.onload = function() {{
-                const savedAddress = localStorage.getItem('chum_draft_address');
-                if(savedAddress) document.getElementById('opt-address').value = savedAddress;
-                
-                fetch('{CACHE_FILE}')
-                    .then(r => r.json())
-                    .then(data => {{
-                        allAppointments = Object.values(data);
-                    }});
-            }};
-
-            function runOptimization() {{
-                const newAddress = document.getElementById('opt-address').value;
-                const dur = parseInt(document.getElementById('opt-dur').value);
-                const cush = parseInt(document.getElementById('opt-cush').value);
-                const resultsDiv = document.getElementById('results');
-                
-                if(!newAddress) return alert("Ingresa una dirección primero.");
-                localStorage.setItem('chum_draft_address', newAddress);
-                
-                resultsDiv.innerHTML = '<div class="loading">calculando rutas...</div>';
-
-                let validGaps = [];
-
-                targetDates.forEach(dateStr => {{
-                    ['Juan', 'Seba'].forEach(mech => {{
-                        let dayApps = allAppointments.filter(a => a.start_dt.startsWith(dateStr) && a.mechanic === mech);
-                        dayApps.sort((a, b) => a.start_timestamp - b.start_timestamp);
-                        
-                        let schedule = [];
-                        let dObj = new Date(dateStr + "T09:30:00-04:00");
-                        schedule.push({{ id: 'Base', address: baseLocation, ts: dObj.getTime()/1000, isBase: true }});
-                        
-                        dayApps.forEach((a, idx) => {{
-                            schedule.push({{ id: mech[0] + (idx+1), address: a.route_address, ts: a.start_timestamp, dur: a.duration, isBase: false }});
-                        }});
-                        
-                        let endObj = new Date(dateStr + "T17:30:00-04:00");
-                        schedule.push({{ id: 'Base', address: baseLocation, ts: endObj.getTime()/1000, isBase: true }});
-                        
-                        for(let i=0; i < schedule.length - 1; i++) {{
-                            let prev = schedule[i];
-                            let next = schedule[i+1];
-                            
-                            let prevEndTime = prev.isBase ? prev.ts : (prev.ts + (prev.dur * 60));
-                            let availableMins = (next.ts - prevEndTime) / 60;
-                            
-                            if (availableMins >= (dur + cush)) {{
-                                validGaps.push({{
-                                    date: dateStr, mechanic: mech,
-                                    prev: prev, next: next,
-                                    availableMins: availableMins
-                                }});
-                            }}
-                        }}
-                    }});
-                }});
-
-                if(validGaps.length === 0) {{
-                    resultsDiv.innerHTML = '<div style="text-align:center; color:red; padding:20px; font-family:\\'Gotham\\';">No hay bloques de tiempo suficientemente grandes.</div>';
-                    return;
-                }}
-
-                const matrix = new google.maps.DistanceMatrixService();
-                let originsLeg1 = validGaps.map(g => g.prev.address);
-                let destsLeg2 = validGaps.map(g => g.next.address);
-                
-                let originsSliced = originsLeg1.slice(0, 25);
-                let destsSliced = destsLeg2.slice(0, 25);
-                let processingGaps = validGaps.slice(0, 25); 
-                
-                matrix.getDistanceMatrix({{
-                    origins: originsSliced, destinations: [newAddress], travelMode: 'DRIVING'
-                }}, function(res1, status1) {{
-                    if(status1 !== 'OK') return resultsDiv.innerHTML = 'Error API Leg 1';
-                    
-                    matrix.getDistanceMatrix({{
-                        origins: [newAddress], destinations: destsSliced, travelMode: 'DRIVING'
-                    }}, function(res2, status2) {{
-                        if(status2 !== 'OK') return resultsDiv.innerHTML = 'Error API Leg 2';
-                        
-                        let finalOptions = [];
-                        
-                        for(let i=0; i < processingGaps.length; i++) {{
-                            let gap = processingGaps[i];
-                            let elem1 = res1.rows[i].elements[0];
-                            let elem2 = res2.rows[0].elements[i];
-                            
-                            if(elem1.status === 'OK' && elem2.status === 'OK') {{
-                                let min1 = Math.round((elem1.duration.value * 1.07) / 60);
-                                let min2 = Math.round((elem2.duration.value * 1.07) / 60);
-                                let totalDrive = min1 + min2;
-                                
-                                if (gap.availableMins >= (dur + min1 + min2)) {{
-                                    gap.min1 = min1;
-                                    gap.min2 = min2;
-                                    gap.totalDrive = totalDrive;
-                                    finalOptions.push(gap);
-                                }}
-                            }}
-                        }}
-                        
-                        finalOptions.sort((a, b) => a.totalDrive - b.totalDrive);
-                        renderResults(finalOptions, newAddress);
-                    }});
-                }});
-            }}
-            
-            function renderResults(options, newAddress) {{
-                const resultsDiv = document.getElementById('results');
-                if(options.length === 0) {{
-                    resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; font-family:\\'Gotham\\';">Ningun bloque cumple con el tiempo de viaje necesario.</div>';
-                    return;
-                }}
-                
-                let html = '';
-                options.forEach(opt => {{
-                    // Fixing UTC offset bugs by using manual parsing
-                    let parts = opt.date.split('-');
-                    let dateObj = new Date(parts[0], parts[1]-1, parts[2]);
-                    let dateDisplay = dateObj.toLocaleDateString('es-ES', {{ weekday: 'short', day: 'numeric', month:'short' }});
-                    
-                    let mechColor = mechanicColors[opt.mechanic];
-                    let pTime = new Date(opt.prev.isBase ? opt.prev.ts*1000 : (opt.prev.ts + opt.prev.dur*60)*1000).toLocaleTimeString([],{{hour:'2-digit',minute:'2-digit'}});
-                    let nTime = new Date(opt.next.ts*1000).toLocaleTimeString([],{{hour:'2-digit',minute:'2-digit'}});
-                    
-                    let prevAddr = opt.prev.isBase ? 'Base' : opt.prev.address.split(',')[0];
-                    let nextAddr = opt.next.isBase ? 'Base' : opt.next.address.split(',')[0];
-                    
-                    let onClick = `loadMapForDraft('${{opt.date}}', '${{opt.mechanic}}')`;
-                    
-                    html += `
-                    <div class="pill" onclick="${{onClick}}">
-                        <div class="pill-endcap" style="background:${{mechColor}};">
-                            <span style="font-size:14px; margin-bottom:2px;">${{opt.prev.id}}</span>
-                            <span>${{pTime}}</span>
-                        </div>
-                        
-                        <div class="pill-body">
-                            <div class="address-text">${{prevAddr}}</div>
-                            <div class="transit-box">${{opt.min1}}</div>
-                            <div class="address-text" style="color:{CHUM_BLUE}; font-weight:bold;">
-                                ${{dateDisplay}}<br>${{newAddress.split(',')[0]}}
-                            </div>
-                            <div class="transit-box">${{opt.min2}}</div>
-                            <div class="address-text">${{nextAddr}}</div>
-                        </div>
-                        
-                        <div class="pill-endcap" style="background:${{opt.next.id === 'Base' ? '#8A9892' : mechColor}};">
-                            <span style="font-size:14px; margin-bottom:2px;">${{opt.next.id}}</span>
-                            <span>${{nTime}}</span>
-                        </div>
-                    </div>`;
-                }});
-                resultsDiv.innerHTML = html;
-            }}
-
-            function loadMapForDraft(dateStr, mechanic) {{
-                const iframe = document.getElementById('map-frame');
-                iframe.src = `desktop_map_${{dateStr}}.html?optimizer=true&draft_address=${{encodeURIComponent(document.getElementById('opt-address').value)}}&mechanic=${{mechanic}}`;
-            }}
-        </script>
-    </body>
-    </html>"""
-    
-    with open("optimizer.html", "w", encoding='utf-8') as f:
-        f.write(html_content)
-
-def update_distance_csv():
-    file_name = 'distances.csv'
-    historical_data = {}
-    expected_fields = ['Date', 'Mechanic', 'ID', 'Client', 'Type', 'Distance_km']
-    
-    if os.path.exists(file_name):
-        try:
-            with open(file_name, 'r', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                if reader.fieldnames and all(field in reader.fieldnames for field in expected_fields):
-                    for row in reader:
-                        key = f"{row['Date']}_{row['Mechanic']}_{row['ID']}_{row['Type']}"
-                        historical_data[key] = row
-        except Exception as e: pass
-                
-    for leg in all_legs_data:
-        key = f"{leg['Date']}_{leg['Mechanic']}_{leg['ID']}_{leg['Type']}"
-        historical_data[key] = leg
-        
-    with open(file_name, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=expected_fields)
-        writer.writeheader()
-        for key in sorted(historical_data.keys()):
-            writer.writerow(historical_data[key])
-
-if __name__ == "__main__":
-    print("Fetching global appointments (with memory cache)...")
-    all_apps = get_all_appointments()
-    now_dt = datetime.now(timezone)
-    
-    if now_dt.hour >= 18: base_date = (now_dt + timedelta(days=1)).date()
-    else: base_date = now_dt.date()
-
-    days_to_generate = [-1, 0, 1, 2, 3, 4]
-    for day_offset in days_to_generate:
-        target = base_date + timedelta(days=day_offset)
-        prev_d = target - timedelta(days=1)
-        next_d = target + timedelta(days=1)
-        generate_desktop_map_for_date(target, prev_d, next_d, all_apps, now_dt)
-        
-    # Generate the new Optimizer tool
-    generate_optimizer_page(base_date)
-    
-    update_distance_csv()
-    
-    with open("desktop_map.html", "w") as f:
-        f.write(f'''
-        <!DOCTYPE html>
-        <html>
-        <head><meta http-equiv="refresh" content="0; url=desktop_map_{base_date.strftime('%Y-%m-%d')}.html" /></head>
-        <body style="font-family: 'Gotham', sans-serif; text-align: center; padding-top: 20%; color: {CHUM_BLUE};">
-            <h2>Cargando Centro de Control...</h2>
-        </body>
-        </html>
-        ''')
+            input {{ padding: 8px 12px; border: 1px solid #ccc; border-radius: 18px; font-family: 'Gotham', sans-serif; outline: none; font-weight: normal; }}
+            .address-input {{ flex-grow:
