@@ -25,6 +25,7 @@ BASE_LOCATION = [-33.45219480797122, -70.5787333882418]
 CALENDAR_URL = 'https://calendar.google.com/calendar/ical/c_0e3e9c70ab1527edfef805c43e9fd06dabb0fdfab8e5081f4feb40565337708b%40group.calendar.google.com/private-a534c46e66604fef2e96a3dc4810f688/basic.ics'
 CACHE_FILE = 'appointments_cache.json'
 CONFIG_URL = 'https://docs.google.com/spreadsheets/d/1Sgtl_4Fm88-vVMfCrGxULl1Tg0ekD6rXT-P59hUlVSw/export?format=csv'
+ROUTING_CACHE_FILE = 'routing_cache.json'
 
 CHUM_BLUE = "#011E41"
 
@@ -50,6 +51,29 @@ CARD_STYLE = (
 )
 
 WAZE_ICON_URL = "waze.png" 
+
+# --- ROUTING CACHE LOGIC ---
+routing_cache = {}
+if os.path.exists(ROUTING_CACHE_FILE):
+    try:
+        with open(ROUTING_CACHE_FILE, 'r', encoding='utf-8') as f:
+            routing_cache = json.load(f)
+    except: pass
+
+def get_cached_directions(origin, dest):
+    key = f"{origin}__{dest}"
+    if key in routing_cache:
+        return routing_cache[key]
+    try:
+        res = gmaps.directions(origin, dest, mode="driving")
+        if res:
+            routing_cache[key] = res
+            with open(ROUTING_CACHE_FILE, 'w', encoding='utf-8') as f:
+                json.dump(routing_cache, f, ensure_ascii=False)
+        return res
+    except:
+        return None
+# ---------------------------
 
 def normalize_text(text):
     if not text: return ""
@@ -223,7 +247,6 @@ def generate_map():
     table_rows_html = ""
 
     ordered_mechs = ['Juan', 'Seba']
-    now_dt = datetime.now(timezone)
     
     for name in ordered_mechs:
         info = MECHANICS[name]
@@ -236,12 +259,17 @@ def generate_map():
             leg_color = info['palette'][i % len(info['palette'])]
             arrival_target = app['start_dt']
             
-            if arrival_target.date() > now_dt.date(): directions = gmaps.directions(current_loc, app['route_address'], mode="driving")
-            elif arrival_target > now_dt: directions = gmaps.directions(current_loc, app['route_address'], mode="driving", arrival_time=arrival_target)
-            else: directions = gmaps.directions(current_loc, app['route_address'], mode="driving", departure_time=now_dt)
+            # ⚠️ USING THE ROUTE CACHE HERE!
+            directions = get_cached_directions(current_loc, app['route_address'])
+
+            c_lat = BASE_LOCATION[0]
+            c_lng = BASE_LOCATION[1]
 
             if directions:
                 leg = directions[0]['legs'][0]
+                c_lat = leg['end_location']['lat']
+                c_lng = leg['end_location']['lng']
+                
                 raw_seconds = leg.get('duration_in_traffic', leg['duration'])['value']
                 penalty_seconds = 180 if app['address2'] else 0
                 buffered_seconds = (raw_seconds * 1.07) + penalty_seconds
@@ -268,7 +296,7 @@ def generate_map():
                     mech_name = app['mechanic'].replace("'", "\\'")
                     orig_time = app['start_dt'].strftime('%H:%M')
                     phone = app['phone']
-                    pill_html = f'<div onclick="openWaModal(\'{phone}\', \'{cust_first_name}\', \'{mech_name}\', \'{orig_time}\')" style="{CARD_STYLE} color:{CHUM_BLUE}; transform:translate(-10%, -50%); pointer-events:auto; cursor:pointer; box-shadow: 0px 4px 10px rgba(0,0,0,0.3); border: 1px solid #ddd;">{pill_content}</div>'
+                    pill_html = f'<div onclick="openWaModal(\'{phone}\', \'{cust_first_name}\', \'{mech_name}\', \'{orig_time}\', {c_lat}, {c_lng})" style="{CARD_STYLE} color:{CHUM_BLUE}; transform:translate(-10%, -50%); pointer-events:auto; cursor:pointer; box-shadow: 0px 4px 10px rgba(0,0,0,0.3); border: 1px solid #ddd;">{pill_content}</div>'
                 else:
                     pill_html = f'<div style="{CARD_STYLE} color:{CHUM_BLUE}; transform:translate(-10%, -50%); pointer-events:none;">{pill_content}</div>'
                 
@@ -290,11 +318,9 @@ def generate_map():
 
         if mech_apps:
             base_str = f"{BASE_LOCATION[0]}, {BASE_LOCATION[1]}"
-            return_target = mech_apps[-1]['start_dt'] + timedelta(hours=1)
             
-            if return_target.date() > now_dt.date(): directions = gmaps.directions(current_loc, base_str, mode="driving")
-            elif return_target > now_dt: directions = gmaps.directions(current_loc, base_str, mode="driving", departure_time=return_target)
-            else: directions = gmaps.directions(current_loc, base_str, mode="driving", departure_time=now_dt)
+            # ⚠️ USING THE ROUTE CACHE HERE!
+            directions = get_cached_directions(current_loc, base_str)
 
             if directions:
                 leg = directions[0]['legs'][0]
@@ -411,8 +437,8 @@ def generate_map():
             return String(Math.abs(hash) % 10000).padStart(4, '0');
         }}
 
-        function openWaModal(phone, custName, mechName, origTime) {{
-            currentWaData = {{ phone, custName, mechName, origTime }};
+        function openWaModal(phone, custName, mechName, origTime, lat, lng) {{
+            currentWaData = {{ phone, custName, mechName, origTime, lat, lng }};
             document.getElementById('wa-cust-name').innerText = custName;
             document.getElementById('mins-tarde').value = '';
             document.getElementById('mins-temprano').value = '';
@@ -439,7 +465,7 @@ def generate_map():
                 
                 if (document.getElementById('voy-ubi-check').checked) {{
                     let secToken = getHourlyToken(0);
-                    let trackingLink = "https://mapas.chum.cl/ubicacion.php?mecanico=" + mName.toLowerCase() + secToken;
+                    let trackingLink = "https://mapas.chum.cl/ubicacion.php?mecanico=" + mName.toLowerCase() + secToken + "&lat=" + currentWaData.lat + "&lng=" + currentWaData.lng;
                     text = baseText + `\\n\\n\\u{{1F4CD}} Puedes ver mi ubicación en tiempo real aquí: ${{trackingLink}}`;
                 }} else {{
                     text = baseText;
@@ -493,12 +519,9 @@ def generate_map():
     {modal_html}
     {wa_modal_html}
     """
-# ... (rest of the script is identical to daily_map.py) ...
     js_filter = "<script>function autoFilter(){const p=new URLSearchParams(window.location.search);const m=p.get('mechanic');if(!m)return;const t=m.toLowerCase();const s=document.querySelectorAll('.leaflet-control-layers-selector');if(s.length===0){setTimeout(autoFilter,300);return}s.forEach(i=>{const l=i.nextElementSibling.innerText.trim().toLowerCase();if((l==='juan'||l==='seba')&&l!==t){if(i.checked)i.click()}})}window.addEventListener('load',autoFilter)</script>"
 
     m.get_root().html.add_child(folium.Element(table_html + js_filter))
-    
-    # ⚠️ CHANGED TO OUTPUT PHP FOR THE SUBDOMAIN
     m.save("ruta_diaria.php")
 
 if __name__ == "__main__":

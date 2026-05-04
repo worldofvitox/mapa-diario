@@ -1,8 +1,6 @@
 name: Master Map Generator
 
 on:
-  schedule:
-    - cron: '*/30 * * * *'
   repository_dispatch:
     types: [calendar_update]
   workflow_dispatch:
@@ -27,40 +25,35 @@ jobs:
         run: |
           pip install requests googlemaps folium pytz icalendar
 
-      # ---- 1. LEGACY MOBILE MAP (Leave untouched for now) ----
-      - name: Run Legacy Mobile Map
-        env:
-          GMAPS_API_KEY: ${{ secrets.GMAPS_API_KEY }}
-        run: python daily_map.py
-
-      # ---- 2. DESKTOP MAP & OPTIMIZER ----
       - name: Run Desktop Map Generator
         env:
           GMAPS_API_KEY: ${{ secrets.GMAPS_API_KEY }}
         run: python desktop_map.py
 
-      # ---- 3. NEW HYBRID DEPLOYMENT (mapas.chum.cl) ----
       - name: Generate ruta_diaria.php
         env:
           GMAPS_API_KEY: ${{ secrets.GMAPS_API_KEY }}
         run: python ruta_diaria.py
 
-      - name: Upload ruta_diaria to Hosty via FTP
+      - name: Upload maps to Hosty via FTP
         env:
           FTP_HOST: ${{ secrets.FTP_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASS: ${{ secrets.FTP_PASS }}
-        # We use a secure curl transfer. Because the FTP user's home directory 
-        # is set to /mapas.chum.cl/, it drops it exactly in the right spot!
         run: |
+          # 1. Upload Mechanic map
           curl -T ruta_diaria.php ftp://$FTP_HOST/ruta_diaria.php --user "$FTP_USER:$FTP_PASS"
+          
+          # 2. Upload Desktop Maps and Optimizer
+          for file in *.html; do
+            curl -T "$file" "ftp://$FTP_HOST/$file" --user "$FTP_USER:$FTP_PASS"
+          done
 
-      # ---- 4. SAVE TO GITHUB MEMORY ----
       - name: Commit and Push All Changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
-          git commit -m "Real-time update: Maps, Cache, and Hybrid Deploy" -a || exit 0
+          git commit -m "Hybrid deploy: Desktop, Optimizer, and Ruta Diaria" -a || exit 0
           git pull origin main --rebase
           git push origin main
