@@ -56,7 +56,7 @@ Date,Mechanic,ID,Client,Type,Distance_km
 2026-05-04,Juan,16824310,Eve Barreto,Ruta a Cliente,2.88
 2026-05-04,Juan,16825894,Felipe Besoain Fuhrmann,Ruta a Cliente,7.4
 2026-05-04,Juan,RETURN,BASE,Retorno a Base,8.2
-2026-05-04,Seba,16825894,Felipe Besoain Fuhrmann,Ruta a Cliente,7.4
+2026-05-04,Seba,16825894,Felipe Besoain Fuhrmann,Ruta a Cliente,7.46
 2026-05-04,Seba,16835749,David Barra,Ruta a Cliente,2.94
 2026-05-04,Seba,16839115,Claudio Castillo,Ruta a Cliente,7.13
 2026-05-04,Seba,16839755,Francisca Saieh,Ruta a Cliente,5.51
@@ -65,10 +65,11 @@ Date,Mechanic,ID,Client,Type,Distance_km
 2026-05-05,Juan,RETURN,BASE,Retorno a Base,7.56
 2026-05-05,Seba,16824569,Alicia Riquelme Parra,Ruta a Cliente,7.8
 2026-05-05,Seba,16839115,Claudio Castillo,Ruta a Cliente,8.07
-2026-05-05,Seba,16841820,Juan Pablo Bambach Vial,Ruta a Cliente,10.04
+2026-05-05,Seba,16841820,Juan Pablo Bambach Vial,Ruta a Cliente,13.48
 2026-05-05,Seba,16842018,Sebastian Monsalves Reyes,Ruta a Cliente,10.3
 2026-05-05,Seba,RETURN,BASE,Retorno a Base,9.22
-2026-05-06,Seba,16828570,Guillermo Guzmán,Ruta a Cliente,1.64
+2026-05-06,Seba,16828570,Guillermo Guzmán,Ruta a Cliente,3.69
+2026-05-06,Seba,16842018,Sebastian Monsalves Reyes,Ruta a Cliente,3.33
 2026-05-06,Seba,RETURN,BASE,Retorno a Base,1.9
 2026-05-07,Seba,16842002,patricio treuquemil,Ruta a Cliente,5.72
 2026-05-07,Seba,RETURN,BASE,Retorno a Base,5.63
