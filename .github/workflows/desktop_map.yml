@@ -35,7 +35,7 @@ jobs:
           GMAPS_API_KEY: ${{ secrets.GMAPS_API_KEY }}
         run: python ruta_diaria.py
 
-      - name: Upload maps to Hosty via FTP
+      - name: Upload maps and data to Hosty via FTP
         env:
           FTP_HOST: ${{ secrets.FTP_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
@@ -44,7 +44,10 @@ jobs:
           # 1. Upload Mechanic map
           curl -T ruta_diaria.php ftp://$FTP_HOST/ruta_diaria.php --user "$FTP_USER:$FTP_PASS"
           
-          # 2. Upload Desktop Maps and Optimizer
+          # 2. Upload Appointments Data (CRITICAL for Optimizer)
+          curl -T appointments_cache.json ftp://$FTP_HOST/appointments_cache.json --user "$FTP_USER:$FTP_PASS"
+          
+          # 3. Upload all Desktop Maps and Optimizer
           for file in *.html; do
             curl -T "$file" "ftp://$FTP_HOST/$file" --user "$FTP_USER:$FTP_PASS"
           done
@@ -54,6 +57,6 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
-          git commit -m "Hybrid deploy: Desktop, Optimizer, and Ruta Diaria" -a || exit 0
+          git commit -m "Hybrid deploy: Desktop, Optimizer, Data, and Ruta Diaria" -a || exit 0
           git pull origin main --rebase
           git push origin main
