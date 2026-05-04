@@ -27,26 +27,40 @@ jobs:
         run: |
           pip install requests googlemaps folium pytz icalendar
 
-      - name: Run Mobile Map Generator
+      # ---- 1. LEGACY MOBILE MAP (Leave untouched for now) ----
+      - name: Run Legacy Mobile Map
         env:
           GMAPS_API_KEY: ${{ secrets.GMAPS_API_KEY }}
         run: python daily_map.py
 
-      - name: Run Desktop Map Generator & Update CSV
+      # ---- 2. DESKTOP MAP & OPTIMIZER ----
+      - name: Run Desktop Map Generator
         env:
           GMAPS_API_KEY: ${{ secrets.GMAPS_API_KEY }}
         run: python desktop_map.py
 
+      # ---- 3. NEW HYBRID DEPLOYMENT (mapas.chum.cl) ----
+      - name: Generate ruta_diaria.php
+        env:
+          GMAPS_API_KEY: ${{ secrets.GMAPS_API_KEY }}
+        run: python ruta_diaria.py
+
+      - name: Upload ruta_diaria to Hosty via FTP
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASS: ${{ secrets.FTP_PASS }}
+        # We use a secure curl transfer. Because the FTP user's home directory 
+        # is set to /mapas.chum.cl/, it drops it exactly in the right spot!
+        run: |
+          curl -T ruta_diaria.php ftp://$FTP_HOST/ruta_diaria.php --user "$FTP_USER:$FTP_PASS"
+
+      # ---- 4. SAVE TO GITHUB MEMORY ----
       - name: Commit and Push All Changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          
-          # Use -A to tell Git "Add whatever files you see, ignore the rest"
           git add -A
-          
-          git commit -m "Real-time update: Mobile, Desktop, Distances, and Memory Cache" -a || exit 0
-          
+          git commit -m "Real-time update: Maps, Cache, and Hybrid Deploy" -a || exit 0
           git pull origin main --rebase
-          
           git push origin main
