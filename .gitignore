@@ -1,2 +1,9 @@
 .DS_Store
 .env
+# Ignore generated maps
+*.html
+ruta_diaria.php
+
+# Do NOT ignore these (we need the cache to stay in GitHub)
+!appointments_cache.json
+!routing_cache.json

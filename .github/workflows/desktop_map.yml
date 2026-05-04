@@ -52,11 +52,12 @@ jobs:
             curl -T "$file" "ftp://$FTP_HOST/$file" --user "$FTP_USER:$FTP_PASS"
           done
 
-      - name: Commit and Push All Changes
+      - name: Commit and Push Cache Updates
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add -A
-          git commit -m "Hybrid deploy: Desktop, Optimizer, Data, and Ruta Diaria" -a || exit 0
+          # Only add the JSON files, ignore the rest
+          git add appointments_cache.json routing_cache.json || exit 0
+          git commit -m "Update routing and appointment caches [skip ci]" || exit 0
           git pull origin main --rebase
           git push origin main
