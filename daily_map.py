@@ -10,6 +10,12 @@ import json
 import urllib.parse
 import csv
 import unicodedata
+import locale
+
+try:
+    locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+except:
+    pass
 
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
 gmaps = googlemaps.Client(key=GMAPS_KEY)
@@ -433,8 +439,8 @@ def generate_map():
                 
                 if (document.getElementById('voy-ubi-check').checked) {{
                     let secToken = getHourlyToken(0);
-                    let trackingLink = "https://chum.cl/ubicacion.php?mecanico=" + mName.toLowerCase() + secToken;
-                    text = baseText + `\\n\\n📍 Puedes ver mi ubicación en tiempo real aquí: ${{trackingLink}}`;
+                    let trackingLink = "https://mapas.chum.cl/ubicacion.php?mecanico=" + mName.toLowerCase() + secToken;
+                    text = baseText + `\\n\\n\\u{{1F4CD}} Puedes ver mi ubicación en tiempo real aquí: ${{trackingLink}}`;
                 }} else {{
                     text = baseText;
                 }}
