@@ -39,7 +39,7 @@ body, html { font-family: Gotham, sans-serif; }
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_cb1a87566a3966aeadf5ab41cd59ff40 {
+                #map_1ac53e44672ae7f5db6bc24151403fc7 {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -190,7 +190,7 @@ body, html { font-family: Gotham, sans-serif; }
         let draftLines = [];
         let currentDraftApp = null;
 
-        function getMapInstance() { return map_cb1a87566a3966aeadf5ab41cd59ff40; }
+        function getMapInstance() { return map_1ac53e44672ae7f5db6bc24151403fc7; }
 
         function plantGlobalPin() {
             const inputVal = document.getElementById('global-draft-input').value;
@@ -349,7 +349,7 @@ body, html { font-family: Gotham, sans-serif; }
                             if (mechanic.toLowerCase() === 'seba') iconUrl = 'seba_icon.png';
                             if (mechanic.toLowerCase() === 'juan') iconUrl = 'juan_icon.png';
                             var vanIcon = L.icon({ iconUrl: iconUrl, iconSize: [28, 28], iconAnchor: [14, 14] });
-                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_cb1a87566a3966aeadf5ab41cd59ff40);
+                            vanMarkers[mechanic] = L.marker([coords.lat, coords.lng], {icon: vanIcon, zIndexOffset: 10000}).addTo(map_1ac53e44672ae7f5db6bc24151403fc7);
                         }
                     }
                 })
@@ -394,7 +394,7 @@ body, html { font-family: Gotham, sans-serif; }
             if(urlParams.has('optimizer') && urlParams.get('optimizer') === 'true') {
                 setTimeout(function() {
                     window.dispatchEvent(new Event('resize'));
-                    map_cb1a87566a3966aeadf5ab41cd59ff40.invalidateSize(true);
+                    map_1ac53e44672ae7f5db6bc24151403fc7.invalidateSize(true);
                     
                     if(storedDraftData) {
                         currentDraftApp = JSON.parse(storedDraftData);
@@ -410,14 +410,14 @@ body, html { font-family: Gotham, sans-serif; }
     
     
     
-            <div class="folium-map" id="map_cb1a87566a3966aeadf5ab41cd59ff40" ></div>
+            <div class="folium-map" id="map_1ac53e44672ae7f5db6bc24151403fc7" ></div>
         
 </body>
 <script>
     
     
-            var map_cb1a87566a3966aeadf5ab41cd59ff40 = L.map(
-                "map_cb1a87566a3966aeadf5ab41cd59ff40",
+            var map_1ac53e44672ae7f5db6bc24151403fc7 = L.map(
+                "map_1ac53e44672ae7f5db6bc24151403fc7",
                 {
                     center: [-33.45219480797122, -70.5787333882418],
                     crs: L.CRS.EPSG3857,
@@ -434,7 +434,7 @@ body, html { font-family: Gotham, sans-serif; }
 
         
     
-            var tile_layer_240470b2ed9654226b8cc8dcf9883e71 = L.tileLayer(
+            var tile_layer_06364da805363c9c96c7f0129e7a6a86 = L.tileLayer(
                 "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
                 {
   "minZoom": 0,
@@ -451,60 +451,60 @@ body, html { font-family: Gotham, sans-serif; }
             );
         
     
-            tile_layer_240470b2ed9654226b8cc8dcf9883e71.addTo(map_cb1a87566a3966aeadf5ab41cd59ff40);
+            tile_layer_06364da805363c9c96c7f0129e7a6a86.addTo(map_1ac53e44672ae7f5db6bc24151403fc7);
         
     
-            var marker_08877530e21e4f39456964103eee8a7a = L.marker(
+            var marker_d48bfdd543fa884a7004b1e0fdc80fd2 = L.marker(
                 [-33.45219480797122, -70.5787333882418],
                 {
 }
-            ).addTo(map_cb1a87566a3966aeadf5ab41cd59ff40);
+            ).addTo(map_1ac53e44672ae7f5db6bc24151403fc7);
         
     
-        var icon_0a2eb7d6b685a6461357afd44e4d664e = L.icon({
+        var icon_a1c15963489da721266612504d44a9a7 = L.icon({
   "iconUrl": "data:image/png;base64,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",
   "iconSize": [28, 28],
 });
         
     
-                marker_08877530e21e4f39456964103eee8a7a.setIcon(icon_0a2eb7d6b685a6461357afd44e4d664e);
+                marker_d48bfdd543fa884a7004b1e0fdc80fd2.setIcon(icon_a1c15963489da721266612504d44a9a7);
             
     
-            var feature_group_83a742d50283bf5d9ba372b40e330690 = L.featureGroup(
+            var feature_group_c0f75d9ced7ee55a39679708534fb8d4 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_83a742d50283bf5d9ba372b40e330690.addTo(map_cb1a87566a3966aeadf5ab41cd59ff40);
+            feature_group_c0f75d9ced7ee55a39679708534fb8d4.addTo(map_1ac53e44672ae7f5db6bc24151403fc7);
         
     
-            var feature_group_3b8b5452799dbaa0cccf9526c82d7670 = L.featureGroup(
+            var feature_group_a179f8db208ccafa45666cacc6a64f85 = L.featureGroup(
                 {
 }
             );
         
     
-            feature_group_3b8b5452799dbaa0cccf9526c82d7670.addTo(map_cb1a87566a3966aeadf5ab41cd59ff40);
+            feature_group_a179f8db208ccafa45666cacc6a64f85.addTo(map_1ac53e44672ae7f5db6bc24151403fc7);
         
     
-            var layer_control_197ee7df5982059e1f7084dafaff051a_layers = {
+            var layer_control_6d864bf615b31eadd8749ad3872bd2d2_layers = {
                 base_layers : {
                 },
                 overlays :  {
-                    "Juan" : feature_group_83a742d50283bf5d9ba372b40e330690,
-                    "Seba" : feature_group_3b8b5452799dbaa0cccf9526c82d7670,
+                    "Juan" : feature_group_c0f75d9ced7ee55a39679708534fb8d4,
+                    "Seba" : feature_group_a179f8db208ccafa45666cacc6a64f85,
                 },
             };
-            let layer_control_197ee7df5982059e1f7084dafaff051a = L.control.layers(
-                layer_control_197ee7df5982059e1f7084dafaff051a_layers.base_layers,
-                layer_control_197ee7df5982059e1f7084dafaff051a_layers.overlays,
+            let layer_control_6d864bf615b31eadd8749ad3872bd2d2 = L.control.layers(
+                layer_control_6d864bf615b31eadd8749ad3872bd2d2_layers.base_layers,
+                layer_control_6d864bf615b31eadd8749ad3872bd2d2_layers.overlays,
                 {
   "position": "topright",
   "collapsed": false,
   "autoZIndex": true,
 }
-            ).addTo(map_cb1a87566a3966aeadf5ab41cd59ff40);
+            ).addTo(map_1ac53e44672ae7f5db6bc24151403fc7);
 
         
 </script>
