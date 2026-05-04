@@ -32,12 +32,12 @@ BRAND_CSS = """
 @font-face { font-family: 'Gotham'; src: url('Gotham%20Book.otf') format('opentype'); font-weight: normal; }
 @font-face { font-family: 'Gotham'; src: url('Gotham%20Bold.otf') format('opentype'); font-weight: bold; }
 @font-face { font-family: 'Gotham'; src: url('Gotham%20Medium.otf') format('opentype'); font-weight: 500; }
-body, html { font-family: 'Gotham', sans-serif; }
-::placeholder { font-family: 'Gotham', sans-serif !important; opacity: 0.6; }
+body, html { font-family: Gotham, sans-serif; }
+::placeholder { font-family: Gotham, sans-serif !important; opacity: 0.6; }
 """
 
 CARD_STYLE = (
-    "font-family: 'Gotham', sans-serif; font-size: 11px; font-weight: bold; "
+    "font-family: Gotham, sans-serif; font-size: 11px; font-weight: bold; "
     "background-color: white; padding: 5px 10px; border-radius: 8px; "
     "box-shadow: 0px 3px 8px rgba(0,0,0,0.15); white-space: nowrap; "
     "display: inline-flex; align-items: center; border: none;"
@@ -250,12 +250,12 @@ def generate_map():
                 mid = points[len(points)//2]
                 encoded_address = urllib.parse.quote(app['route_address']).replace("'", "%27")
                 waze_link = f"https://waze.com/ul?q={encoded_address}&navigate=yes"
-                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:{leg_color}; transform:translateY(-20px); font-family:'Gotham', sans-serif;"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{label_id} / {departure_dt.strftime('%H:%M')} / {buffered_mins} min</div></a>''')).add_to(fg)
+                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:{leg_color}; transform:translateY(-20px); font-family:Gotham, sans-serif;"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{label_id} / {departure_dt.strftime('%H:%M')} / {buffered_mins} min</div></a>''')).add_to(fg)
 
                 short_cust_name = app['name'][:20]
                 display_addr1 = app['address1'][:20] + "..." if len(app['address1']) > 20 else app['address1']
                 end_pt = apply_offset([(leg['end_location']['lat'], leg['end_location']['lng'])], info['offset'])[0]
-                pill_content = f'<span style="font-family:\'Gotham\'; font-weight:bold;">{label_id} / {app["start_dt"].strftime("%H:%M")} / {short_cust_name}</span> / <span style="font-family:\'Gotham\'; font-weight:normal;">{display_addr1}</span>'
+                pill_content = f'<span style="font-family:Gotham, sans-serif; font-weight:bold;">{label_id} / {app["start_dt"].strftime("%H:%M")} / {short_cust_name}</span> / <span style="font-family:Gotham, sans-serif; font-weight:normal;">{display_addr1}</span>'
                 
                 if app.get('phone'):
                     cust_first_name = app['name'].split()[0].replace("'", "\\'")
@@ -301,7 +301,7 @@ def generate_map():
                 mid = points[len(points)//2]
                 waze_link = f"https://waze.com/ul?ll={BASE_LOCATION[0]},{BASE_LOCATION[1]}&navigate=yes"
                 base_label = f"{info['initial']}{len(mech_apps) + 1}"
-                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#8A9892; transform:translateY(-20px); font-family:'Gotham', sans-serif;"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{base_label} / Base / {buffered_mins} min</div></a>''')).add_to(fg)
+                folium.Marker(location=mid, icon=folium.DivIcon(html=f'''<a href="{waze_link}" target="_blank" style="text-decoration:none;"><div style="{CARD_STYLE} color:#8A9892; transform:translateY(-20px); font-family:Gotham, sans-serif;"><img src="{WAZE_ICON_URL}" style="width:16px; margin-right:5px;">{base_label} / Base / {buffered_mins} min</div></a>''')).add_to(fg)
 
     folium.LayerControl(collapsed=False).add_to(m)
 
@@ -315,10 +315,10 @@ def generate_map():
 
     modal_html = f"""
     <div id="notes-backdrop" onclick="closeNotes()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.4); z-index:100000;"></div>
-    <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:'Gotham', sans-serif; font-size:14px; font-weight:normal; color:{CHUM_BLUE}; border: 2px solid {CHUM_BLUE};">
+    <div id="notes-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:8px; box-shadow:0px 4px 15px rgba(0,0,0,0.3); z-index:100001; min-width:300px; max-width:80%; max-height:80vh; overflow-y:auto; font-family:Gotham, sans-serif; font-size:14px; font-weight:normal; color:{CHUM_BLUE}; border: 2px solid {CHUM_BLUE};">
         <div style="margin-bottom: 10px; font-size: 11px; color: #8A9892; text-transform: lowercase; font-family:'Saturn-Bold';">notas de la cita</div>
         <div id="notes-content" style="user-select:text; white-space: pre-wrap; line-height: 1.4;"></div>
-        <div style="margin-top: 15px; text-align: right;"><button onclick="closeNotes()" style="background:{CHUM_BLUE}; color:white; border:none; padding:5px 15px; border-radius:18px; cursor:pointer; font-family:'Gotham'; font-weight:bold;">Cerrar</button></div>
+        <div style="margin-top: 15px; text-align: right;"><button onclick="closeNotes()" style="background:{CHUM_BLUE}; color:white; border:none; padding:5px 15px; border-radius:18px; cursor:pointer; font-family:Gotham, sans-serif; font-weight:bold;">Cerrar</button></div>
     </div>
     <script>
         function showNotes(text) {{
@@ -335,58 +335,76 @@ def generate_map():
 
     wa_modal_html = f"""
     <div id="wa-backdrop" onclick="closeWaModal()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(1,30,65,0.5); z-index:100004;"></div>
-    <div id="wa-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:12px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; width:85%; max-width:380px; font-family:'Gotham', sans-serif; max-height:90vh; overflow-y:auto; border: 2px solid {CHUM_BLUE};">
-        <div style="margin-bottom: 15px; font-size: 14px; color: {CHUM_BLUE}; font-family:'Saturn-Bold'; text-align:center;">Contactar a <span id="wa-cust-name"></span></div>
+    <div id="wa-modal" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; border-radius:12px; box-shadow:0px 4px 15px rgba(0,0,0,0.4); z-index:100005; width:85%; max-width:380px; font-family:Gotham, sans-serif; max-height:90vh; overflow-y:auto; border: 2px solid {CHUM_BLUE};">
+        <div style="margin-bottom: 15px; font-size: 14px; color: {CHUM_BLUE}; font-family:'Saturn-Bold', sans-serif; text-align:center;">Contactar a <span id="wa-cust-name"></span></div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <button onclick="sendWa('hablar')" style="background:#25D366; color:white; border:none; padding:15px 5px; border-radius:8px; font-family:'Gotham'; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Hablar</button>
-            <button onclick="sendWa('voy')" style="background:#007bff; color:white; border:none; padding:15px 5px; border-radius:8px; font-family:'Gotham'; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Voy</button>
+            <button onclick="sendWa('hablar')" style="background:#25D366; color:white; border:none; padding:15px 5px; border-radius:8px; font-family:Gotham, sans-serif; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Hablar</button>
+            
+            <div style="display:flex; flex-direction:column;">
+                <button onclick="sendWa('voy')" style="background:#007bff; color:white; border:none; padding:15px 5px; border-radius:8px; font-family:Gotham, sans-serif; font-weight:bold; cursor:pointer; font-size:14px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width:100%;">Voy</button>
+                <label style="font-size:11px; color:#444; display:flex; align-items:center; justify-content:center; margin-top:4px; cursor:pointer;"><input type="checkbox" id="voy-ubi-check" checked> + Ubi</label>
+            </div>
             
             <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#856404; text-transform: lowercase;">tarde</span>
+                <span style="font-size:13px; font-family:'Saturn-Bold', sans-serif; color:#856404; text-transform: lowercase;">tarde</span>
                 <div style="display:flex; align-items:center; gap:5px;">
-                    <input type="number" id="mins-tarde" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:'Gotham';">
+                    <input type="number" id="mins-tarde" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:Gotham, sans-serif;">
                     <span style="font-size:12px; color:#666;">min</span>
                 </div>
-                <button onclick="sendWa('tarde')" style="background:#ffc107; color:#333; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
+                <button onclick="sendWa('tarde')" style="background:#ffc107; color:#333; border:none; padding:8px; width:100%; border-radius:4px; font-family:Gotham, sans-serif; font-weight:bold; cursor:pointer;">Enviar</button>
             </div>
             
             <div style="background:#d4edda; border:1px solid #c3e6cb; border-radius:8px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <span style="font-size:13px; font-family:'Saturn-Bold'; color:#155724; text-transform: lowercase;">temprano</span>
+                <span style="font-size:13px; font-family:'Saturn-Bold', sans-serif; color:#155724; text-transform: lowercase;">temprano</span>
                 <div style="display:flex; align-items:center; gap:5px;">
-                    <input type="number" id="mins-temprano" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:'Gotham';">
+                    <input type="number" id="mins-temprano" placeholder="00" min="5" max="95" step="5" style="width:50px; text-align:center; padding:5px; border:1px solid #ccc; border-radius:4px; font-size:14px; box-sizing:border-box; font-family:Gotham, sans-serif;">
                     <span style="font-size:12px; color:#666;">min</span>
                 </div>
-                <button onclick="sendWa('temprano')" style="background:#28a745; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
+                <button onclick="sendWa('temprano')" style="background:#28a745; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:Gotham, sans-serif; font-weight:bold; cursor:pointer;">Enviar</button>
             </div>
 
             <div style="background:#d1ecf1; border:1px solid #bee5eb; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#0c5460; text-align:center; text-transform: lowercase;">llegué</span>
+               <span style="font-size:13px; font-family:'Saturn-Bold', sans-serif; color:#0c5460; text-align:center; text-transform: lowercase;">llegué</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="llegue_opt" value="normal" checked> Normal</label>
                    <label><input type="radio" name="llegue_opt" value="avisar"> Avisar</label>
                    <label><input type="radio" name="llegue_opt" value="porton"> Portón</label>
                    <label><input type="radio" name="llegue_opt" value="donde"> Donde</label>
                </div>
-               <button onclick="sendWa('llegue')" style="background:#17a2b8; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
+               <button onclick="sendWa('llegue')" style="background:#17a2b8; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:Gotham, sans-serif; font-weight:bold; cursor:pointer;">Enviar</button>
            </div>
 
            <div style="background:#e2d9f3; border:1px solid #d3c2ee; border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-               <span style="font-size:13px; font-family:'Saturn-Bold'; color:#3b1c6e; text-align:center; text-transform: lowercase;">listo</span>
+               <span style="font-size:13px; font-family:'Saturn-Bold', sans-serif; color:#3b1c6e; text-align:center; text-transform: lowercase;">listo</span>
                <div style="font-size:11px; color:#444; display:flex; flex-direction:column; gap:4px; line-height:1.2;">
                    <label><input type="radio" name="listo_opt" value="buscar" checked> Buscar</label>
                    <label><input type="radio" name="listo_opt" value="proxima"> Proxima</label>
                    <label><input type="radio" name="listo_opt" value="recibir"> Recibir</label>
                    <label><input type="radio" name="listo_opt" value="conserje"> Conserje</label>
                </div>
-               <button onclick="sendWa('listo')" style="background:#6f42c1; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:'Gotham'; font-weight:bold; cursor:pointer;">Enviar</button>
+               <button onclick="sendWa('listo')" style="background:#6f42c1; color:white; border:none; padding:8px; width:100%; border-radius:4px; font-family:Gotham, sans-serif; font-weight:bold; cursor:pointer;">Enviar</button>
            </div>
         </div>
         <div style="margin-top: 15px; text-align: center;">
-            <button onclick="closeWaModal()" style="background:#eee; color:{CHUM_BLUE}; border:none; padding:8px 20px; border-radius:18px; cursor:pointer; font-family:'Gotham'; font-weight:bold; font-size:12px;">Cancelar</button>
+            <button onclick="closeWaModal()" style="background:#eee; color:{CHUM_BLUE}; border:none; padding:8px 20px; border-radius:18px; cursor:pointer; font-family:Gotham, sans-serif; font-weight:bold; font-size:12px;">Cancelar</button>
         </div>
     </div>
     <script>
         let currentWaData = {{}};
+
+        function getHourlyToken(offsetHours = 0) {{
+            let d = new Date();
+            d.setHours(d.getHours() + offsetHours);
+            let str = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + "-" + d.getHours();
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {{
+                let char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }}
+            return String(Math.abs(hash) % 10000).padStart(4, '0');
+        }}
+
         function openWaModal(phone, custName, mechName, origTime) {{
             currentWaData = {{ phone, custName, mechName, origTime }};
             document.getElementById('wa-cust-name').innerText = custName;
@@ -410,7 +428,17 @@ def generate_map():
             let text = "";
             
             if (type === 'hablar') {{ window.open('https://wa.me/' + phone, '_blank'); closeWaModal(); return; }} 
-            else if (type === 'voy') {{ text = `Hola ${{cName}}! Te habla ${{mName}}, tu mecánico asignado por Chum para el día de hoy, para avisarte que ya estamos en camino hacia ti y tu bici. Cuando hayamos llegado te avisaremos por esta vía. Si hay cualquier instrucción especifica para llegar, porfa avísanos.`; }} 
+            else if (type === 'voy') {{ 
+                let baseText = `Hola ${{cName}}! Te habla ${{mName}}, tu mecánico asignado por Chum para el día de hoy, para avisarte que ya estamos en camino hacia ti y tu bici. Cuando hayamos llegado te avisaremos por esta vía. Si hay cualquier instrucción especifica para llegar, porfa avísanos.`; 
+                
+                if (document.getElementById('voy-ubi-check').checked) {{
+                    let secToken = getHourlyToken(0);
+                    let trackingLink = "https://chum.cl/ubicacion.php?mecanico=" + mName.toLowerCase() + secToken;
+                    text = baseText + `\\n\\n📍 Puedes ver mi ubicación en tiempo real aquí: ${{trackingLink}}`;
+                }} else {{
+                    text = baseText;
+                }}
+            }} 
             else if (type === 'temprano') {{
                 let mins = parseInt(document.getElementById('mins-temprano').value, 10);
                 if (isNaN(mins) || mins <= 0) {{ alert('Ingresa un número válido.'); return; }}
@@ -447,12 +475,12 @@ def generate_map():
         #mbs-table-container table tbody tr:nth-child(even) {{ background-color: #f8f9fa; }}
         #mbs-table-container table tbody tr:nth-child(odd) {{ background-color: #ffffff; }}
         .leaflet-bottom {{ bottom: 28% !important; }} 
-        .leaflet-control-layers-list::before {{ content: 'ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; font-family:'Saturn-Bold'; font-size:14px; color:{CHUM_BLUE}; text-transform: lowercase; }} 
+        .leaflet-control-layers-list::before {{ content: 'ruta'; display: block; margin-bottom: 5px; border-bottom: 1px solid #ccc; font-family:'Saturn-Bold', sans-serif; font-size:14px; color:{CHUM_BLUE}; text-transform: lowercase; }} 
         .leaflet-control-layers-base {{ display: none; }}
-        .leaflet-control-layers {{ border: 2px solid {CHUM_BLUE} !important; border-radius: 8px !important; color: {CHUM_BLUE} !important; font-family: 'Gotham', sans-serif; font-weight: bold; }}
+        .leaflet-control-layers {{ border: 2px solid {CHUM_BLUE} !important; border-radius: 8px !important; color: {CHUM_BLUE} !important; font-family: Gotham, sans-serif; font-weight: bold; }}
     </style>
     <div id="mbs-table-container" style="position: fixed; bottom: 0; left: 0; width: 100%; height: 28%; background-color: white; z-index: 9999; overflow-y: auto; box-shadow: 0px -4px 10px rgba(0,0,0,0.1); border-top: 2px solid {CHUM_BLUE};">
-        <table style="width: 100%; border-collapse: collapse; font-family: 'Gotham', sans-serif; font-size: 12px; font-weight: normal; table-layout: fixed;">
+        <table style="width: 100%; border-collapse: collapse; font-family: Gotham, sans-serif; font-size: 12px; font-weight: normal; table-layout: fixed;">
             <tbody>{table_rows_html}</tbody>
         </table>
     </div>
