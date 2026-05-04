@@ -56,8 +56,15 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # Only add the JSON files, ignore the rest
+          
+          # 1. Add only the JSON files we want to keep
           git add appointments_cache.json routing_cache.json || exit 0
+          
+          # 2. Commit them
           git commit -m "Update routing and appointment caches [skip ci]" || exit 0
-          git pull origin main --rebase
+          
+          # 3. Use autostash to handle the generated HTML/PHP files during the pull
+          git pull origin main --rebase --autostash
+          
+          # 4. Final push
           git push origin main
