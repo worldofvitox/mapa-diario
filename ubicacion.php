@@ -155,7 +155,9 @@ if (!$isValid) {
                     let coords = data.coords;
                     lastVanLat = coords.lat;
                     lastVanLng = coords.lng;
-                    let iconUrl = 'chum_logo.png'; 
+                    let iconUrl = 'base_icon.png'; // Fallback
+                    if (targetMechanic === 'juan') iconUrl = 'icono_juan.png';
+                    if (targetMechanic === 'seba') iconUrl = 'icono_seba.png'; 
                     
                     if (!vanMarker) {
                         let vanIcon = L.icon({ iconUrl: iconUrl, iconSize: [40, 40], iconAnchor: [20, 20] });
