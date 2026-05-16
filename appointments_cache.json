@@ -35,6 +35,24 @@
     "phone": "56942967569",
     "notas": "#5367"
   },
+  "16898494": {
+    "uid": "16898494",
+    "booking_id": "16898494",
+    "name": "Francisca Gonzalez Varas",
+    "address1": "Bello Horizonte 1025",
+    "address2": "D 702",
+    "comuna": "Las Condes",
+    "route_address": "Bello Horizonte 1025, Las Condes, Santiago, Chile",
+    "service": "Mantención de Bicicleta Electrica Mant. Electrica Rigida",
+    "mechanic": "Juan",
+    "start_dt": "2026-05-18T12:00:00-04:00",
+    "start_timestamp": 1779120000.0,
+    "abbrev": "ELR",
+    "duration": 80,
+    "shorthand": "Mant. Ebike Rigida",
+    "phone": "56976244808",
+    "notas": "proforma"
+  },
   "16895473": {
     "uid": "16895473",
     "booking_id": "16895473",
