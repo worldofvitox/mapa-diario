@@ -35,7 +35,7 @@ if (strlen($rawParam) > 4) {
 if (isset($_GET['ajax']) && $_GET['ajax'] == 'coords') {
     header('Content-Type: application/json');
     if (!$isValid) { echo json_encode(['error' => 'invalid']); exit; }
-    $firebaseUrl = 'https://vantracker-7cdef-default-rtdb.firebaseio.com/vans.json';
+    $firebaseUrl = 'https://vantracker-7cdef-default-rtdb.firebaseio.com/vans.json?auth=VP2AH7SKzPS12UepacsoQCunbIsLkwkRTpyc0smK';
     $ch = curl_init(); curl_setopt($ch, CURLOPT_URL, $firebaseUrl); curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5); $data = curl_exec($ch); curl_close($ch);
     $json = json_decode($data, true);
