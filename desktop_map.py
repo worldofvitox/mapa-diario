@@ -18,7 +18,7 @@ except:
     pass
 
 # ⚠️ PASTE YOUR FIREBASE URL HERE
-FIREBASE_URL = 'https://vantracker-7cdef-default-rtdb.firebaseio.com/vans.json'
+FIREBASE_URL = 'https://vantracker-7cdef-default-rtdb.firebaseio.com/vans.json?auth=VP2AH7SKzPS12UepacsoQCunbIsLkwkRTpyc0smK'
 
 # ⚠️ GMAPS KEY
 GMAPS_KEY = os.getenv('GMAPS_API_KEY')
