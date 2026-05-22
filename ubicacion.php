@@ -2,7 +2,7 @@
 date_default_timezone_set('America/Santiago');
 
 // ⚠️ PASTE YOUR ACTUAL GOOGLE MAPS API KEY HERE
-$GMAPS_KEY = 'TU_CLAVE_API_AQUI';
+$GMAPS_KEY = 'AIzaSyDMi_wbYarCHOgAHMdgxHecbCihjhUv-Cs';
 
 function getHourlyToken($offsetHours = 0) {
     $timestamp = time() + ($offsetHours * 3600);
